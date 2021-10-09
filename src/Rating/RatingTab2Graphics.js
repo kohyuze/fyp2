@@ -6,7 +6,6 @@ const Tab2 = () => {
     const tubeNo = 230
     const tubeDiameter = 0.03
     const shellDiameter = 1.3
-    const tubes = [];
     const tubeConfig = "triangular" //square, triangular, rotated square
 
     const canvasRef = useRef(null);
@@ -27,7 +26,7 @@ const Tab2 = () => {
         
         
         const findTubeImgSpacing = (shellImgDiameter, tubeNo, tubeImgDiameter, tubeConfig) => { //horizontal distance between two tubes
-            if (tubeConfig == "triangular"){
+            if (tubeConfig === "triangular"){
                 //recalculate tubeImgSpacing since triangular layout is more compact
                 // sin60 = 0.866
                 const shellImgArea = Math.PI * (shellImgDiameter ** 2) / 4 - tubeImgDiameter;
@@ -68,9 +67,9 @@ const Tab2 = () => {
         let tubeDrawn = 0
         let currentRow = 1 //change this to 2 to leave center row empty for baffles
 
-        if (tubeConfig == "square") {
+        if (tubeConfig === "square") {
             while (tubeDrawn < tubeNo && currentRow < tubeNo) {
-                if (currentRow == 1) {
+                if (currentRow === 1) {
                     //draw center row
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         const x = xleft + (i * tubeImgSpacing)
@@ -89,7 +88,7 @@ const Tab2 = () => {
                     console.log(tubeDrawn, currentRow)
                     currentRow++
                 }
-                else if (currentRow % 2 == 0) {
+                else if (currentRow % 2 === 0) {
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         //move up draw another row above
                         const x = xleft + (i * tubeImgSpacing)
@@ -108,7 +107,7 @@ const Tab2 = () => {
                     currentRow++
 
                 }
-                else if (currentRow % 2 == 1) {
+                else if (currentRow % 2 === 1) {
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         //draw row below
                         const x = xleft + (i * tubeImgSpacing)
@@ -131,9 +130,9 @@ const Tab2 = () => {
         }
 
 
-        else if (tubeConfig == "rotated square"){
+        else if (tubeConfig === "rotated square"){
             while (tubeDrawn < tubeNo && currentRow < tubeNo) {
-                if (currentRow == 1) {
+                if (currentRow === 1) {
                     //draw center row
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         const x = xleft + (i * Math.sqrt(2) * tubeImgSpacing)
@@ -152,7 +151,7 @@ const Tab2 = () => {
                     console.log(tubeDrawn, currentRow)
                     currentRow++
                 }
-                else if (currentRow % 2 == 0) { //these will be the offset rows, every alternate row is offset
+                else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         //move up draw another row above
                         let x = xleft + (i * Math.sqrt(2) * tubeImgSpacing) + tubeImgSpacing/Math.sqrt(2)
@@ -183,7 +182,7 @@ const Tab2 = () => {
                     currentRow++
 
                 }
-                else if (currentRow % 2 == 1) { 
+                else if (currentRow % 2 === 1) { 
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         //draw row above
                         let x = xleft + (i * Math.sqrt(2) * tubeImgSpacing)
@@ -217,10 +216,10 @@ const Tab2 = () => {
             }
         }
 
-        else if (tubeConfig == "triangular"){
+        else if (tubeConfig === "triangular"){
             // sin60 = 0.866
             while (tubeDrawn < tubeNo && currentRow < tubeNo) {
-                if (currentRow == 1) {
+                if (currentRow === 1) {
                     //draw center row
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         const x = xleft + (i * tubeImgSpacing)
@@ -239,7 +238,7 @@ const Tab2 = () => {
                     console.log(tubeDrawn, currentRow)
                     currentRow++
                 }
-                else if (currentRow % 2 == 0) { //these will be the offset rows, every alternate row is offset
+                else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         //move up draw another row above
                         let x = xleft + (i * tubeImgSpacing) + tubeImgSpacing/2
@@ -270,7 +269,7 @@ const Tab2 = () => {
                     currentRow++
 
                 }
-                else if (currentRow % 2 == 1) { 
+                else if (currentRow % 2 === 1) { 
                     for (let i = 0; i <= noTubeCenterRow; i++) {
                         //draw row above
                         let x = xleft + (i * tubeImgSpacing)

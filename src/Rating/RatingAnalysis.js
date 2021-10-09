@@ -1,7 +1,4 @@
 import React, { useRef } from 'react';
-import A_1 from '../Resources/A_1.png'
-import E from '../Resources/E.png'
-import L_1 from '../Resources/L_1.png'
 import Tab1Graphics from './RatingTab1Graphics';
 import Tab2Graphics from './RatingTab2Graphics';
 

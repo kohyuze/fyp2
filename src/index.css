@@ -114,16 +114,3 @@ code {
   width: 60vw;
   margin:auto; 
 }
-
-.head{
-  /* width: 40%; */
-  display: none;
-}
-.shell{
-  /* width: 80%; */
-  display: none;
-}
-.rear{
-  /* width: 40%; */
-  display: none;
-}
