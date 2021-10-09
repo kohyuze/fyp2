@@ -69,8 +69,6 @@ class RatingAnalysis extends React.Component {
           </div>
 
         </section> 
-
-
       </div>
     );
   }
