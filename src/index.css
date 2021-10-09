@@ -11,3 +11,119 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* start page */
+.startTitle {
+  padding-top: 1em;
+  font-size: 24;
+  text-align: center;
+  font-weight: bold; 
+}
+
+.nav {
+  padding-top: 10em;
+}
+
+.navButtons {
+  height: 50;
+  width: 20em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  border-radius: 0.5em;
+  background-color: blue;
+}
+
+.navLink {
+  text-decoration: none;
+}
+
+.navButtons:hover {
+  opacity: 50%;
+}
+
+.buttonText {
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 18;
+}
+
+/* Tabs */
+.tabs {
+  position: relative;
+  background: lightgray;
+  z-index: 10;
+}
+
+.tabs .container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.tabs p {
+  font-size: 1rem;
+}
+.tabs .container > div{
+  padding: 1rem 0;
+}
+.tabs .container > div:hover{
+  color: white;
+  cursor: pointer;
+}
+.tab-border{
+  border-bottom: red 4px solid;
+}
+/* Tab Content */
+.tab-content {
+  padding: 2rem 0;
+  background: white;
+  color :#000;
+}
+#tab-1-content,
+#tab-2-content,
+#tab-3-content{
+  display: none;
+}
+.show {
+  display: block !important;
+}
+
+.hide{
+  display: none;
+}
+
+/*------------ Canvas -----------*/
+#Tab1 canvas{
+  position: relative;
+  display:block;
+  background: white;
+  height: 30vw; 
+  width: 70vw;
+  margin:auto; 
+}
+
+#Tab2 canvas{
+  position: relative;
+  background: white;
+  display: block;
+  height: 30vw; 
+  width: 60vw;
+  margin:auto; 
+}
+
+.head{
+  /* width: 40%; */
+  display: none;
+}
+.shell{
+  /* width: 80%; */
+  display: none;
+}
+.rear{
+  /* width: 40%; */
+  display: none;
+}
