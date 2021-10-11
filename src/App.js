@@ -4,6 +4,7 @@ import Start from './Start';
 import RatingAnalysis from './Rating/RatingAnalysis';
 import SizingAnalysis from './SizingAnalysis';
 
+import RatingInputPage from './Rating/RatingInputPage';
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
             </Route>
             <Route path="/SizingAnalysis">
               <SizingAnalysis />
+            </Route>
+            <Route path="/RatingInputPage">
+              <RatingInputPage />
             </Route>
           </Switch>
         </Router>

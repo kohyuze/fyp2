@@ -1,6 +1,7 @@
 import React, { Component} from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
+import PopUp from '../popup';
 
 
 const MyTextInput = ({ label, ...props }) => {
@@ -36,24 +37,29 @@ class RatingTab3Form extends React.Component {
     constructor(props) {
         super(props);
         //this.handleChange = this.handleChange.bind(this);
+         //state is just for the popup box
+         this.state = {
+            popUp: false,
+        }
     }
     render() {
         return (
             <div className='formContainer' >
                 {/* the error message sucks, pls fix in future */}
                 <Formik
-                    initialValues={{ baffleCut: '', centralBaffleSpacing: '' }}//dk why i dun need to put all the variables here
+                    initialValues={{}}//dk why i dun need to put all the variables here
                     validationSchema={
                         Yup.object({
-                            baffleCut: Yup.number().required('Required'),                            
-                            centralBaffleSpacing: Yup.number().required('Required'),                            
-                            clearance: Yup.number().required('Required'),                       
+                            baffleCut: Yup.number(),                        
+                            centralBaffleSpacing: Yup.number(),                            
+                            clearance: Yup.number(),                       
                             })
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
                         console.log("submitted values:" + values);
                         setSubmitting(false);
+                        this.setState({popUp: true})
                     }}
                 >
                     <Form>
@@ -83,7 +89,9 @@ class RatingTab3Form extends React.Component {
                         {/* button is not done, dk what to do with it yet */}                       
                     </Form>
                 </Formik >
-
+                <PopUp open={this.state.popUp} onClose={() => this.setState({popUp: false})}>
+                    <p className="popup-text">Updated!</p>
+                </PopUp>
             </div >
         );
     }

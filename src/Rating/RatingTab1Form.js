@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
-
+import PopUp from '../popup';
 
 const MyTextInput = ({ label, ...props }) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
@@ -9,9 +9,9 @@ const MyTextInput = ({ label, ...props }) => {
     // message if the field is invalid and it has been touched (i.e. visited)
     const [field, meta] = useField(props);
     return (
-        <>           
+        <>
             <div className="form">
-                 {/* <label htmlFor={props.id || props.name}>{label}</label> */}
+                {/* <label htmlFor={props.id || props.name}>{label}</label> */}
                 <input className="input" {...field} {...props} />
                 <p className="units">{props.unit}</p>
                 {meta.touched && meta.error ? (<div className="error">{meta.error}</div>) : null}
@@ -36,24 +36,29 @@ class RatingTab1Form extends React.Component {
     constructor(props) {
         super(props);
         //this.handleChange = this.handleChange.bind(this);
+        //state is just for the popup box
+        this.state = {
+            popUp: false,
+        }
     }
     render() {
         return (
             <div className='formContainer' >
                 {/* the error message sucks, pls fix in future */}
                 <Formik
-                    initialValues={{ shellIT: '', shellMFR: '' }}//dk why i dun need to put all the variables here
+                    initialValues={{}}//shellIT: '', shellMFR: '' }}//dk why i dun need to put all the variables here
                     validationSchema={
                         Yup.object({
-                            shellIT: Yup.number().required('Required'),
-                            shellMFR: Yup.number().required('Required'),
-                            tubeIT: Yup.number().required('Required'),
-                            tubeMFR: Yup.number().required('Required'),
+                            shellIT: Yup.number(),
+                            shellMFR: Yup.number(),
+                            tubeIT: Yup.number(),
+                            tubeMFR: Yup.number(),
                         })
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
                         setSubmitting(false);
+                        this.setState({popUp: true})
                     }}
                 >
                     <Form>
@@ -110,10 +115,13 @@ class RatingTab1Form extends React.Component {
                             unit="kg/s"
                         />
                         <button className='applyButton' type="submit" >Apply</button>
+                        <button onClick={() => console.log(this.state)}>log state 2</button>
                         {/* button is not done, dk what to do with it yet */}
                     </Form>
                 </Formik >
-
+                <PopUp open={this.state.popUp} onClose={() => this.setState({popUp: false})}>
+                    <p className="popup-text">Updated!</p>
+                </PopUp>
             </div >
         );
     }

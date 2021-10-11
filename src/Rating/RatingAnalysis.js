@@ -5,6 +5,8 @@ import Tab1Form from './RatingTab1Form';
 import Tab2Form from './RatingTab2Form';
 import Tab3Form from './RatingTab3Form';
 
+import { Link } from 'react-router-dom';
+
 class RatingAnalysis extends React.Component {
   constructor(props) {
     super(props);
@@ -55,11 +57,12 @@ class RatingAnalysis extends React.Component {
       rear: 'M_1',
       // App states
       currentTab: "tab-1", //default tab is tab1
+      currentPage: "forms"
     };
   }
 
   //switches the tabs
-  onClick = e => {
+  onClickTab = e => {
     this.setState({ currentTab: e.target.id });
   }
 
@@ -73,6 +76,10 @@ class RatingAnalysis extends React.Component {
     //upon submission, this will toggle and the ternary operator in render() will display
     //the corresponding page
   }
+
+  // onClickNext = e => {
+  //   this.setState({ currentPage: "inputCheck" });
+  // }
 
   render() {
     return (
@@ -90,16 +97,19 @@ class RatingAnalysis extends React.Component {
           </div>
         </div>
 
+        {/* <a href="#" class="next" onClick={this.onClickNext}>Next &raquo;</a> */}
+        <Link to="/RatingInputPage" className="next" >Next &raquo;</Link>
+
         <section className="tabs">
           <div className="container">
-            <div id="tab-1" className={`tab-item ${this.state.currentTab === "tab-1" ? "tab-border" : ""}`} onClick={this.onClick}>
-              <p id="tab-1">General Configuration/Fluids</p>
+            <div id="tab-1" className={`tab-item ${this.state.currentTab === "tab-1" ? "tab-border" : ""}`} onClick={this.onClickTab}>
+              <p id="tab-1">General</p>
             </div>
-            <div id="tab-2" className={`tab-item ${this.state.currentTab === "tab-2" ? "tab-border" : ""}`} onClick={this.onClick}>
-              <p id="tab-2">Tube Configurations</p>
+            <div id="tab-2" className={`tab-item ${this.state.currentTab === "tab-2" ? "tab-border" : ""}`} onClick={this.onClickTab}>
+              <p id="tab-2">Tube</p>
             </div>
-            <div id="tab-3" className={`tab-item ${this.state.currentTab === "tab-3" ? "tab-border" : ""}`} onClick={this.onClick}>
-              <p id="tab-3">Shell Configurations</p>
+            <div id="tab-3" className={`tab-item ${this.state.currentTab === "tab-3" ? "tab-border" : ""}`} onClick={this.onClickTab}>
+              <p id="tab-3">Shell</p>
             </div>
           </div>
         </section>

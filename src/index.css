@@ -68,7 +68,7 @@ code {
   font-size: 1rem;
 }
 .tabs .container > div{
-  padding: 1rem 0;
+  /* padding: 0.3rem 0; */
 }
 .tabs .container > div:hover{
   color: white;
@@ -130,7 +130,7 @@ code {
 .input {
   /* justify-content: left; */
   padding: 0.65rem 0.5rem;
-  font-size: 1rem;
+  font-size: medium;
   border: 10px solid var(black);
   background-color: #e4e2e2;
   border-radius: 10px;
@@ -142,6 +142,7 @@ code {
 
 .categoryHeader {
   margin-top: 1em;
+  font-size: large;
 }
 
 .error {
@@ -159,6 +160,7 @@ code {
 .applyButton {
   border-radius: 1em;
   background-color: blue;
+  text-decoration-color: white;
   margin-top: 1.5em;
   height: 3em;
   width: 15em;
@@ -167,4 +169,30 @@ code {
 
 .applyButton:hover {
   opacity: 50%;
+}
+
+/* ----------Next button------------ */
+/* .next:before{
+  margin-left: 20vw;
+} */
+.next {
+  background-color: #04AA6D;
+  color: white;
+  border-radius: 1em;  
+  padding: 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 70vw;
+  font-size: small;
+}
+.next:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* ----------Pop up------------ */
+.popup-text{
+  text-align: center;
 }
