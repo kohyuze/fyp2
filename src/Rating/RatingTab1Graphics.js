@@ -15,7 +15,7 @@ import M_0 from '../Resources/M_0.png'
 const Tab1 = () => {
 
     const headSelected = A_1;
-    const shellSelected = F;
+    const shellSelected = E;
     const rearSelected = M_1;
 
     useEffect(() => {

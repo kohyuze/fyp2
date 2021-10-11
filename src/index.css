@@ -114,3 +114,57 @@ code {
   width: 60vw;
   margin:auto; 
 }
+
+/* ----------Forms------------ */
+.formContainer {
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  margin-left: calc(50% - 7em);
+}
+
+.input {
+  /* justify-content: left; */
+  padding: 0.65rem 0.5rem;
+  font-size: 1rem;
+  border: 10px solid var(black);
+  background-color: #e4e2e2;
+  border-radius: 10px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin-top: 0.3em;
+}
+
+.categoryHeader {
+  margin-top: 1em;
+}
+
+.error {
+  color: red;
+  font-size: small;
+  margin-top: 1em;
+  margin-left: 1em;
+}
+
+.units {
+  margin-top: 1em;
+  margin-left: 0em;
+}
+
+.applyButton {
+  border-radius: 1em;
+  background-color: blue;
+  margin-top: 1.5em;
+  height: 3em;
+  width: 15em;
+  border: blue;
+}
+
+.applyButton:hover {
+  opacity: 50%;
+}
