@@ -84,7 +84,14 @@ class RatingTab3Form extends React.Component {
                             type="text"
                             placeholder="Clearance"
                             unit="m"
-                        />                  
+                        />
+                        <MyTextInput
+                            label="Number of Tube Passes"
+                            name="numberPasses"
+                            type="text"
+                            placeholder="Number of Tube Passes"
+                            unit="-"
+                        />                       
                         <button className='applyButton' type="submit" >Apply</button>
                         {/* button is not done, dk what to do with it yet */}                       
                     </Form>

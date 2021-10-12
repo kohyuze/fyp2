@@ -1,11 +1,12 @@
 import React from 'react';
 import * as dfd from 'danfojs';
 
-class InputPage extends React.Component {
+class RatingResult extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            tubeHEcoeff: 0,
+            shellHEcoeff: 0
         }
     }
 
@@ -29,8 +30,8 @@ class InputPage extends React.Component {
                 // the $data[0] is gotten by referencing the object when u console.log the fkin thing,
                 // trying to extract the fkin value from the dataframe was a huge headache.
                 let j = 0;
-                while (averageTemp > Number(sub_df.iloc({ rows: [j] }).$data[0][0])) { 
-                    j++ 
+                while (averageTemp > Number(sub_df.iloc({ rows: [j] }).$data[0][0])) {
+                    j++
                 }
                 sub_df.iloc({ rows: [j - 1, j] }).print();
 
@@ -72,7 +73,7 @@ class InputPage extends React.Component {
     }
 
     //call this function as u iterate to update the new fluid properties
-    updateProperties(shellIT,shellOT,tubeIT,tubeOT) {
+    updateProperties(shellIT, shellOT, tubeIT, tubeOT) {
         const { handleSubmit } = this.props;
         this.fetchProperties(shellIT, shellOT, (shellProperties) => {
             handleSubmit({ shellOT: shellOT })
@@ -92,21 +93,7 @@ class InputPage extends React.Component {
         })
     }
 
-    componentDidMount() {
-        let {
-            shellIT,
-            shellOT,
-            tubeIT,
-            tubeOT,
-        } = this.props.data;
-
-        shellOT = shellIT;
-        tubeOT = tubeIT;
-        
-        this.updateProperties(shellIT,shellOT,tubeIT,tubeOT)
-    }
-
-    render() {
+    calculate() {
         const {
             // constants for shell
             shellIT,
@@ -118,7 +105,6 @@ class InputPage extends React.Component {
             shellTC,
             shellD,
             shellFF,
-            //ShellPN, //not filled in form
             // Constant for tube
             tubeIT,
             tubeOT,
@@ -129,7 +115,6 @@ class InputPage extends React.Component {
             tubeTC,
             tubeD,
             tubeFF,
-            //TubePN, //not filled in form
             // Constant for Constraints and physical Dimensions
             tubeInnerD,
             tubeOuterD,
@@ -143,56 +128,67 @@ class InputPage extends React.Component {
             clearance,
             shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
-            // Constant for material design
-            tubeUnsupportedLength,
-            tubeYoungModule,
-            tubeLongitudeStress,
-            addedMassCoefficient,
-            metalMassUnitLength,
         } = this.props.data;
+        // o is used to hold the calculated values before we setState at the end of the function
+        let o = {}
+
+        // ---- Calculation of the tube-side heat transfer coefficient using Nitsche method(pg39) -------
+        //Calculation of the flow cross section
+        const tubeCrossSection = (numberTube / numberPasses) * Math.PI * Math.pow(tubeInnerD, 2) / 4;
+        //Determination of the flow velocity in the tubes
+        const tubeFlowVelocity = tubeMFR / tubeCrossSection;
+        //Determination of the Reynolds number
+        const tubeRe = (tubeFlowVelocity * tubeInnerD) / tubeKV;
+        //Calculation of the Pr number
+        const tubePr = (tubeKV * tubeSHC * tubeD) / tubeTC;
+        //Determination of the Nusselt number
+        const tubeNu = 0.023 * Math.pow(tubeRe, 0.8) * Math.pow(tubePr, 0.33); //for Re>8000
+        //Calculation of the heat transfer coefficient
+        const tubeHEcoeff = (tubeNu * tubeTC) / tubeInnerD;
+        o.tubeHEcoeff = tubeHEcoeff.toFixed();
+
+
+        // ---- Calculation of the shell-side heat transfer coefficient using Nitsche method for Re>10(pg40) -------
+        //Calculation of the flow cross section
+        const shellCrossSection = shellInnerDiameter * centralBaffleSpacing * (1 - (tubeOuterD / tubePitch)) //what if no baffle spacing given?
+        //Determination of the flow velocity in the shell
+        const shellFlowVelocity = shellMFR / shellCrossSection;
+        //Determination of the Reynolds number
+        const shellRe = (shellFlowVelocity * tubeOuterD) / shellKV;
+        //Calculation of the Pr number
+        const shellPr = (shellKV * shellSHC * shellD) / shellTC;
+        //Determination of the Nusselt number
+        const shellNu = 0.196 * Math.pow(shellRe, 0.6) * Math.pow(shellPr, 0.33); //for triangular pitch
+        //Calculation of the heat transfer coefficient
+        const shellHEcoeff = (shellNu * shellTC) / tubeOuterD;
+        o.shellHEcoeff = shellHEcoeff.toFixed();
+
+
+
+
+        this.setState(o)
+    }
+
+    componentDidMount() {
+        this.calculate()
+    }
+
+    render() {
         const {
-            handleSubmit,
             handlePageChange
         } = this.props;
         return (
             <div>
-                <button className="previous" onClick={() => handlePageChange({ currentPage: 'forms' })}>&laquo; Edit Inputs</button>
-                <button onClick={() => console.log(this.props.data)}>log props</button>
-
-                <h2>Inputs</h2>
-
+                <button className="previous" onClick={() => handlePageChange({ currentPage: 'inputCheck' })}>&laquo; Back to Inputs</button>
+                <h1>Results</h1>
                 <div className='input-Container'>
-                    <h2>Shell-side Fluid</h2>
-                    {/* I use h5 tags to style the numbers differently */}
-                    <div><p>Inlet Temperature:</p> <h5>{shellIT}°C</h5></div>
-                    <div><p>Mass Flow Rate:</p> <h5>{shellMFR}kg/s</h5></div>
-                    <div><p>Specific Heat Capacity:</p> <h5>{shellSHC}J/kg.K</h5></div>
-                    <div><p>Dynamic Viscosity:</p> <h5>{shellDV}Pa.s</h5></div>
-                    <div><p>Thermal Conductivity:</p> <h5>{shellTC}W/m.K</h5></div>
-                    <div><p>Density:</p> <h5>{shellD}kg/m³</h5></div>
-                    <h2>Tube-side Fluid</h2>
-                    <div><p>Inlet Temperature:</p> <h5>{tubeIT}°C</h5></div>
-                    <div><p>Mass Flow Rate:</p> <h5>{tubeMFR}kg/s</h5></div>
-                    <div><p>Specific Heat Capacity:</p> <h5>{tubeSHC}J/kg.K</h5></div>
-                    <div><p>Dynamic Viscosity:</p> <h5>{tubeDV}Pa.s</h5></div>
-                    <div><p>Thermal Conductivity:</p> <h5>{tubeTC}W/m.K</h5></div>
-                    <div><p>Density:</p> <h5>{tubeD}kg/m³</h5></div>
-                    <h2>Physical Dimensions</h2>
-                    <div><p>Number of Tubes:</p> <h5>{numberTube}</h5></div>
-                    <div><p>Tube Inner Diameter</p> <h5>{tubeInnerD}m</h5></div>
-                    <div><p>Tube Outer Diameter</p> <h5>{tubeOuterD}m</h5></div>
-                    <div><p>Shell Inner Diameter</p> <h5>{shellInnerDiameter}m</h5></div>
-                    <div><p>Tube Pitch</p> <h5>{tubePitch}m</h5></div>
-                    <div><p>Tube Layout</p> <h5>{layoutAngle}</h5></div>
-                    <div><p>Baffle Cut</p> <h5>{baffleCut}%</h5></div>
-                    <div><p>Central Baffles Spacing</p> <h5>{centralBaffleSpacing}m</h5></div>
-                    <div><p>Clearance</p> <h5>{clearance}m</h5></div>
-                    <div><p>Number of Tube Passes</p> <h5>{numberPasses}</h5></div>
-                    <button className='calculate' onClick={() => handlePageChange({ currentPage: 'result' })}>Calculate</button>
+                    <div><p>Tube-side heat transfer coefficient:</p> <h5>{this.state.tubeHEcoeff}W/m².K</h5></div>
+                    <div><p>Shell-side heat transfer coefficient:</p> <h5>{this.state.shellHEcoeff}W/m².K</h5></div>
                 </div>
+                <button onClick={() => console.log(this.state)}>log state</button>
             </div>
         );
     }
 }
 
-export default InputPage;
+export default RatingResult;

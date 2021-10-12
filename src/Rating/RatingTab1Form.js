@@ -85,6 +85,10 @@ class RatingTab1Form extends React.Component {
                             </MySelect>
                         </div>
                         <h2 className='categoryHeader'>Shell Side Fluid</h2>
+                        <MySelect label="Shell Fluid" name="shellFluid">
+                            <option value="">Select a Shell Fluid</option>
+                            <option value="water">Water</option>
+                        </MySelect>
                         <MyTextInput
                             label="Inlet Temperature" //text infront of box
                             name="shellIT" //name inside the JSON object
@@ -100,6 +104,10 @@ class RatingTab1Form extends React.Component {
                             unit="kg/s"
                         />
                         <h2 className='categoryHeader'>Tube Side Fluid</h2>
+                        <MySelect label="Tube Fluid" name="tubeFluid">
+                            <option value="">Select a Tube Fluid</option>
+                            <option value="water">Water</option>
+                        </MySelect>
                         <MyTextInput
                             label="Inlet Temperature" //text infront of box
                             name="tubeIT" //name inside the JSON object
@@ -115,7 +123,6 @@ class RatingTab1Form extends React.Component {
                             unit="kg/s"
                         />
                         <button className='applyButton' type="submit" >Apply</button>
-                        <button onClick={() => console.log(this.state)}>log state 2</button>
                         {/* button is not done, dk what to do with it yet */}
                     </Form>
                 </Formik >

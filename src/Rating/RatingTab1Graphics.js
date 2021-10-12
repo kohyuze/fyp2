@@ -36,10 +36,6 @@ const Tab1 = () => {
     //   }
     // }
     const prepareCanvas = () => {
-        // const head = document.querySelector(".head")
-        // const shell = document.querySelector(".shell")
-        // const rear = document.querySelector(".rear")
-
         const head = new Image();
         head.src = headSelected;
         const shell = new Image();

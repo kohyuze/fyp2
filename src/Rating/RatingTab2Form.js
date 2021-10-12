@@ -22,16 +22,16 @@ const MyTextInput = ({ label, ...props }) => {
     );
 };
 
-// const MySelect = ({ label, ...props }) => {
-//     const [field, meta] = useField(props);
-//     return ( //do something about the styling pls
-//       <div className="form">
-//         {/* <label htmlFor={props.id || props.name}>{label}</label> */}
-//         <select className="input" {...field} {...props} />
-//         {meta.touched && meta.error ? (<div className="error">{meta.error}</div>) : null}
-//       </div>
-//     );
-//   };
+const MySelect = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
+    return ( //do something about the styling pls
+      <div className="form">
+        {/* <label htmlFor={props.id || props.name}>{label}</label> */}
+        <select className="input" {...field} {...props} />
+        {meta.touched && meta.error ? (<div className="error">{meta.error}</div>) : null}
+      </div>
+    );
+  };
 
 class RatingTab2Form extends React.Component {
     constructor(props) {
@@ -66,6 +66,13 @@ class RatingTab2Form extends React.Component {
                     <Form>
                         <h2 className='categoryHeader'>Tube Side configs</h2>
                         <MyTextInput
+                            label="Number of Tubes"
+                            name="numberTube"
+                            type="text"
+                            placeholder="Number of Tubes"
+                            unit="-"
+                        />       
+                        <MyTextInput
                             label="Tube Inner Diameter"
                             name="tubeInnerD"
                             type="text"
@@ -80,19 +87,25 @@ class RatingTab2Form extends React.Component {
                             unit="m"  
                         />
                         <MyTextInput
+                            label="Shell Inner Diameter"
+                            name="shellInnerDiameter"
+                            type="text"
+                            placeholder="Shell Inner Diameter"
+                            unit="m"  
+                        />
+                        <MyTextInput
                             label="Tube Pitch"
                             name="tubePitch"
                             type="text"
                             placeholder="Tube Pitch"
                             unit="m"
                         />
-                        <MyTextInput
-                            label="Number of Tubes"
-                            name="numberTube"
-                            type="text"
-                            placeholder="Number of Tubes"
-                            unit="-"
-                        />                  
+                        <MySelect label="Tube Layout" name="layoutAngle">
+                            <option value="">Select a Layout</option>
+                            <option value="triangular">triangular</option>
+                            <option value="square">square</option>
+                            <option value="rotated-square">rotated-square</option>
+                        </MySelect>
                         <button className='applyButton' type="submit" >Apply</button>
                         {/* button is not done, dk what to do with it yet */}                       
                     </Form>
