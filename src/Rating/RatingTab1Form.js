@@ -57,8 +57,12 @@ class RatingTab1Form extends React.Component {
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
+                        console.log(values)
                         setSubmitting(false);
-                        this.setState({popUp: true})
+                        this.setState({popUp: true})   
+                        
+                        this.props.updateShellProperties(this.props.formData.shellIT,this.props.formData.shellFluid);
+                        this.props.updateTubeProperties(this.props.formData.tubeIT,this.props.formData.tubeFluid);
                     }}
                 >
                     <Form>
@@ -88,6 +92,7 @@ class RatingTab1Form extends React.Component {
                         <MySelect label="Shell Fluid" name="shellFluid">
                             <option value="">Select a Shell Fluid</option>
                             <option value="water">Water</option>
+                            <option value="engine oil">Engine Oil</option>
                         </MySelect>
                         <MyTextInput
                             label="Inlet Temperature" //text infront of box
@@ -107,6 +112,7 @@ class RatingTab1Form extends React.Component {
                         <MySelect label="Tube Fluid" name="tubeFluid">
                             <option value="">Select a Tube Fluid</option>
                             <option value="water">Water</option>
+                            <option value="engine oil">Engine Oil</option>
                         </MySelect>
                         <MyTextInput
                             label="Inlet Temperature" //text infront of box

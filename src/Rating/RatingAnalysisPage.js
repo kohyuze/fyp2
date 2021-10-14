@@ -24,7 +24,7 @@ class RatingAnalysis extends React.Component {
     return (
       <div>
         <div>
-          
+
           <div className={`${this.state.currentTab === "tab-1" ? "" : "hide"}`}>
             <Tab1Graphics />
           </div>
@@ -39,7 +39,7 @@ class RatingAnalysis extends React.Component {
         <button onClick={() => console.log(this.props)}>log props</button>
         <button onClick={() => console.log(this.state)}>log state2</button>
 
-        <button className="next" onClick={()=>this.props.handlePageChange({currentPage: 'inputCheck'})}>Check Inputs &raquo;</button>
+        <button className="next" onClick={() => this.props.handlePageChange({ currentPage: 'inputCheck' })}>Check Inputs &raquo;</button>
         <section className="tabs">
           <div className="container">
             <div id="tab-1" className={`tab-item ${this.state.currentTab === "tab-1" ? "tab-border" : ""}`} onClick={this.onClickTab}>
@@ -59,19 +59,30 @@ class RatingAnalysis extends React.Component {
             <div id="tab-1-content" className={`tab-content-item ${this.state.currentTab === "tab-1" ? "show" : ""}`}>
               <div className="tab-1-content-inner">
                 <div>
-                  < Tab1Form formData={this.props.data} handleSubmit={this.props.handleSubmit} />
+                  < Tab1Form
+                    formData={this.props.data}
+                    handleSubmit={this.props.handleSubmit}
+                    updateTubeProperties={this.props.updateTubeProperties}
+                    updateShellProperties={this.props.updateShellProperties}
+                  />
                 </div>
               </div>
             </div>
 
             <div id="tab-2-content" className={`tab-content-item ${this.state.currentTab === "tab-2" ? "show" : ""}`}>
               <div className="tab-2-content-top">
-                < Tab2Form formData={this.props.data} handleSubmit={this.props.handleSubmit} />
+                < Tab2Form
+                  formData={this.props.data}
+                  handleSubmit={this.props.handleSubmit}
+                />
               </div>
             </div>
             <div id="tab-3-content" className={`tab-content-item ${this.state.currentTab === "tab-3" ? "show" : ""}`}>
               <div className="text-center">
-                < Tab3Form formData={this.props.data} handleSubmit={this.props.handleSubmit} />
+                < Tab3Form
+                  formData={this.props.data}
+                  handleSubmit={this.props.handleSubmit}
+                />
               </div>
             </div>
           </div>
