@@ -37,13 +37,13 @@ class RatingAnalysis extends React.Component {
             tubeD: 0,
             tubeFF: 0,
             // Constant for Constraints and physical Dimensions
-            tubeInnerD: 0,
-            tubeOuterD: 0,
+            tubeInnerD: 0.010,
+            tubeOuterD: 0.012,
             tubePitch: 0,
-            numberTube: 0,
+            numberTube: 130,
             numberPasses: 1,
-            layoutAngle: 0,
-            shellInnerDiameter: 0,
+            layoutAngle: "square",
+            shellInnerDiameter: 0.5,
             baffleCut: 0,
             centralBaffleSpacing: 0,
             clearance: 0,
@@ -62,7 +62,8 @@ class RatingAnalysis extends React.Component {
             rear: 'M_1',
             // App states
             currentPage: "forms",
-            recalculate: 0
+            recalculate: 0,
+            redraw: 0,
         };
     }
 
@@ -72,19 +73,21 @@ class RatingAnalysis extends React.Component {
         return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
     }
 
+    //After fluid and temperature are given, the properties are fetched
     fetchProperties(AveT, fluid, callback) {
         let averageTemp = Number(AveT)
 
+        console.log("fetching " + fluid)
         let fluidProperties = ''
         switch (fluid) {
-            case 'water':
+            case 'water':  
                 fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
                 break;
             case 'engine oil':
                 fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/engineOilUnused"
                 break;
             default:
-                //this of a way to catch this error
+                //think of a way to catch this error
                 fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
         }
 

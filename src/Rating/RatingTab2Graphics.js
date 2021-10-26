@@ -2,22 +2,36 @@ import { useEffect, useRef } from "react";
 
 
 //write program to check if all numbers of tubes can be drawn and fit into circle properly
-const Tab2 = () => {
-    const tubeNo = 230
-    const tubeDiameter = 0.03
-    const shellDiameter = 1.3
-    const tubeConfig = "triangular" //square, triangular, rotated square
+const Tab2 = (props) => {
+    const {
+        // Constant for Constraints and physical Dimensions
+        tubeInnerD,
+        tubeOuterD,
+        tubePitch,
+        numberTube,
+        layoutAngle,
+        shellInnerDiameter,
+    } = props.data;
+
+
+
+    const tubeNo = numberTube
+    const tubeDiameter = tubeInnerD
+    const shellDiameter = shellInnerDiameter
+    const tubeConfig = layoutAngle //square, triangular, rotated square
 
     const canvasRef = useRef(null);
 
     useEffect(() => {
         prepareCanvas();
-    }, []);
+    });
 
     const prepareCanvas = () => {
+        
         const canvas = canvasRef.current
         const shellImgDiameter = canvas.height / 1.1
         const c = canvas.getContext("2d")
+        c.clearRect(0, 0, canvas.width, canvas.height);
         c.beginPath();
         c.arc(canvas.width / 2, canvas.height / 2, shellImgDiameter / 2, 0, 2 * Math.PI);
         c.stroke();
@@ -85,7 +99,7 @@ const Tab2 = () => {
                         }
                         // console.log(tubeDrawn, i)
                     }
-                    console.log(tubeDrawn, currentRow)
+                    //console.log(tubeDrawn, currentRow)
                     currentRow++
                 }
                 else if (currentRow % 2 === 0) {
@@ -103,7 +117,7 @@ const Tab2 = () => {
                             tubeDrawn++
                         }
                     }
-                    console.log(tubeDrawn, currentRow)
+                    //console.log(tubeDrawn, currentRow)
                     currentRow++
 
                 }
@@ -122,7 +136,7 @@ const Tab2 = () => {
                             tubeDrawn++
                         }
                     }
-                    console.log(tubeDrawn, currentRow)
+                    //console.log(tubeDrawn, currentRow)
                     currentRow++
 
                 }
@@ -130,7 +144,7 @@ const Tab2 = () => {
         }
 
 
-        else if (tubeConfig === "rotated square"){
+        else if (tubeConfig === "rotated-square"){
             while (tubeDrawn < tubeNo && currentRow < tubeNo) {
                 if (currentRow === 1) {
                     //draw center row
@@ -148,7 +162,7 @@ const Tab2 = () => {
                         }
                         // console.log(tubeDrawn, i)
                     }
-                    console.log(tubeDrawn, currentRow)
+                   // console.log(tubeDrawn, currentRow)
                     currentRow++
                 }
                 else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
@@ -178,7 +192,7 @@ const Tab2 = () => {
                             tubeDrawn++
                         }
                     }
-                    console.log(tubeDrawn, currentRow)
+                   // console.log(tubeDrawn, currentRow)
                     currentRow++
 
                 }
@@ -209,7 +223,7 @@ const Tab2 = () => {
                             tubeDrawn++
                         }
                     }
-                    console.log(tubeDrawn, currentRow)
+                    //console.log(tubeDrawn, currentRow)
                     currentRow++
 
                 }
@@ -235,7 +249,7 @@ const Tab2 = () => {
                         }
                         // console.log(tubeDrawn, i)
                     }
-                    console.log(tubeDrawn, currentRow)
+                    //console.log(tubeDrawn, currentRow)
                     currentRow++
                 }
                 else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
@@ -265,7 +279,7 @@ const Tab2 = () => {
                             tubeDrawn++
                         }
                     }
-                    console.log(tubeDrawn, currentRow)
+                    //console.log(tubeDrawn, currentRow)
                     currentRow++
 
                 }
@@ -296,7 +310,7 @@ const Tab2 = () => {
                             tubeDrawn++
                         }
                     }
-                    console.log(tubeDrawn, currentRow)
+                    //console.log(tubeDrawn, currentRow)
                     currentRow++
                 }
             }
@@ -306,25 +320,6 @@ const Tab2 = () => {
     return (
         <div id='Tab2'>
             <canvas ref={canvasRef} />
-            {/* <div className="big_circle">
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div>
-                <div className="tube-row">{tubes}</div> 
-                
-            </div>
-            <div className="shellDiameter">
-                <p>Shell Diameter: {shellDiameter}m</p>
-                <p>No. of tubes: {tubeNo}m</p>
-            </div> */}
         </div>
     );
 

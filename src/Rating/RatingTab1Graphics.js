@@ -12,29 +12,45 @@ import L_0 from '../Resources/L_0.png'
 import M_1 from '../Resources/M_1.png'
 import M_0 from '../Resources/M_0.png'
 
-const Tab1 = () => {
+const Tab1 = (props) => {
 
-    const headSelected = A_1;
+    const {
+        //TEMA configs
+        head,
+        shell,
+        rear,
+    } = props.data;
+
+    let headSelected;
+    switch (head) {
+        case 'A_1':
+            headSelected = A_1;
+            break;
+        case 'A_2':
+            headSelected = A_2;
+            break;
+        case 'B_1':
+            headSelected = B_1;
+            break;
+        case 'B_2':
+            headSelected = B_2;
+            break;
+    }
+
+    
+    //const headSelected = A_1;
     const shellSelected = E;
     const rearSelected = M_1;
 
     useEffect(() => {
         prepareCanvas();
-    }, []);
+    });
     //it reloads every time currentTab is changed
     //empty array here means useEffect only runs once on Mount. 
 
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
 
-    // function make_base()
-    // {
-    //   base_image = new Image();
-    //   base_image.src = 'img/base.png';
-    //   base_image.onload = function(){
-    //     context.drawImage(base_image, 0, 0);
-    //   }
-    // }
     const prepareCanvas = () => {
         const head = new Image();
         head.src = headSelected;
@@ -83,6 +99,7 @@ const Tab1 = () => {
         }
 
     };
+
 
     return (
         <div id='Tab1'>

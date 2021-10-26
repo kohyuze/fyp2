@@ -69,19 +69,20 @@ class RatingTab1Form extends React.Component {
                         <h2 className='categoryHeader'>TEMA</h2>
                         <div>
                             {/* need to fix this, cannot be A_1, A_2 */}
-                            <MySelect label="Head" name="Head" >
+                            <MySelect label="Head" name="head" >
                                 <option value="">Select head</option>
                                 <option value="A_1">A_1</option>
                                 <option value="A_2">A_2</option>
-                                <option value="B_1">B</option>
+                                <option value="B_1">B_1</option>
+                                <option value="B_2">B_2</option>
                             </MySelect>
-                            <MySelect label="Shell" name="Shell">
+                            <MySelect label="Shell" name="shell">
                                 <option value="">Select shell</option>
                                 <option value="E">E</option>
                                 <option value="F">F</option>
                                 <option value="U">U</option>
                             </MySelect>
-                            <MySelect label="Rear" name="Rear" >
+                            <MySelect label="Rear" name="rear" >
                                 <option value="">Select rear</option>
                                 <option value="L_1">L_1</option>
                                 <option value="L_0">L_0</option>

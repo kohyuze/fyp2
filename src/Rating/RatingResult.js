@@ -36,13 +36,13 @@ class RatingResult extends React.Component {
             // Constant for Constraints and physical Dimensions
             tubeInnerD,
             tubeOuterD,
-            tubePitch,
+            //tubePitch,
             numberTube,
             numberPasses,
             layoutAngle,
             shellInnerDiameter,
             baffleCut,
-            centralBaffleSpacing,
+            //centralBaffleSpacing,
             clearance,
             shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
@@ -88,24 +88,107 @@ class RatingResult extends React.Component {
         // o.shellHEcoeff = shellHEcoeff.toFixed();
 
 
-        //-------Shah pg653
         //------------------Rating problem-----------------------
-        //----skipping geometrical calculations from shah pg594---
+        ////////////////////Geometrical Calculations, Shah 594/////////////////////////
+        //Assumptions: The shell-and-tube heat exchanger is assumed to have the ideal geometrical
+        //characteristics summarized in Section 8.5
 
-        const A_ocr = 0.03275
-        const A_obp = 0.00949
-        const F_c = 0.6506
-        const N_rcc = 9
-        const A_osb = 0.001027
-        const A_otb = 0.001995
-        const N_b = 14
-        const A_ow = 0.01308
+        //what are these?
+        const D_otl = 0.321 //Diameter of the outer tube limit
+        const centralBaffleSpacing = 0.279
+        const Longitudinal_tube_pitch = 0.0177 //whats this?
+        const Traverse_tube_pitch = 0.0354
+        const tubePitch = 0.025
+        //const tubeLength = 4.3
+        const inletBaffleSpacing = 0.318
+        const outletBaffleSpacing = 0.318
+        const Width_bypass_lane = 0.019
+        const Tube_to_baffle_hole_diametral_clearance = 0.000794
+        const Shell_to_baffle_diametral_clearance = 0.002946
+
+        //Window Section. Let us start the calculations with computing the angle θb from Eq.(8.112):
+        const θ_b = 2*Math.acos(1-(2*baffleCut/shellInnerDiameter)); //rad
+
+        //Then the gross window area A_frw from Eq. (8.111) is
+        const A_frw = ((shellInnerDiameter**2)/4)*(θ_b/2 - (1-(2*baffleCut/shellInnerDiameter))*Math.sin(θ_b/2 ));
+
+        //In order to calculate the fraction Fw of total tubes in the window section, first compute
+        //the baffle cut angle, using Eq. (8.114), as
+        const D_ctl = D_otl-tubeOuterD
+        const θ_ctl = 2*Math.acos((shellInnerDiameter-2*baffleCut)/D_ctl); 
+
+        //Now the fraction Fw of total tubes in the window section is given by Eq. (8.113) as
+        const F_w = (θ_ctl/ (2*Math.PI)) - (Math.sin(θ_ctl)/ (2*Math.PI))
+
+        //Consequently, the number of tubes in the window section, from Eq. (8.115), is
+        const N_tw = F_w*numberTube
+
+        //The area occupied by tubes in the window section, Eq. (8.116), is
+        const A_frt = (Math.PI/4)*(tubeOuterD**2)*N_tw
+
+        //The net flow area in one window section is then, from Eq. (8.117)
+        const A_ow = A_frw - A_frt
+
+        //The hydraulic diameter for the window section is given by Eq. (8.118) as
+        const D_hw = (4*A_ow)/(Math.PI*tubeOuterD*N_tw + Math.PI*shellInnerDiameter*(θ_b/(2*Math.PI)));
+
+        //Finally, the number of effective tube rows in crossflow in each window is computed using Eq. (8.119) as
+        const N_rcw = (0.8/Longitudinal_tube_pitch)*(baffleCut-0.5*(shellInnerDiameter-D_ctl))
+
+        //Crossflow Section. The fraction Fc of the total number of tubes in the crossflow section is calculated from Eq. (8.120) as
+        const F_c = 1 - 2*F_w
+
+        //Next calculate the number of tube rows Nr;cc crossed during flow through one crossflow
+        //section between the baffle tips [Eq. (8.121)] as
+        const N_rcc = (shellInnerDiameter-2*baffleCut)/Longitudinal_tube_pitch
+
+        //The crossflow area for the 458 tube layout bundle with plain tubes at or near the shell
+        //centerline for one crossflow section can be calculated, using Eq. (8.123), as
+        const A_ocr = centralBaffleSpacing*(shellInnerDiameter - D_otl + 2*(D_ctl/Traverse_tube_pitch)*(tubePitch - tubeOuterD))
+
+        //Now, compute the number of baffles from Eq. (8.126) as
+        const N_b = (tubeLength-inletBaffleSpacing-outletBaffleSpacing)/centralBaffleSpacing + 1
+
+        //Bypass and Leakage Flow Areas. To calculate the fraction of crossflow area available for
+        //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area
+        //for flow bypass:
+        const A_obp = centralBaffleSpacing*(shellInnerDiameter-D_otl+(0.5*numberPasses*Width_bypass_lane))
+
+        //Consequently,
+        const F_bp = A_obp/A_ocr
+
+        //Tube-to-baffle leakage area is now given by Eq. (8.129) as follows
+        const A_otb = (Math.PI*tubeOuterD*Tube_to_baffle_hole_diametral_clearance*numberTube*(1-F_w))/2
+
+        //Finally, the shell-to-baffle leakage area for one baffle [Eq. (8.130)] is
+        const A_osb = Math.PI * shellInnerDiameter * (Shell_to_baffle_diametral_clearance/2) * (1 - θ_b/(2*Math.PI))
+
+        //This concludes all geometrical characteristics needed for the thermal design/rating of a
+        //shell-and-tube heat exchanger using the Bell–Delaware method.
+        // console.log("A_ocr:" + A_ocr)
+        // console.log("A_obp:" +A_obp)
+        // console.log("F_c:" +F_c)
+        // console.log("N_rcc:" +N_rcc)
+        // console.log("A_osb:" +A_osb)
+        // console.log("A_otb:" +A_otb)
+        // console.log("N_b:" +N_b)
+        // console.log("A_ow:" +A_ow)
+
+    
+        // const A_ocr = 0.03275
+        // const A_obp = 0.00949
+        // const F_c = 0.6506
+        // const N_rcc = 9
+        // const A_osb = 0.001027
+        // const A_otb = 0.001995
+        // const N_b = 14
+        // const A_ow = 0.01308
 
         const k_w = 111
 
+        
 
-
-
+        //////////////Thermal calculations, Shah pg653//////////////////////////
         //-----Shell-Side Heat Transfer Coefficient-----------------------
         //Determination of the flow velocity in the shell
         const shellMassVelocity = shellMFR / A_ocr;
@@ -178,12 +261,12 @@ class RatingResult extends React.Component {
         const C_tube = tubeMFR * tubeSHC
         const C_shell = shellMFR * shellSHC
         //if (C_tube > C_shell) {
-        const C_min = C_shell
-        const C_max = C_tube
+        let C_min = C_shell
+        let C_max = C_tube
         //}
         if (C_tube <= C_shell) {
-            const C_min = C_tube
-            const C_max = C_shell
+            C_min = C_tube
+            C_max = C_shell
         }
         const C_star = C_min / C_max
         //Number of heat transfer units
@@ -197,10 +280,10 @@ class RatingResult extends React.Component {
         //------------------Heat Transfer Rate and Exit Temperatures----------------------
         //Heat Transfer Rate
         const Q = HEeffectiveness * C_min * (shellIT - tubeIT)
-        //Oil exit temperature
+        //Shell exit temperature
         const shellOT2 = shellIT - HEeffectiveness * C_star * (shellIT - tubeIT)
         console.log("shellOT", shellOT2)
-        //Water exit temperature
+        //Tube exit temperature
         const tubeOT2 = tubeIT + HEeffectiveness * C_star * (shellIT - tubeIT)
         console.log("tubeOT", tubeOT2)
 
@@ -211,9 +294,9 @@ class RatingResult extends React.Component {
 
     componentDidMount() {
         this.props.handleSubmit({
-            // shellIT: 65.6,
+            shellIT: 65.6,
             // //shellOT: 0, 
-            // shellMFR: 36.3,
+            shellMFR: 36.3,
             // shellSHC: 2094,
             // shellDV: 0.0646,
             // //shellKV:,
@@ -221,9 +304,9 @@ class RatingResult extends React.Component {
             // shellD: 849,
             // shellPr: 966,
             shellFF: 0.000176,
-            // tubeIT: 32.2,
+            tubeIT: 32.2,
             // //tubeOT,
-            // tubeMFR: 18.1,
+            tubeMFR: 18.1,
             // tubeSHC: 4187,
             // tubeDV: 0.000723,
             // //tubeKV,
@@ -237,6 +320,15 @@ class RatingResult extends React.Component {
             numberTube: 102,
             numberPasses: 2,
             tubeLength: 4.3,
+            shellFluid: 'engine oil',
+            tubeFluid: 'water',
+
+            
+            layoutAngle: "rotated-square",
+            shellInnerDiameter: 0.336,
+            baffleCut: 0.0867, //this value is in mm, calc also in mm. Need to change to %
+            centralBaffleSpacing: 0.279,
+            recalculate: 1
         })
         this.calculate()
     }
@@ -248,11 +340,8 @@ class RatingResult extends React.Component {
         if (this.props.data.recalculate) {
             this.props.handleSubmit({recalculate: 0});
             console.log('recalculating..')
-            
             this.calculate()
-            
         }
-        // console.log('componentDidUpdate', this.props.data.recalculate)
     }
 
     render() {
