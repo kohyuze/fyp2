@@ -69,7 +69,7 @@ class RatingTab3Form extends React.Component {
                             name="baffleCut"
                             type="text"
                             placeholder="Baffle Cut"
-                            unit="%"
+                            unit="m"
                         />
                         <MyTextInput
                             label="Central Baffles Spacing"

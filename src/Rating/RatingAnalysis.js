@@ -59,7 +59,7 @@ class RatingAnalysis extends React.Component {
             //TEMA configs
             head: 'A_1',
             shell: 'E',
-            rear: 'M_1',
+            rear: 'L_1',
             // App states
             currentPage: "forms",
             recalculate: 0,
@@ -209,7 +209,10 @@ class RatingAnalysis extends React.Component {
                     <RatingResultPage 
                     data={this.state}
                     handleSubmit={this.handleSubmit}
-                    handlePageChange={this.handlePageChange}/>
+                    handlePageChange={this.handlePageChange}
+                    updateTubeProperties={this.updateTubeProperties}
+                    updateShellProperties={this.updateShellProperties}
+                    />
                 </div>
             </div>
 
