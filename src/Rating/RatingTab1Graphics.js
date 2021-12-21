@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
-
 import E from '../Resources/E.png'
-import F from '../Resources/F.png'
-import U from '../Resources/U.png'
+//import F from '../Resources/F.png'
+//import U from '../Resources/U.png'
 import A_1 from '../Resources/A_1.png'
 import A_2 from '../Resources/A_2.png'
 import B_1 from '../Resources/B_1.png'
@@ -46,17 +45,8 @@ const Tab1 = (props) => {
             break;
     }
 
-    switch (shell) {
-        case 'E':
-            shellSelected = E;
-            break;
-        case 'F':
-            shellSelected = F;
-            break;
-        case 'U':
-            shellSelected = U;
-            break;
-    }
+    //We'll load plain E shell without nozzles. We'll draw the nozzles in later to show different shell types
+    shellSelected = shell;
 
     switch (rear) {
         case 'L_1':
@@ -86,7 +76,7 @@ const Tab1 = (props) => {
         const head = new Image();
         head.src = headSelected;
         const shell = new Image();
-        shell.src = shellSelected;
+        shell.src = E;
         const rear = new Image();
         rear.src = rearSelected;
 
@@ -110,13 +100,13 @@ const Tab1 = (props) => {
         //is opened initially, and would only appear when we click reload.
         head.onload = function () {
             var topLeftX = w / 2 - shellWidth / 2 - headrearWidth
-            var topLeftY =  h / 2 - imgHeight / 2.15
-            var partitionThickness =  0.02 * h //arbitrary as fuck
+            var topLeftY = h / 2 - imgHeight / 2.15
+            var partitionThickness = 0.02 * h //arbitrary as fuck
             c.drawImage(head, topLeftX, topLeftY, headrearWidth, 0.9 * imgHeight);
 
             // if (numberPasses == 2) {
             if (true) {
-                var imgData = c.getImageData(topLeftX, topLeftY  + 0.45*imgHeight - 0.5*partitionThickness, shellWidth, partitionThickness); 
+                var imgData = c.getImageData(topLeftX, topLeftY + 0.45 * imgHeight - 0.5 * partitionThickness, shellWidth, partitionThickness);
                 var i;
                 for (i = 0; i < imgData.data.length; i += 4) {
                     if ( //this picks out the blue colors in the image, which is the area we want to draw in for the baffles and partitions
@@ -132,9 +122,9 @@ const Tab1 = (props) => {
                         imgData.data[i + 3] = 255
                     }
                 }
-                c.putImageData(imgData, topLeftX, topLeftY + 0.45*imgHeight - 0.5*partitionThickness);
+                c.putImageData(imgData, topLeftX, topLeftY + 0.45 * imgHeight - 0.5 * partitionThickness);
             }
-            
+
 
 
             // var imgData = c.getImageData(topLeftX, topLeftY, shellWidth, imgHeight);
@@ -160,8 +150,19 @@ const Tab1 = (props) => {
 
         shell.onload = function () {
             var topLeftX = w / 2 - shellWidth / 2
-            var topLeftY =  h / 2 - imgHeight / 2
+            var topLeftY = h / 2 - imgHeight / 2
             c.drawImage(shell, topLeftX, topLeftY, shellWidth, imgHeight);
+
+            // values are tweaked till they're in place, theres no logic to it w / 1.78 - shellWidth / 2;
+            var shellTopLeftX = 0.565 * w - shellWidth / 2;
+            var shellTopLeftY = h / 2 - imgHeight / 4.2;
+            var shellInsideHeight = h / 3.33;
+            var shellInsideWidth = 0.8 * shellWidth;
+            var baffleWidth = 0.005 * shellWidth;
+            var baffleHeight = (1 - baffleCut / shellInnerDiameter) * (shellInsideHeight)
+            var noOfBaffles = (tubeLength - 2 * clearance) / centralBaffleSpacing
+            var baffleClearance = (clearance / tubeLength) * shellInsideWidth //at the two ends
+            var baffleSpacing = (centralBaffleSpacing / tubeLength) * shellInsideWidth //central baffle spacing
 
             // var imgData = c.getImageData(topLeftX, topLeftY, shellWidth, imgHeight);
             // var i;
@@ -180,40 +181,80 @@ const Tab1 = (props) => {
             // }
             // c.putImageData(imgData, topLeftX, topLeftY);
 
-
-
-            
-            // values are tweaked till they're in place, theres no logic to it w / 1.78 - shellWidth / 2;
-            var shellTopLeftX = w / 1.6 - shellWidth / 2;
-            var shellTopLeftY = h / 2 - imgHeight / 4.2;
-            var shellInsideHeight = h / 3.33;
-            var shellInsideWidth = 0.63 * shellWidth;
-            var baffleWidth = 0.005 * shellWidth;
-            var baffleHeight = (1 - baffleCut/shellInnerDiameter) * (shellInsideHeight) 
-            var noOfBaffles = (tubeLength - 2*clearance) / centralBaffleSpacing
-            var baffleClearance = (clearance/ tubeLength) * shellInsideWidth
-            var baffleSpacing = (centralBaffleSpacing/ tubeLength) * shellInsideWidth
-            console.log("No of baffles", noOfBaffles)
-
             //this is just to help me see the space we're working with, comment out when unneeded.
             // c.fillStyle = 'red';
             // c.fillRect(shellTopLeftX, shellTopLeftY, shellInsideWidth, shellInsideHeight)
 
-            //The baffle spacings are not drawn to scale since the first baffle needs to be after the 
-            // shell entrance. We just draw it somewhere and split the space between the first and last baffle up equally for the remaining baffles
-            
-            // draw the first and last baffle. 
             c.fillStyle = 'black';
-            c.fillRect(shellTopLeftX+baffleClearance, shellTopLeftY, baffleWidth, baffleHeight)
-            c.fillRect(shellTopLeftX+shellInsideWidth-baffleClearance, shellTopLeftY+shellInsideHeight-baffleHeight, baffleWidth, baffleHeight)
+            var nozzleWidth = shellInsideWidth * 0.10
+            var nozzleWidthThickness = 0.035 * shellInsideHeight
+            var nozzleHeight = 0.6 * shellInsideHeight
+            var nozzleHeightThickness = 0.005 * shellWidth
 
-            //draw the remaining baffles. Split the space between equally.
-            var i = 1;
-            while (i < noOfBaffles-1) {
-                c.fillRect(shellTopLeftX+baffleClearance + i * baffleSpacing, shellTopLeftY+shellInsideHeight-baffleHeight, baffleWidth, baffleHeight)
-                c.fillRect(shellTopLeftX+baffleClearance +  (i+1) * baffleSpacing, shellTopLeftY, baffleWidth, baffleHeight)
-                i = i + 2;
+            switch (shellSelected) {
+                case 'E':
+                    var inputNozzleX = shellTopLeftX + 0.5 * baffleClearance;
+                    var inputNozzleY = shellTopLeftY - nozzleHeight;
+                    var outputNozzleX = shellTopLeftX + shellInsideWidth - 0.5 * baffleClearance;
+                    var outputNozzleY = shellTopLeftY + shellInsideHeight;
+
+                    //Draw the shell input nozzle
+                    c.fillRect(inputNozzleX, inputNozzleY, nozzleHeightThickness, nozzleHeight)
+                    c.fillRect(inputNozzleX - 0.5 * nozzleWidth, inputNozzleY, nozzleWidth, nozzleWidthThickness)
+                    //Draw the shell output nozzle            
+                    c.fillRect(outputNozzleX, outputNozzleY, nozzleHeightThickness, nozzleHeight)
+                    c.fillRect(outputNozzleX - 0.5 * nozzleWidth, outputNozzleY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
+
+                    // draw the first and last baffle. 
+                    c.fillStyle = 'black';
+                    c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY, baffleWidth, baffleHeight)
+                    c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight)
+
+                    //draw the remaining baffles. Split the space between equally.
+                    var i = 1;
+                    while (i < noOfBaffles - 1) {
+                        c.fillRect(shellTopLeftX + baffleClearance + i * baffleSpacing, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight)
+                        c.fillRect(shellTopLeftX + baffleClearance + (i + 1) * baffleSpacing, shellTopLeftY, baffleWidth, baffleHeight)
+                        i = i + 2;
+                    }
+                    break;
+                case 'F':
+                    var inputNozzleX = shellTopLeftX + 0.5 * baffleClearance;
+                    var inputNozzleY = shellTopLeftY - nozzleHeight;
+                    var outputNozzleX = shellTopLeftX + 0.5 * baffleClearance;
+                    var outputNozzleY = shellTopLeftY + shellInsideHeight;
+
+                    //Draw the shell input nozzle
+                    c.fillRect(inputNozzleX, inputNozzleY, nozzleHeightThickness, nozzleHeight)
+                    c.fillRect(inputNozzleX - 0.5 * nozzleWidth, inputNozzleY, nozzleWidth, nozzleWidthThickness)
+                    //Draw the shell output nozzle            
+                    c.fillRect(outputNozzleX, outputNozzleY, nozzleHeightThickness, nozzleHeight)
+                    c.fillRect(outputNozzleX - 0.5 * nozzleWidth, outputNozzleY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
+
+                    //draw longitudinal baffle
+                    c.fillRect(shellTopLeftX, shellTopLeftY + 0.5 * shellInsideHeight, shellInsideWidth - baffleClearance, nozzleWidthThickness)
+                    
+                    // draw the first and last baffle. 
+                    c.fillStyle = 'black';
+                    c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY, baffleWidth, baffleHeight - 0.5*shellInsideHeight)
+                    c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight + 0.5*shellInsideHeight, baffleWidth, baffleHeight - 0.5*shellInsideHeight)
+                    c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight - (shellInsideHeight - baffleHeight)) 
+
+                    //draw the remaining baffles. Split the space between equally.
+                    var i = 1;
+                    while (i < noOfBaffles - 1) {
+                        c.fillRect(shellTopLeftX + baffleClearance + i * baffleSpacing, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight - (shellInsideHeight - baffleHeight))
+                        c.fillRect(shellTopLeftX + baffleClearance + (i + 1) * baffleSpacing, shellTopLeftY, baffleWidth, baffleHeight - 0.5*shellInsideHeight)
+                        c.fillRect(shellTopLeftX + baffleClearance + (i + 1) * baffleSpacing, shellTopLeftY + shellInsideHeight - baffleHeight + 0.5*shellInsideHeight, baffleWidth, baffleHeight - 0.5*shellInsideHeight)
+                        i = i + 2;
+                    }
+                    break;
+                case 'U':
+                    shellSelected = E;
+                    break;
             }
+
+            
 
             //this loop draws the tubes
             // c.fillStyle = "black";
@@ -229,10 +270,10 @@ const Tab1 = (props) => {
         rear.onload = function () {
             var topLeftX = w / 2 + shellWidth / 2
             var topLeftY = h / 2 - imgHeight / 2.15
-            var partitionThickness =  0.02 * h //arbitrary as fuck
+            var partitionThickness = 0.02 * h //arbitrary as fuck
             c.drawImage(rear, topLeftX, topLeftY, headrearWidth, 0.9 * imgHeight);
 
-            var imgData = c.getImageData(topLeftX, topLeftY  + 0.45*imgHeight - 0.5*partitionThickness, shellWidth, partitionThickness); 
+            var imgData = c.getImageData(topLeftX, topLeftY + 0.45 * imgHeight - 0.5 * partitionThickness, shellWidth, partitionThickness);
             var i;
             for (i = 0; i < imgData.data.length; i += 4) {
                 if ( //this picks out the blue colors in the image, which is the area we want to draw in for the baffles and partitions
@@ -248,7 +289,7 @@ const Tab1 = (props) => {
                     imgData.data[i + 3] = 255
                 }
             }
-            c.putImageData(imgData, topLeftX, topLeftY + 0.45*imgHeight - 0.5*partitionThickness);
+            c.putImageData(imgData, topLeftX, topLeftY + 0.45 * imgHeight - 0.5 * partitionThickness);
         }
 
 
