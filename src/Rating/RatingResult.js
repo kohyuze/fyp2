@@ -1,6 +1,7 @@
 import React from 'react';
 import * as dfd from 'danfojs';
 import * as EShellThermalCalc from '../EShellThermalCalc';
+import * as FShellThermalCalc from '../FShellThermalCalc';
 
 class RatingResult extends React.Component {
     constructor(props) {
@@ -22,6 +23,7 @@ class RatingResult extends React.Component {
 
     calculate() {
         const {
+            shell,
             shellFluid,
             tubeFluid,
             // constants for shell
@@ -52,7 +54,7 @@ class RatingResult extends React.Component {
             numberPasses,
             layoutAngle,
             shellInnerDiameter,
-            baffleCut,
+            baffleCutPercent,
             centralBaffleSpacing,
             clearance,
             shellSideFluidDynamicViscocity,
@@ -72,23 +74,46 @@ class RatingResult extends React.Component {
         console.log("Iteration " + this.state.iteration)
         this.setState({ iteration: this.state.iteration + 1 })
 
+        let o;
+        switch (shell) {
+            case 'E':
+                o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state)
+                this.setState(o)
 
+                // Checks if iteration is needed. Updates fluid properties with new mean temps and iterates.
+                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
+                    this.setState({ shellMeanT: o.newShellMeanT })
+                    updateShellProperties(o.newShellMeanT, shellFluid) //dun use the newly updated state, cos sometimes the 
+                    //state may update slowly and this function will run with the old value  
+                }
+                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
+                    this.setState({ tubeMeanT: o.newTubeMeanT })
+                    updateTubeProperties(o.newTubeMeanT, tubeFluid)
+                }
 
-        let o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state)
-        this.setState(o)
+                break;
+            case 'F':
+                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT) //first half of F shell
+                this.setState(o)
+                console.log("1st run", this.state.shellOT, this.props.data.shellIT)
+                console.log(this.state.tubeOT, this.props.data.tubeIT)
+                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT) //first half of F shell
+                this.setState(o)
+                // o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, Number(this.state.shellOT), Number(this.state.tubeOT)) // second half of F shell. Input is output of previous half.
+                // this.setState(o)
+                console.log(this.state.shellOT, this.props.data.shellIT)
+                console.log(this.state.tubeOT, this.props.data.tubeIT)
 
-        if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
-            this.setState({ shellMeanT: o.newShellMeanT })
-            updateShellProperties(o.newShellMeanT, shellFluid) //dun use the newly updated state, cos sometimes the 
-            //state may update slowly and this function will run with the old value  
+                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
+                    this.setState({ shellMeanT: o.newShellMeanT })
+                    updateShellProperties(o.newShellMeanT, shellFluid) 
+                }
+                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
+                    this.setState({ tubeMeanT: o.newTubeMeanT })
+                    updateTubeProperties(o.newTubeMeanT, tubeFluid)
+                }
+                break;
         }
-        if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
-            this.setState({ tubeMeanT: o.newTubeMeanT })
-            updateTubeProperties(o.newTubeMeanT, tubeFluid)
-        }
-
-
-
 
 
     }
@@ -127,7 +152,7 @@ class RatingResult extends React.Component {
 
             layoutAngle: "rotated-square",
             shellInnerDiameter: 0.336,
-            baffleCut: 0.0867, //this value is in m, refers to the open space of the baffles
+            baffleCutPercent: 25.8, //0.0867, //this value is in m, refers to the open space of the baffles
             centralBaffleSpacing: 0.279,
             clearance: 0.318,
             recalculate: 1

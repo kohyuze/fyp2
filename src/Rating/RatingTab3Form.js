@@ -50,7 +50,7 @@ class RatingTab3Form extends React.Component {
                     initialValues={{}}//dk why i dun need to put all the variables here
                     validationSchema={
                         Yup.object({
-                            baffleCut: Yup.number(),                        
+                            baffleCutPercent: Yup.number(),                        
                             centralBaffleSpacing: Yup.number(),                            
                             clearance: Yup.number(),                       
                             })
@@ -66,10 +66,10 @@ class RatingTab3Form extends React.Component {
                         <h2 className='categoryHeader'>Shell Side Fluid</h2>
                         <MyTextInput
                             label="Baffle Cut"
-                            name="baffleCut"
+                            name="baffleCutPercent"
                             type="text"
                             placeholder="Baffle Cut"
-                            unit="m"
+                            unit="%"
                         />
                         <MyTextInput
                             label="Central Baffles Spacing"

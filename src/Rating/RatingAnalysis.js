@@ -44,7 +44,7 @@ class RatingAnalysis extends React.Component {
             numberPasses: 1,
             layoutAngle: "square",
             shellInnerDiameter: 0.5,
-            baffleCut: 0,
+            baffleCutPercent: 0,
             centralBaffleSpacing: 0,
             clearance: 0,
             shellSideFluidDynamicViscocity: 0,

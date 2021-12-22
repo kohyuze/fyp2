@@ -35,7 +35,7 @@ export function EShellThermalCalculation(data, State) {
         numberPasses,
         layoutAngle,
         shellInnerDiameter,
-        baffleCut,
+        baffleCutPercent,
         centralBaffleSpacing,
         clearance,
         shellSideFluidDynamicViscocity,
@@ -62,7 +62,7 @@ export function EShellThermalCalculation(data, State) {
     //Assumptions: The shell-and-tube heat exchanger is assumed to have the ideal geometrical
     //characteristics summarized in Section 8.5
 
-    const D_otl = 0.321 //Diameter of the outer tube limit, can add to input, or we decide ourself just take D-15mm
+    const D_otl = shellInnerDiameter - 0.015 //Diameter of the outer tube limit, can add to input, or we decide ourself just take D-15mm
 
     let X_l, X_t;
     //Determination of Longitudinal_tube_pitch and Traverse_tube_pitch from table 8.1, shah pg568
@@ -85,6 +85,9 @@ export function EShellThermalCalculation(data, State) {
             break;
         default:
     }
+
+    //Convert the baffle cut from percent to meters
+    const baffleCut = baffleCutPercent/100 * shellInnerDiameter
 
     //Window Section. Let us start the calculations with computing the angle θb from Eq.(8.112):
     const θ_b = 2 * Math.acos(1 - (2 * baffleCut / shellInnerDiameter)); //rad
