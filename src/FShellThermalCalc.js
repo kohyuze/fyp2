@@ -16,6 +16,8 @@
 // The method i used to calculate is essentially treating the F shell HX as 2 separate 1-1 E shell HX in counterflow, in series.
 // This function only calculates for 1 side of the F shell, so call this function twice in the main results component
 
+import * as math from 'mathjs';
+
 
 
 export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
@@ -307,7 +309,7 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
 
     //------------- Heat Transfer Effectiveness------------------
     //Total tube outside heat transfer area
-    const A_s = Math.PI * tubeLength * tubeOuterD * numberTube
+    const A_s = Math.PI * tubeLength * tubeOuterD * numberTube/2 //one pass has half the tubes
     const C_tube = tubeMFR * tubeSHC
     const C_shell = shellMFR * shellSHC
     let C_min
@@ -323,21 +325,68 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
     const C_star = C_min / C_max
     //Number of heat transfer units
     const NTU = overallHEcoeff * A_s / C_min
-    //Heat exchanger effectiveness
-    const coth = Math.cosh(NTU / Math.sqrt(2)) / Math.sinh(NTU / Math.sqrt(2))
-    const HEeffectiveness = Math.sqrt(2) / (Math.sqrt(2) + coth)
+    //Heat exchanger effectiveness for pure counter flow (table 3.3)
+    let HEeffectiveness;
+    if (C_star > 0.95 && C_star < 1.05) { //approximately = 1
+        HEeffectiveness = NTU / (1 + NTU)
+    } else {
+        const exp = Math.exp(-1*NTU*(1-C_star))
+        HEeffectiveness = (1 - exp)/(1 - C_star*exp)
+    }
+    
     console.log("HEeffectiveness", HEeffectiveness)
     o.HEeffectiveness = HEeffectiveness.toFixed(6);
 
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
+    // Refer to report on this segment. Pg ___
+
+    let T1, T2, T3, T4, T5, T6 = 0.01; //initial value. Not zero as it might cause errors
+    T1 = tubeIT;
+    T4 = shellIT;
+    console.log("ShellIT ", shellIT)
+    console.log("TubeIT ", tubeIT)
+
+    const EC = HEeffectiveness * C_min
+    let matrixA = math.matrix([[-1*C_tube, 0, EC, 0], 
+                                 [0, 0, EC - C_shell, C_shell],
+                                 [C_tube, EC-C_tube, 0, 0],
+                                 [0, EC, C_shell, 0]]);
+    
+    let matrixB = math.matrix([[(EC - C_tube) * T1], 
+                                 [EC * T1],
+                                 [EC * T4],
+                                 [(EC + C_shell) * T4]]);
+    
+    let matrixX
+    // console.log("determinant",math.det(matrixA))
+    if (math.det(matrixA) > 0.1 || math.det(matrixA) < -0.1) { //to avoid determinant=0 error
+        matrixX = math.multiply(math.inv(matrixA), matrixB); 
+         console.log(matrixX)
+        // console.log("T2", matrixX.get([0, 0]))
+        // console.log("T3", matrixX.get([1, 0]))
+
+        T2 = matrixX.get([0, 0])
+        T3 = matrixX.get([1, 0])
+        T5 = matrixX.get([2, 0])
+        T6 = matrixX.get([3, 0])
+    }                
+   
+
     //Heat Transfer Rate
-    const Q = HEeffectiveness * C_min * (shellIT - tubeIT)
+    const Q_a = HEeffectiveness * C_min  * Math.abs(T5 - T1) 
+    const Q_b = HEeffectiveness * C_min  * Math.abs(T4 - T3) 
+    const Q = Q_a + Q_b
+    // console.log ("Q" , Q)
+    // console.log("TubeIT ", tubeIT)
+    // console.log("C tube ", C_tube)
+    // console.log("T3 = ", T3)
+    // console.log("Calc T3 = ", Q/C_tube+T1)
     //Shell exit temperature
-    const shellOT2 = shellIT - HEeffectiveness * C_star * (shellIT - tubeIT)
+    const shellOT2 = Number(T6)
     o.shellOT = shellOT2.toFixed(6);
     //console.log("shellOT", shellOT2)
     //Tube exit temperature
-    const tubeOT2 = tubeIT + HEeffectiveness * C_star * (shellIT - tubeIT)
+    const tubeOT2 = Number(T3)
     o.tubeOT = tubeOT2.toFixed(6);
     //console.log("tubeOT", tubeOT2)
 
@@ -350,37 +399,8 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
     console.log("newTubeMeanT " + o.newTubeMeanT)
     console.log("tubeMeanT " + o.tubeMeanT)
 
+    console.log("ShellOT ", shellOT2)
+    console.log("TubeOT ", tubeOT2)
+
     return (o)
 }
-
-
-// // ---- Calculation of the tube-side heat transfer coefficient using Nitsche method(pg39) -------
-        // //Calculation of the flow cross section
-        // const tubeCrossSection = (numberTube / numberPasses) * Math.PI * Math.pow(tubeInnerD, 2) / 4;
-        // //Determination of the flow velocity in the tubes
-        // const tubeFlowVelocity = tubeMFR / tubeCrossSection;
-        // //Determination of the Reynolds number
-        // const tubeRe = (tubeFlowVelocity * tubeInnerD) / tubeKV;
-        // //Calculation of the Pr number
-        // const tubePr = (tubeKV * tubeSHC * tubeD) / tubeTC;
-        // //Determination of the Nusselt number
-        // const tubeNu = 0.023 * Math.pow(tubeRe, 0.8) * Math.pow(tubePr, 0.33); //for Re>8000
-        // //Calculation of the heat transfer coefficient
-        // const tubeHEcoeff = (tubeNu * tubeTC) / tubeInnerD;
-        // o.tubeHEcoeff = tubeHEcoeff.toFixed();
-
-
-        // // ---- Calculation of the shell-side heat transfer coefficient using Nitsche method for Re>10(Nitsche pg40) -------
-        // //Calculation of the flow cross section
-        // const shellCrossSection = shellInnerDiameter * centralBaffleSpacing * (1 - (tubeOuterD / tubePitch)) //what if no baffle spacing given?
-        // //Determination of the mass flow velocity in the shell
-        // const shellMassVelocity = shellMFR / shellCrossSection;
-        // //Determination of the Reynolds number
-        // const shellRe = (shellMassVelocity * tubeOuterD) / shellDV;
-        // //Calculation of the Pr number
-        // const shellPr = (shellKV * shellSHC * shellD) / shellTC;//fetch this too
-        // //Determination of the Nusselt number
-        // const shellNu = 0.196 * shellRe**0.6 * shellPr**0.33; //for triangular pitch
-        // //Calculation of the heat transfer coefficient
-        // const shellHEcoeff = (shellNu * shellTC) / tubeOuterD;
-        // o.shellHEcoeff = shellHEcoeff.toFixed();

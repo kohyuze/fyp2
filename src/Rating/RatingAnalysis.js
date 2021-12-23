@@ -20,22 +20,22 @@ class RatingAnalysis extends React.Component {
             shellIT: 0,//required
             shellOT: 0, 
             shellMFR: 0,
-            shellSHC: 0,
-            shellDV: 0,
-            shellKV: 0,
-            shellTC: 0,
-            shellD: 0,
-            shellFF: 0,
+            shellSHC: 0.01,  //put 0.01 cos sometimes the initial value of 0 will cause program to crash
+            shellDV: 0.01,
+            shellKV: 0.01,
+            shellTC: 0.01,
+            shellD: 0.01,
+            shellFF: 0.01,
             // Constant for tube
             tubeIT: 0,//required
             tubeOT: 0,
             tubeMFR: 0,
-            tubeSHC: 0,
-            tubeDV: 0,
-            tubeKV: 0,
-            tubeTC: 0,
-            tubeD: 0,
-            tubeFF: 0,
+            tubeSHC: 0.01,
+            tubeDV: 0.01,
+            tubeKV: 0.01,
+            tubeTC: 0.01,
+            tubeD: 0.01,
+            tubeFF: 0.01,
             // Constant for Constraints and physical Dimensions
             tubeInnerD: 0.010,
             tubeOuterD: 0.012,
@@ -58,7 +58,7 @@ class RatingAnalysis extends React.Component {
             metalMassUnitLength: 0,
             //TEMA configs
             head: 'A_1',
-            shell: 'E',
+            shell: 'F',
             rear: 'L_1',
             // App states
             currentPage: "forms",

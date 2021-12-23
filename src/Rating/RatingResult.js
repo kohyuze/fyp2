@@ -95,14 +95,8 @@ class RatingResult extends React.Component {
             case 'F':
                 o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT) //first half of F shell
                 this.setState(o)
-                console.log("1st run", this.state.shellOT, this.props.data.shellIT)
-                console.log(this.state.tubeOT, this.props.data.tubeIT)
-                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT) //first half of F shell
-                this.setState(o)
-                // o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, Number(this.state.shellOT), Number(this.state.tubeOT)) // second half of F shell. Input is output of previous half.
-                // this.setState(o)
-                console.log(this.state.shellOT, this.props.data.shellIT)
-                console.log(this.state.tubeOT, this.props.data.tubeIT)
+                // console.log("1st run", this.state.shellOT, this.props.data.shellIT)
+                // console.log(this.state.tubeOT, this.props.data.tubeIT)
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
                     this.setState({ shellMeanT: o.newShellMeanT })
@@ -157,6 +151,8 @@ class RatingResult extends React.Component {
             clearance: 0.318,
             recalculate: 1
         })
+        this.props.updateShellProperties(65.6, 'engine oil')
+        this.props.updateTubeProperties(32.2, 'water')
         this.calculate()
     }
 

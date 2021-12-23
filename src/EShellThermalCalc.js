@@ -285,13 +285,19 @@ export function EShellThermalCalculation(data, State) {
     const NTU = overallHEcoeff * A_s / C_min
     //Heat exchanger effectiveness
     const coth = Math.cosh(NTU / Math.sqrt(2)) / Math.sinh(NTU / Math.sqrt(2))
-    const HEeffectiveness = Math.sqrt(2) / (Math.sqrt(2) + coth)
-    //console.log("HEeffectiveness", HEeffectiveness)
+    let HEeffectiveness;
+    if (C_star > 0.95 && C_star < 1.05) { //approximately = 1
+        HEeffectiveness =  Math.sqrt(2) / (Math.sqrt(2) + coth)
+    } else {
+        HEeffectiveness = 2 / (((1+C_star)+(1+C_star**2)**0.5)*coth)
+    }
+    console.log("HEeffectiveness", HEeffectiveness)
     o.HEeffectiveness = HEeffectiveness.toFixed(6);
 
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
     //Heat Transfer Rate
     const Q = HEeffectiveness * C_min * (shellIT - tubeIT)
+    console.log ("Q" , Q)
     //Shell exit temperature
     const shellOT2 = shellIT - HEeffectiveness * C_star * (shellIT - tubeIT)
     o.shellOT = shellOT2.toFixed(6);
@@ -309,6 +315,13 @@ export function EShellThermalCalculation(data, State) {
     console.log("shellMeanT " + o.shellMeanT)
     console.log("newTubeMeanT " + o.newTubeMeanT)
     console.log("tubeMeanT " + o.tubeMeanT)
+
+    console.log("ShellOT ", shellOT2)
+    console.log("TubeOT ", tubeOT2)
+    
+    console.log("TubeIT ", tubeIT)
+    console.log("C tube ", C_tube)
+    console.log("TubeOT Recalc ", Q/C_tube + tubeIT)
 
     return (o)
 }
