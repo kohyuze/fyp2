@@ -147,14 +147,14 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
     const D_hw = (4 * A_ow) / (Math.PI * tubeOuterD * N_tw + Math.PI * shellInnerDiameter_new * (θ_b / (2 * Math.PI)));
 
     //Finally, the number of effective tube rows in crossflow in each window is computed using Eq. (8.119) as
-    const N_rcw = (0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter_new - D_ctl))
+    const N_rcw = Math.floor((0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter_new - D_ctl)))
 
     //Crossflow Section. The fraction Fc of the total number of tubes in the crossflow section is calculated from Eq. (8.120) as
     const F_c = 1 - 2 * F_w
 
     //Next calculate the number of tube rows Nrcc crossed during flow through one crossflow
     //section between the baffle tips [Eq. (8.121)] as
-    const N_rcc = (shellInnerDiameter_new - 2 * baffleCut) / X_l
+    const N_rcc = Math.floor((shellInnerDiameter_new - 2 * baffleCut) / X_l)
 
     //The crossflow area at or near the shell centerline for one crossflow section may be estimated from A_ocr
     //There are different calculations for A_ocr for different conditions, see shah pg 592
@@ -175,7 +175,7 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
 
 
     //Now, compute the number of baffles from Eq. (8.126) as
-    const N_b = (tubeLength - clearance - clearance) / centralBaffleSpacing + 1
+    const N_b = Math.floor((tubeLength - clearance - clearance) / centralBaffleSpacing + 1)
 
     //Bypass and Leakage Flow Areas. To calculate the fraction of crossflow area available for
     //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area
@@ -199,37 +199,9 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
     //This concludes all geometrical characteristics needed for the thermal design/rating of a
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
-    // console.log("A_ocr:" + A_ocr)
-    // console.log("A_obp:" +A_obp)
-    // console.log("F_c:" +F_c)
-    // console.log("N_rcc:" +N_rcc)
-    // console.log("A_osb:" +A_osb)
-    // console.log("A_otb:" +A_otb)
-    // console.log("N_b:" +N_b)
-    // console.log("A_ow:" +A_ow)
 
-    //Impt constants needed for HT analysis
-    // const A_ocr = 0.03275
-    // const A_obp = 0.00949
-    // const F_c = 0.6506
-    // const N_rcc = 9
-    // const A_osb = 0.001027
-    // const A_otb = 0.001995
-    // const N_b = 14
-    // const A_ow = 0.01308
+    const k_w = 111 //thermal conductivity of tube wall. user input. <====================================================================================================================
 
-    const k_w = 111 //thermal conductivity of tube wall. user input.
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     //////////////Thermal calculations, Shah pg653//////////////////////////
     //-----Shell-Side Heat Transfer Coefficient-----------------------
@@ -262,8 +234,8 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
     const N_ssplus = N_ss / N_rcc
     const J_b = Math.exp(-1 * C * r_b * (1 - (2 * N_ssplus) ** (1 / 3)))
     //Now we compute L_iplus and L_oplus for determining unequal baffle spacing factor Js from Table 9.2.
-    const L_iplus = 0.318 / 0.279
-    const L_oplus = L_iplus
+    const L_iplus = clearance / centralBaffleSpacing
+    const L_oplus = clearance / centralBaffleSpacing
     const n = 0.6 //for turbulent flow. It should almost always be in turbulent flow?
     const J_s = (N_b - 1 + L_iplus ** (1 - n) + L_oplus ** (1 - n)) / (N_b - 1 + L_iplus + L_oplus)
     //Finally, the adverse temperature gradient factor Jr ¼ 1 for Res ¼ 326 > 100
@@ -340,53 +312,54 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
     // Refer to report on this segment. Pg ___
 
-    let T1, T2, T3, T4, T5, T6 = 0.01; //initial value. Not zero as it might cause errors
-    T1 = tubeIT;
-    T4 = shellIT;
+    let T_ci, T_co, T_hi, T_ho, T_1, T_2 = 0; //initial value.
+    T_ci = tubeIT;
+    T_hi = shellIT;
     console.log("ShellIT ", shellIT)
     console.log("TubeIT ", tubeIT)
 
     const EC = HEeffectiveness * C_min
-    let matrixA = math.matrix([[-1*C_tube, 0, EC, 0], 
-                                 [0, 0, EC - C_shell, C_shell],
-                                 [C_tube, EC-C_tube, 0, 0],
-                                 [0, EC, C_shell, 0]]);
+    let matrixA = math.matrix([[-1*C_tube, 0, 0, 0], 
+                                 [0, 0, C_shell, 0],
+                                 [-1*(EC-C_tube), -C_tube, EC, 0],
+                                 [-1*EC, 0, EC-C_shell, C_shell]]);
     
-    let matrixB = math.matrix([[(EC - C_tube) * T1], 
-                                 [EC * T1],
-                                 [EC * T4],
-                                 [(EC + C_shell) * T4]]);
+    let matrixB = math.matrix([[(EC - C_tube) * T_ci - EC*T_hi], 
+                                 [EC * T_ci - (EC - C_shell) * T_hi],
+                                 [0],
+                                 [0]]);
     
     let matrixX
     // console.log("determinant",math.det(matrixA))
     if (math.det(matrixA) > 0.1 || math.det(matrixA) < -0.1) { //to avoid determinant=0 error
         matrixX = math.multiply(math.inv(matrixA), matrixB); 
-         console.log(matrixX)
-        // console.log("T2", matrixX.get([0, 0]))
-        // console.log("T3", matrixX.get([1, 0]))
 
-        T2 = matrixX.get([0, 0])
-        T3 = matrixX.get([1, 0])
-        T5 = matrixX.get([2, 0])
-        T6 = matrixX.get([3, 0])
+        T_1 = matrixX.get([0, 0])
+        T_co = matrixX.get([1, 0])
+        T_2 = matrixX.get([2, 0])
+        T_ho = matrixX.get([3, 0])
+
+        console.log(matrixX)
+        console.log("T_ci", T_ci)
+        console.log("T1", T_1)
+        console.log("T_co", T_co)
+        console.log("T_hi", T_hi)
+        console.log("T2", T_2)
+        console.log("T_ho", T_ho)
     }                
    
 
     //Heat Transfer Rate
-    const Q_a = HEeffectiveness * C_min  * Math.abs(T5 - T1) 
-    const Q_b = HEeffectiveness * C_min  * Math.abs(T4 - T3) 
+    const Q_a = HEeffectiveness * C_min  * Math.abs(T_2 - T_ci) 
+    const Q_b = HEeffectiveness * C_min  * Math.abs(T_hi - T_co) 
     const Q = Q_a + Q_b
-    // console.log ("Q" , Q)
-    // console.log("TubeIT ", tubeIT)
-    // console.log("C tube ", C_tube)
-    // console.log("T3 = ", T3)
-    // console.log("Calc T3 = ", Q/C_tube+T1)
+
     //Shell exit temperature
-    const shellOT2 = Number(T6)
+    const shellOT2 = Number(T_ho)
     o.shellOT = shellOT2.toFixed(6);
     //console.log("shellOT", shellOT2)
     //Tube exit temperature
-    const tubeOT2 = Number(T3)
+    const tubeOT2 = Number(T_co)
     o.tubeOT = tubeOT2.toFixed(6);
     //console.log("tubeOT", tubeOT2)
 

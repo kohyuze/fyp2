@@ -18,6 +18,8 @@ class RatingResult extends React.Component {
             HEeffectiveness: 0,
             shellOT: 0,
             tubeOT: 0,
+            tubePressureDrop: 0,
+            shellPressureDrop: 0,
         }
     }
 
@@ -88,7 +90,7 @@ class RatingResult extends React.Component {
                 }
                 if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
-                    updateTubeProperties(o.newTubeMeanT, tubeFluid)
+                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
                 }
 
                 break;
@@ -115,24 +117,10 @@ class RatingResult extends React.Component {
     componentDidMount() {
         this.props.handleSubmit({
             shellIT: 65.6,
-            // //shellOT: 0, 
             shellMFR: 36.3,
-            // shellSHC: 2094,
-            // shellDV: 0.0646,
-            // //shellKV:,
-            // shellTC: 0.140,
-            // shellD: 849,
-            // shellPr: 966,
             shellFF: 0.000176,
             tubeIT: 32.2,
-            // //tubeOT,
-            tubeMFR: 18.1,
-            // tubeSHC: 4187,
-            // tubeDV: 0.000723,
-            // //tubeKV,
-            // tubeTC: 0.634,
-            // tubeD: 993,
-            // tubePr: 4.77,
+            tubeMFR: 18.1,  
             tubeFF: 0.000088,
             tubeInnerD: 0.0166,
             tubeOuterD: 0.019,
@@ -142,6 +130,21 @@ class RatingResult extends React.Component {
             tubeLength: 4.3,
             shellFluid: 'engine oil',
             tubeFluid: 'water',
+
+            // tubeIT: 65.6,
+            // tubeMFR: 36.3,
+            // tubeFF: 0.000176,
+            // shellIT: 32.2,
+            // shellMFR: 18.1,  
+            // shellFF: 0.000088,
+            // tubeInnerD: 0.0166,
+            // tubeOuterD: 0.019,
+            // tubePitch: 0.025,
+            // numberTube: 102,
+            // numberPasses: 2,
+            // tubeLength: 4.3,
+            // tubeFluid: 'engine oil',
+            // shellFluid: 'water',
 
 
             layoutAngle: "rotated-square",
@@ -184,6 +187,9 @@ class RatingResult extends React.Component {
                     <div><p></p> <h5></h5></div>
                     <div><p>Shell output temperature:</p> <h5>{this.state.shellOT}°C</h5></div>
                     <div><p>Tube output temperature:</p> <h5>{this.state.tubeOT}°C</h5></div>
+                    <div><p></p> <h5></h5></div>
+                    <div><p>Shell pressure drop:</p> <h5>{this.state.shellPressureDrop}Pa</h5></div>
+                    <div><p>Tube pressure drop:</p> <h5>{this.state.tubePressureDrop}Pa</h5></div>
                 </div>
                 <button onClick={() => console.log(this.state)}>log state</button>
             </div>

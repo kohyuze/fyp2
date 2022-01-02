@@ -3,6 +3,7 @@ import RatingAnalysisPage from './RatingAnalysisPage';
 import RatingInputPage from './RatingInputPage';
 import RatingResultPage from './RatingResult';
 import * as dfd from 'danfojs';
+import * as util from '../util';
 
 
 class RatingAnalysis extends React.Component {
@@ -12,13 +13,14 @@ class RatingAnalysis extends React.Component {
         this.handlePageChange = this.handlePageChange.bind(this);
         this.updateTubeProperties = this.updateTubeProperties.bind(this);
         this.updateShellProperties = this.updateShellProperties.bind(this);
+
         this.state = {
             // fluids 
             shellFluid: '',
             tubeFluid: '',
             // constants for shell
             shellIT: 0,//required
-            shellOT: 0, 
+            shellOT: 0,
             shellMFR: 0,
             shellSHC: 0.01,  //put 0.01 cos sometimes the initial value of 0 will cause program to crash
             shellDV: 0.01,
@@ -58,8 +60,13 @@ class RatingAnalysis extends React.Component {
             metalMassUnitLength: 0,
             //TEMA configs
             head: 'A_1',
-            shell: 'F',
+            shell: 'E',
             rear: 'L_1',
+            // pressure drop needed parameters
+            // tubeRe: 0,
+            // sigma: 0,
+            Kc: 0,
+            ke: 0,
             // App states
             currentPage: "forms",
             recalculate: 0,
@@ -80,7 +87,7 @@ class RatingAnalysis extends React.Component {
         console.log("fetching " + fluid)
         let fluidProperties = ''
         switch (fluid) {
-            case 'water':  
+            case 'water':
                 fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
                 break;
             case 'engine oil':
@@ -89,11 +96,12 @@ class RatingAnalysis extends React.Component {
             default:
                 //think of a way to catch this error
                 fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
+                console.log("ERROR: Default steam table used for fluid properties.")
         }
 
         dfd.read_csv(fluidProperties)
             .then(df => {
-                //first we read the entire steam table, then we pick out only the temp and specific columns
+                //first we read the entire table, then we pick out only the temp and specific columns
                 let sub_df = df.loc({ columns: ["temp", "densityL", "specHeatL", "dynamicViscL", "therCondL"] })
                 // sub_df.head().print()
                 // sub_df.iloc({rows:[2]}).print();
@@ -146,16 +154,30 @@ class RatingAnalysis extends React.Component {
     }
 
     //call this function as u iterate to update the new fluid properties
-    updateTubeProperties(tubeAveT, tubeFluid) {
+    updateTubeProperties(tubeAveT, tubeFluid, tubeRe, sigma) {
         this.fetchProperties(tubeAveT, tubeFluid, (tubeProperties) => {
             this.handleSubmit({ tubeD: tubeProperties[0] })
             this.handleSubmit({ tubeSHC: tubeProperties[1] })
             this.handleSubmit({ tubeDV: tubeProperties[2] })
             this.handleSubmit({ tubeKV: tubeProperties[3] })
             this.handleSubmit({ tubeTC: tubeProperties[4] })
-            this.handleSubmit({recalculate: 1}) 
-            //putting recalculate:1 here will ensure the fluid properties are fully updated
-            //before running recalculation
+
+            // need to check whether tubeRe is defined as the programs will run a few iterations before returnig a defined value
+            if (typeof tubeRe !== "undefined") {
+                util.calculate_Kc_and_Ke(tubeRe, sigma, 'Kc', (K) => {
+                    this.handleSubmit({ Kc: K })
+                    util.calculate_Kc_and_Ke(tubeRe, sigma, 'Ke', (K) => {
+                        this.handleSubmit({ Ke: K })
+                        this.handleSubmit({ recalculate: 1 })
+                    })
+                })
+            }
+            else {
+                this.handleSubmit({ recalculate: 1 })
+                //putting recalculate:1 here will ensure the fluid properties are fully updated
+                //before running recalculation
+            }
+
         })
     }
 
@@ -166,15 +188,16 @@ class RatingAnalysis extends React.Component {
             this.handleSubmit({ shellDV: shellProperties[2] })
             this.handleSubmit({ shellKV: shellProperties[3] })
             this.handleSubmit({ shellTC: shellProperties[4] })
-            this.handleSubmit({recalculate: 1})
+            this.handleSubmit({ recalculate: 1 })
         })
     }
 
-    
+
+
     handleSubmit(value) {
         for (var property in value) {
             //this loop converts all the numeric data input into float so we can do arithmetic
-            if (!isNaN(value[property])){
+            if (!isNaN(value[property])) {
                 value[property] = parseFloat(value[property])
             }
         }
@@ -200,18 +223,18 @@ class RatingAnalysis extends React.Component {
                     />
                 </div>
                 <div className={`${this.state.currentPage === "inputCheck" ? "" : "hide"}`}>
-                    <RatingInputPage 
-                    data={this.state}
-                    handleSubmit={this.handleSubmit}
-                    handlePageChange={this.handlePageChange}/>
+                    <RatingInputPage
+                        data={this.state}
+                        handleSubmit={this.handleSubmit}
+                        handlePageChange={this.handlePageChange} />
                 </div>
                 <div className={`${this.state.currentPage === "result" ? "" : "hide"}`}>
-                    <RatingResultPage 
-                    data={this.state}
-                    handleSubmit={this.handleSubmit}
-                    handlePageChange={this.handlePageChange}
-                    updateTubeProperties={this.updateTubeProperties}
-                    updateShellProperties={this.updateShellProperties}
+                    <RatingResultPage
+                        data={this.state}
+                        handleSubmit={this.handleSubmit}
+                        handlePageChange={this.handlePageChange}
+                        updateTubeProperties={this.updateTubeProperties}
+                        updateShellProperties={this.updateShellProperties}
                     />
                 </div>
             </div>

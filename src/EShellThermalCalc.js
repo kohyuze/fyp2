@@ -1,6 +1,9 @@
 
 // This is calculation using the Bell-Delaware method.
 
+import math from "mathjs";
+import * as util from './util';
+
 
 export function EShellThermalCalculation(data, State) {
 
@@ -41,6 +44,9 @@ export function EShellThermalCalculation(data, State) {
         shellSideFluidDynamicViscocity,
         tubeMaterialThermalConductivity,
         tubeLength,
+        // Constants for tube pressure drop
+        Kc,
+        Ke
     } = data;
 
     // o is used to hold the calculated values before we return at the end of the function
@@ -55,7 +61,14 @@ export function EShellThermalCalculation(data, State) {
         HEeffectiveness: State.HEeffectiveness,
         shellOT: State.shellOT,
         tubeOT: State.tubeOT,
+        tubeRe: 0,
+        sigma: 0,
     }
+
+    // //I redeclare this here cos idw to pass it as props all the way down
+    // function interpolate(x, x1, x2, y1, y2) {
+    //     return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
+    // }
 
     //------------------Rating problem-----------------------
     ////////////////////Geometrical Calculations, Shah 594/////////////////////////
@@ -87,7 +100,7 @@ export function EShellThermalCalculation(data, State) {
     }
 
     //Convert the baffle cut from percent to meters
-    const baffleCut = baffleCutPercent/100 * shellInnerDiameter
+    const baffleCut = baffleCutPercent / 100 * shellInnerDiameter
 
     //Window Section. Let us start the calculations with computing the angle θb from Eq.(8.112):
     const θ_b = 2 * Math.acos(1 - (2 * baffleCut / shellInnerDiameter)); //rad
@@ -116,14 +129,14 @@ export function EShellThermalCalculation(data, State) {
     const D_hw = (4 * A_ow) / (Math.PI * tubeOuterD * N_tw + Math.PI * shellInnerDiameter * (θ_b / (2 * Math.PI)));
 
     //Finally, the number of effective tube rows in crossflow in each window is computed using Eq. (8.119) as
-    const N_rcw = (0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter - D_ctl))
+    const N_rcw = Math.floor((0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter - D_ctl)))
 
     //Crossflow Section. The fraction Fc of the total number of tubes in the crossflow section is calculated from Eq. (8.120) as
     const F_c = 1 - 2 * F_w
 
     //Next calculate the number of tube rows Nrcc crossed during flow through one crossflow
     //section between the baffle tips [Eq. (8.121)] as
-    const N_rcc = (shellInnerDiameter - 2 * baffleCut) / X_l
+    const N_rcc = Math.floor((shellInnerDiameter - 2 * baffleCut) / X_l)
 
     //The crossflow area at or near the shell centerline for one crossflow section may be estimated from A_ocr
     //There are different calculations for A_ocr for different conditions, see shah pg 592
@@ -144,7 +157,7 @@ export function EShellThermalCalculation(data, State) {
 
 
     //Now, compute the number of baffles from Eq. (8.126) as
-    const N_b = (tubeLength - clearance - clearance) / centralBaffleSpacing + 1
+    const N_b = Math.floor((tubeLength - clearance - clearance) / centralBaffleSpacing + 1)
 
     //Bypass and Leakage Flow Areas. To calculate the fraction of crossflow area available for
     //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area
@@ -168,26 +181,7 @@ export function EShellThermalCalculation(data, State) {
     //This concludes all geometrical characteristics needed for the thermal design/rating of a
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
-    // console.log("A_ocr:" + A_ocr)
-    // console.log("A_obp:" +A_obp)
-    // console.log("F_c:" +F_c)
-    // console.log("N_rcc:" +N_rcc)
-    // console.log("A_osb:" +A_osb)
-    // console.log("A_otb:" +A_otb)
-    // console.log("N_b:" +N_b)
-    // console.log("A_ow:" +A_ow)
-
-    //Impt constants needed for HT analysis
-    // const A_ocr = 0.03275
-    // const A_obp = 0.00949
-    // const F_c = 0.6506
-    // const N_rcc = 9
-    // const A_osb = 0.001027
-    // const A_otb = 0.001995
-    // const N_b = 14
-    // const A_ow = 0.01308
-
-    const k_w = 111 //thermal conductivity of tube wall. user input.
+    const k_w = 111 //thermal conductivity of tube wall. user input.<====================================================================================================================
 
     //////////////Thermal calculations, Shah pg653//////////////////////////
     //-----Shell-Side Heat Transfer Coefficient-----------------------
@@ -220,8 +214,8 @@ export function EShellThermalCalculation(data, State) {
     const N_ssplus = N_ss / N_rcc
     const J_b = Math.exp(-1 * C * r_b * (1 - (2 * N_ssplus) ** (1 / 3)))
     //Now we compute L_iplus and L_oplus for determining unequal baffle spacing factor Js from Table 9.2.
-    const L_iplus = 0.318 / 0.279
-    const L_oplus = L_iplus
+    const L_iplus = clearance / centralBaffleSpacing
+    const L_oplus = clearance / centralBaffleSpacing
     const n = 0.6 //for turbulent flow. It should almost always be in turbulent flow?
     const J_s = (N_b - 1 + L_iplus ** (1 - n) + L_oplus ** (1 - n)) / (N_b - 1 + L_iplus + L_oplus)
     //Finally, the adverse temperature gradient factor Jr ¼ 1 for Res ¼ 326 > 100
@@ -246,6 +240,7 @@ export function EShellThermalCalculation(data, State) {
     const A_ot = (Math.PI / 4) * tubeInnerD ** 2 * N_tp
     //Tube-side Reynolds number
     const tubeRe = (tubeMFR * tubeInnerD) / (A_ot * tubeDV)
+    o.tubeRe = tubeRe
     // console.log("A_ot", A_ot)
     //console.log("tubeDV", tubeDV)
     //console.log("tubeRe", tubeRe)
@@ -287,17 +282,17 @@ export function EShellThermalCalculation(data, State) {
     const coth = Math.cosh(NTU / Math.sqrt(2)) / Math.sinh(NTU / Math.sqrt(2))
     let HEeffectiveness;
     if (C_star > 0.95 && C_star < 1.05) { //approximately = 1
-        HEeffectiveness =  Math.sqrt(2) / (Math.sqrt(2) + coth)
+        HEeffectiveness = Math.sqrt(2) / (Math.sqrt(2) + coth)
     } else {
-        HEeffectiveness = 2 / (((1+C_star)+(1+C_star**2)**0.5)*coth)
+        HEeffectiveness = 2 / (((1 + C_star) + (1 + C_star ** 2) ** 0.5) * coth)
     }
     console.log("HEeffectiveness", HEeffectiveness)
     o.HEeffectiveness = HEeffectiveness.toFixed(6);
 
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
     //Heat Transfer Rate
-    const Q = HEeffectiveness * C_min * (shellIT - tubeIT)
-    console.log ("Q" , Q)
+    const Q = HEeffectiveness * C_min * Math.abs(shellIT - tubeIT)
+    console.log("Q", Q)
     //Shell exit temperature
     const shellOT2 = shellIT - HEeffectiveness * C_star * (shellIT - tubeIT)
     o.shellOT = shellOT2.toFixed(6);
@@ -318,42 +313,61 @@ export function EShellThermalCalculation(data, State) {
 
     console.log("ShellOT ", shellOT2)
     console.log("TubeOT ", tubeOT2)
-    
-    console.log("TubeIT ", tubeIT)
-    console.log("C tube ", C_tube)
-    console.log("TubeOT Recalc ", Q/C_tube + tubeIT)
+
+    // console.log("TubeIT ", tubeIT)
+    // console.log("C tube ", C_tube)
+    // console.log("TubeOT Recalc ", Q/C_tube + tubeIT)
+
+    //------------------Shell side pressure drop shah pg656----------------------
+    const b = 6.59 / (1 + 0.14 * shellRe ** 0.52)
+    const F_id = 3.5 * (1.33 * (tubeOuterD / tubePitch)) ** b * shellRe ** (-0.476)
+
+    //the ideal pressure drop without correction
+    const deltaP_bid = (4 * F_id * shellMassVelocity ** 2 * N_rcc) / (2 * shellD)  //assuming the wall viscosity is v similar to bulk vioscosity
+
+    //finding the correction factors C_b, C_l and C_s
+    let C_b
+    if (N_ssplus >= 0.5) { C_b = 1 }
+    else {
+        let D;
+        if (shellRe > 100) { D = 3.7 }
+        else { D = 4.5 }
+        C_b = Math.exp(-1 * D * r_b * (1 - (2 * N_ssplus) ** (1 / 3)))
+    }
+
+    const p = -0.15 * (1 + r_s) + 0.8
+    const C_l = Math.exp(-1.33 * (1+r_s) *  r_lm ** p)
+
+    const n_prime = 0.2 //assuming turbulent flow. I think quite unlikely for laminar flow in shell side leh.
+    const C_s = (centralBaffleSpacing/clearance)**(2 - n_prime) + (centralBaffleSpacing/clearance)**(2 - n_prime)
+
+    // finding the deltaPs
+    const deltaP_cr = deltaP_bid * (N_b - 1) * C_b * C_l
+    const G_w = shellMFR/((A_ocr * A_ow)**0.5)
+    const deltaP_w = N_b * (2 + 0.6* N_rcw) * ((G_w**2) / (2 * shellD)) * C_l
+    const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw/N_rcc)) * C_b * C_s
+
+    const shellPressureDrop = deltaP_cr + deltaP_w + deltaP_io
+    o.shellPressureDrop = shellPressureDrop
+
+    //------------------Tube side pressure drop shah pg657----------------------
+    const frictionFactor = 0.046 * tubeRe ** -0.2; //eqn 7.72
+
+    const sigma = (2 * (tubePitch - tubeOuterD)) / (1.414 * tubePitch)
+    o.sigma = sigma
+
+    if ((typeof Kc !== "undefined") && (typeof Ke !== "undefined")) {
+        // eqn from Shah pg 658. its too long so I break it up.
+        const entranceEffect = 1 - sigma ** 2 + Kc
+        const exitEffect = 1 - sigma ** 2 - Ke
+        const coeff_in_front = tubeMFR ** 2 / (2 * tubeD * A_ot ** 2)
+        const firstTerm = (4 * frictionFactor * tubeLength / tubeInnerD)
+        const tubePressureDrop = coeff_in_front * (firstTerm + entranceEffect - exitEffect) * numberPasses
+        o.tubePressureDrop = tubePressureDrop
+        //console.log("tubePressureDrop ", tubePressureDrop)
+    }
+
 
     return (o)
+
 }
-
-
-// // ---- Calculation of the tube-side heat transfer coefficient using Nitsche method(pg39) -------
-        // //Calculation of the flow cross section
-        // const tubeCrossSection = (numberTube / numberPasses) * Math.PI * Math.pow(tubeInnerD, 2) / 4;
-        // //Determination of the flow velocity in the tubes
-        // const tubeFlowVelocity = tubeMFR / tubeCrossSection;
-        // //Determination of the Reynolds number
-        // const tubeRe = (tubeFlowVelocity * tubeInnerD) / tubeKV;
-        // //Calculation of the Pr number
-        // const tubePr = (tubeKV * tubeSHC * tubeD) / tubeTC;
-        // //Determination of the Nusselt number
-        // const tubeNu = 0.023 * Math.pow(tubeRe, 0.8) * Math.pow(tubePr, 0.33); //for Re>8000
-        // //Calculation of the heat transfer coefficient
-        // const tubeHEcoeff = (tubeNu * tubeTC) / tubeInnerD;
-        // o.tubeHEcoeff = tubeHEcoeff.toFixed();
-
-
-        // // ---- Calculation of the shell-side heat transfer coefficient using Nitsche method for Re>10(Nitsche pg40) -------
-        // //Calculation of the flow cross section
-        // const shellCrossSection = shellInnerDiameter * centralBaffleSpacing * (1 - (tubeOuterD / tubePitch)) //what if no baffle spacing given?
-        // //Determination of the mass flow velocity in the shell
-        // const shellMassVelocity = shellMFR / shellCrossSection;
-        // //Determination of the Reynolds number
-        // const shellRe = (shellMassVelocity * tubeOuterD) / shellDV;
-        // //Calculation of the Pr number
-        // const shellPr = (shellKV * shellSHC * shellD) / shellTC;//fetch this too
-        // //Determination of the Nusselt number
-        // const shellNu = 0.196 * shellRe**0.6 * shellPr**0.33; //for triangular pitch
-        // //Calculation of the heat transfer coefficient
-        // const shellHEcoeff = (shellNu * shellTC) / tubeOuterD;
-        // o.shellHEcoeff = shellHEcoeff.toFixed();
