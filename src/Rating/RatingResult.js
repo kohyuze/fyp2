@@ -1,7 +1,9 @@
 import React from 'react';
 import * as dfd from 'danfojs';
-import * as EShellThermalCalc from '../EShellThermalCalc';
-import * as FShellThermalCalc from '../FShellThermalCalc';
+import * as EShellThermalCalc from '../EShellCalc';
+import * as FShellThermalCalc from '../FShellCalc';
+import * as GShellThermalCalc from '../GShellCalc';
+
 
 class RatingResult extends React.Component {
     constructor(props) {
@@ -28,6 +30,8 @@ class RatingResult extends React.Component {
             shell,
             shellFluid,
             tubeFluid,
+            Kc,
+            Ke,
             // constants for shell
             shellIT,
             shellOT,
@@ -95,10 +99,8 @@ class RatingResult extends React.Component {
 
                 break;
             case 'F':
-                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT) //first half of F shell
+                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
                 this.setState(o)
-                // console.log("1st run", this.state.shellOT, this.props.data.shellIT)
-                // console.log(this.state.tubeOT, this.props.data.tubeIT)
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
                     this.setState({ shellMeanT: o.newShellMeanT })
@@ -106,7 +108,20 @@ class RatingResult extends React.Component {
                 }
                 if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
-                    updateTubeProperties(o.newTubeMeanT, tubeFluid)
+                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+                }
+                break;
+            case 'G':
+                o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
+                this.setState(o)
+
+                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
+                    this.setState({ shellMeanT: o.newShellMeanT })
+                    updateShellProperties(o.newShellMeanT, shellFluid) 
+                }
+                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
+                    this.setState({ tubeMeanT: o.newTubeMeanT })
+                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
                 }
                 break;
         }

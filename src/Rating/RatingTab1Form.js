@@ -80,7 +80,7 @@ class RatingTab1Form extends React.Component {
                                 <option value="">Select shell</option>
                                 <option value="E">E</option>
                                 <option value="F">F</option>
-                                <option value="U">U</option>
+                                <option value="G">G</option>
                             </MySelect>
                             <MySelect label="Rear" name="rear" >
                                 <option value="">Select rear</option>

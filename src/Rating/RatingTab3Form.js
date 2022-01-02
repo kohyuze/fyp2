@@ -1,4 +1,4 @@
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 import PopUp from '../popup';
@@ -22,27 +22,49 @@ const MyTextInput = ({ label, ...props }) => {
     );
 };
 
-// const MySelect = ({ label, ...props }) => {
-//     const [field, meta] = useField(props);
-//     return ( //do something about the styling pls
-//       <div className="form">
-//         {/* <label htmlFor={props.id || props.name}>{label}</label> */}
-//         <select className="input" {...field} {...props} />
-//         {meta.touched && meta.error ? (<div className="error">{meta.error}</div>) : null}
-//       </div>
-//     );
-//   };
+const MySelect = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
+    return ( //do something about the styling pls
+        <div className="form">
+            {/* <label htmlFor={props.id || props.name}>{label}</label> */}
+            <select className="input" {...field} {...props} />
+            {meta.touched && meta.error ? (<div className="error">{meta.error}</div>) : null}
+        </div>
+    );
+};
 
 class RatingTab3Form extends React.Component {
     constructor(props) {
         super(props);
         //this.handleChange = this.handleChange.bind(this);
-         //state is just for the popup box
-         this.state = {
+        //state is just for the popup box
+        this.state = {
             popUp: false,
         }
     }
     render() {
+        //this function will change the number of tubepasses allowed to be input
+        const project = () => {
+            switch (this.props.formData.shell) {
+                case "E": return <MySelect label="Number of Tube Passes" name="numberPasses">
+                    <option value="">Number of Tube Passes</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </MySelect>
+                case "F": return <MySelect label="Number of Tube Passes" name="numberPasses">
+                    <option value="">Number of Tube Passes</option>
+                    <option value="2">2</option>
+                </MySelect>
+                case "G": return <MySelect label="Number of Tube Passes" name="numberPasses">
+                    <option value="">Number of Tube Passes</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </MySelect>
+                default: return
+            }
+        }
         return (
             <div className='formContainer' >
                 {/* the error message sucks, pls fix in future */}
@@ -50,16 +72,16 @@ class RatingTab3Form extends React.Component {
                     initialValues={{}}//dk why i dun need to put all the variables here
                     validationSchema={
                         Yup.object({
-                            baffleCutPercent: Yup.number(),                        
-                            centralBaffleSpacing: Yup.number(),                            
-                            clearance: Yup.number(),                       
-                            })
+                            baffleCutPercent: Yup.number(),
+                            centralBaffleSpacing: Yup.number(),
+                            clearance: Yup.number(),
+                        })
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
                         console.log("submitted values:" + values);
                         setSubmitting(false);
-                        this.setState({popUp: true})
+                        this.setState({ popUp: true })
                     }}
                 >
                     <Form>
@@ -85,18 +107,12 @@ class RatingTab3Form extends React.Component {
                             placeholder="Clearance"
                             unit="m"
                         />
-                        <MyTextInput
-                            label="Number of Tube Passes"
-                            name="numberPasses"
-                            type="text"
-                            placeholder="Number of Tube Passes"
-                            unit="-"
-                        />                       
+                        <div>{project()}</div>
                         <button className='applyButton' type="submit" >Apply</button>
-                        {/* button is not done, dk what to do with it yet */}                       
+                        {/* button is not done, dk what to do with it yet */}
                     </Form>
                 </Formik >
-                <PopUp open={this.state.popUp} onClose={() => this.setState({popUp: false})}>
+                <PopUp open={this.state.popUp} onClose={() => this.setState({ popUp: false })}>
                     <p className="popup-text">Updated!</p>
                 </PopUp>
             </div >

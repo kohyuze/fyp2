@@ -60,7 +60,7 @@ class RatingAnalysis extends React.Component {
             metalMassUnitLength: 0,
             //TEMA configs
             head: 'A_1',
-            shell: 'E',
+            shell: 'F',
             rear: 'L_1',
             // pressure drop needed parameters
             // tubeRe: 0,

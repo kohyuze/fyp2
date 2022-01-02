@@ -11,6 +11,7 @@ const Tab2 = (props) => {
         numberTube,
         layoutAngle,
         shellInnerDiameter,
+        shell,
     } = props.data;
 
 
@@ -79,7 +80,17 @@ const Tab2 = (props) => {
 
 
         let tubeDrawn = 0
-        let currentRow = 1 //change this to 2 to leave center row empty for baffles
+        let currentRow //change this to 2 to leave center row empty for longitudinal baffle, 1 to fill the center row
+
+        if (shell == "E"){
+            currentRow = 1 
+        } else {
+            currentRow = 2
+            //draw longitudinal baffle
+            let baffleImgHeight = 0.02 * shellImgDiameter
+            c.fillRect(xcenter - 0.5 * shellImgDiameter, ycenter - 0.5 * baffleImgHeight, shellImgDiameter, baffleImgHeight)
+        }
+
 
         if (tubeConfig === "square") {
             while (tubeDrawn < tubeNo && currentRow < tubeNo) {
