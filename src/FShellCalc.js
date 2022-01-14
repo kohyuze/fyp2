@@ -19,9 +19,9 @@ import * as math from 'mathjs';
 
 
 
-export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
+export function FShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
-    const {
+    let {
         shellFluid,
         tubeFluid,
         // constants for shell
@@ -74,6 +74,10 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT) {
         HEeffectiveness: State.HEeffectiveness,
         shellOT: State.shellOT,
         tubeOT: State.tubeOT,
+    }
+
+    if (Length) { //this is here for sizing calculation
+        tubeLength = Length
     }
 
     //just in case strings were passed in

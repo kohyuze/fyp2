@@ -4,7 +4,7 @@ import * as math from 'mathjs';
 
 
 
-export function GShellThermalCalculation(data, State, shellIT, tubeIT) {
+export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
     let {
         shellFluid,
@@ -59,6 +59,10 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT) {
         HEeffectiveness: State.HEeffectiveness,
         shellOT: State.shellOT,
         tubeOT: State.tubeOT,
+    }
+
+    if (Length) { //this is here for sizing calculation
+        tubeLength = Length
     }
 
     //just in case strings were passed in
@@ -333,23 +337,23 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT) {
     const EC_c = HEeffectiveness_counterflow * C_min
     const EC_p = HEeffectiveness_parallelflow * C_min
 
-    let matrixA = math.matrix([[0, 0, 0, -C_c, 0, 0, 0, 0],
-                                [0, 0, 0, C_c, 0, 0, C_h, 0],
-                                [0, 0, 0, EC_p-C_c, C_c, 0, 0, 0],
-                                [0, 0, 0, -C_c, C_c, 0, 0, C_h],
-                                [0, 0, 0, 0, -(EC_p+C_c), -C_c, 0, EC_p],
-                                [0, 0, C_h, 0, -C_c, C_c, 0, -C_h],
-                                [-C_c, 0, 0, 0, 0, -(EC_c+C_c), EC_c, 0],
-                                [C_c, C_h, 0, 0, 0, -C_c, -C_h, 0]]);
+    let matrixA = math.matrix([[0, 0, 0, -C_c, 0, 0, EC_p, 0],
+                                [0, C_h, 0, C_c, 0, 0, -C_h, 0],
+                                [0, 0, 0, C_c-EC_c, -C_c, 0, 0, EC_c],
+                                [0, 0, C_h, -C_c, C_c, 0, 0, -C_h],
+                                [0, 0, 0, 0, (EC_c-C_c), C_c, 0, 0],
+                                [0, 0, 0, 0, -C_c, C_c, 0, C_h],
+                                [C_c, 0, 0, 0, 0, (EC_p-C_c), 0, 0],
+                                [C_c, 0, 0, 0, 0, -C_c, -C_h, 0]]);
 
-    let matrixB = math.matrix([[(EC_c-C_c)*T_ci - EC_c*T_hi],
-                                [C_h * T_hi + C_c * T_ci],
-                                [EC_p * T_hi],
+    let matrixB = math.matrix([[(EC_p-C_c)*T_ci],
+                                [C_c * T_ci],
+                                [0],
+                                [0],
+                                [EC_c * T_hi],
                                 [C_h * T_hi],
-                                [0],
-                                [0],
-                                [0],
-                                [0]]);
+                                [EC_p*T_hi],
+                                [C_h * T_hi]]);
 
     let matrixX
     // console.log("determinant",math.det(matrixA))

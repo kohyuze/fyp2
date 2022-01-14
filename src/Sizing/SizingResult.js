@@ -5,7 +5,7 @@ import * as FShellThermalCalc from '../FShellCalc';
 import * as GShellThermalCalc from '../GShellCalc';
 
 
-class RatingResult extends React.Component {
+class SizingResult extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -35,6 +35,7 @@ class RatingResult extends React.Component {
             // constants for shell
             shellIT,
             shellOT,
+            shellOTreq,
             shellMFR,
             shellSHC,
             shellDV,
@@ -45,6 +46,7 @@ class RatingResult extends React.Component {
             // Constant for tube
             tubeIT,
             tubeOT,
+            tubeOTreq,
             tubeMFR,
             tubeSHC,
             tubeDV,
@@ -80,11 +82,23 @@ class RatingResult extends React.Component {
         console.log("Iteration " + this.state.iteration)
         this.setState({ iteration: this.state.iteration + 1 })
 
+        //procedure for sizing: we need to determine the length of the HX needed to meet the HT load. 
+        //we assume one small value for the length first, then we do the rating exercise. Increase the value and repeat until HT load is met.
+
+
+
         let o;
+
         switch (shell) {
             case 'E':
-                o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state)
+                o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
+
+                // if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq){
+                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    const newTubeLength = tubeLength + 0.1
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
 
                 // Checks if iteration is needed. Updates fluid properties with new mean temps and iterates.
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -96,28 +110,37 @@ class RatingResult extends React.Component {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
                     updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
                 }
-
                 break;
-            case 'F':
-                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
-                this.setState(o)
 
+            case 'F':
+                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT, tubeLength)
+                this.setState(o)
+                // if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq){
+                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    const newTubeLength = tubeLength + 0.1
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
                     this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid) 
+                    updateShellProperties(o.newShellMeanT, shellFluid)
                 }
                 if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
                     updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
                 }
                 break;
-            case 'G':
-                o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
-                this.setState(o)
 
+            case 'G':
+                o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT, tubeLength)
+                this.setState(o)
+                // if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq){
+                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    const newTubeLength = tubeLength + 0.1
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
                     this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid) 
+                    updateShellProperties(o.newShellMeanT, shellFluid)
                 }
                 if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
@@ -126,6 +149,10 @@ class RatingResult extends React.Component {
                 break;
         }
 
+        this.setState({tubeLength: tubeLength})
+        console.log("FINAL TUBE LENGTH", tubeLength)
+
+        
 
     }
 
@@ -142,10 +169,12 @@ class RatingResult extends React.Component {
             tubePitch: 0.025,
             numberTube: 102,
             numberPasses: 2,
-            tubeLength: 4.3,
             shellFluid: 'engine oil',
             tubeFluid: 'water',
-            shell: 'E',
+            shell: 'F',
+            tubeOTreq: 37.36,
+            shellOTreq: 60.44,
+            tubeLength: 0,//4.3,
 
             // tubeIT: 65.6,
             // tubeMFR: 36.3,
@@ -206,6 +235,8 @@ class RatingResult extends React.Component {
                     <div><p></p> <h5></h5></div>
                     <div><p>Shell pressure drop:</p> <h5>{this.state.shellPressureDrop}Pa</h5></div>
                     <div><p>Tube pressure drop:</p> <h5>{this.state.tubePressureDrop}Pa</h5></div>
+                    <div><p></p> <h5></h5></div>
+                    <div><p>Minimum tube length:</p> <h5>{this.state.tubeLength}m</h5></div>
                 </div>
                 <button onClick={() => console.log(this.state)}>log state</button>
             </div>
@@ -213,4 +244,4 @@ class RatingResult extends React.Component {
     }
 }
 
-export default RatingResult;
+export default SizingResult;

@@ -1,12 +1,13 @@
 import React from 'react';
-import RatingAnalysisPage from './RatingAnalysisPage';
-import RatingInputPage from './RatingInputPage';
-import RatingResultPage from './RatingResult';
+import SizingAnalysisPage from './SizingAnalysisPage';
+import SizingInputPage from './SizingInputPage';
+import SizingResultPage from './SizingResult';
 import * as dfd from 'danfojs';
 import * as util from '../util';
 
 
-class RatingAnalysis extends React.Component {
+
+class SizingAnalysis extends React.Component {
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,6 +22,7 @@ class RatingAnalysis extends React.Component {
             // constants for shell
             shellIT: 0,//required
             shellOT: 0,
+            shellOTreq: 0,
             shellMFR: 0,
             shellSHC: 0.01,  //put 0.01 cos sometimes the initial value of 0 will cause program to crash
             shellDV: 0.01,
@@ -31,6 +33,7 @@ class RatingAnalysis extends React.Component {
             // Constant for tube
             tubeIT: 0,//required
             tubeOT: 0,
+            tubeOTreq: 0,
             tubeMFR: 0,
             tubeSHC: 0.01,
             tubeDV: 0.01,
@@ -214,7 +217,7 @@ class RatingAnalysis extends React.Component {
                 <button onClick={() => console.log(this.state)}>log state</button>
 
                 <div className={`${this.state.currentPage === "forms" ? "" : "hide"}`}>
-                    <RatingAnalysisPage
+                    <SizingAnalysisPage
                         data={this.state}
                         handleSubmit={this.handleSubmit}
                         handlePageChange={this.handlePageChange}
@@ -223,13 +226,13 @@ class RatingAnalysis extends React.Component {
                     />
                 </div>
                 <div className={`${this.state.currentPage === "inputCheck" ? "" : "hide"}`}>
-                    <RatingInputPage
+                    <SizingInputPage
                         data={this.state}
                         handleSubmit={this.handleSubmit}
                         handlePageChange={this.handlePageChange} />
                 </div>
                 <div className={`${this.state.currentPage === "result" ? "" : "hide"}`}>
-                    <RatingResultPage
+                    <SizingResultPage
                         data={this.state}
                         handleSubmit={this.handleSubmit}
                         handlePageChange={this.handlePageChange}
@@ -242,4 +245,4 @@ class RatingAnalysis extends React.Component {
         );
     }
 }
-export default RatingAnalysis;
+export default SizingAnalysis;

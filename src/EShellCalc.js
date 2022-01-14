@@ -5,9 +5,9 @@ import math from "mathjs";
 import * as util from './util';
 
 
-export function EShellThermalCalculation(data, State) {
+export function EShellThermalCalculation(data, State, Length) {
 
-    const {
+    let {
         shellFluid,
         tubeFluid,
         // constants for shell
@@ -74,6 +74,12 @@ export function EShellThermalCalculation(data, State) {
     ////////////////////Geometrical Calculations, Shah 594/////////////////////////
     //Assumptions: The shell-and-tube heat exchanger is assumed to have the ideal geometrical
     //characteristics summarized in Section 8.5
+
+    if (Length) { //this is here for sizing calculation
+        tubeLength = Length
+    }
+
+    
 
     const D_otl = shellInnerDiameter - 0.015 //Diameter of the outer tube limit, can add to input, or we decide ourself just take D-15mm
 
@@ -286,13 +292,13 @@ export function EShellThermalCalculation(data, State) {
     } else {
         HEeffectiveness = 2 / (((1 + C_star) + (1 + C_star ** 2) ** 0.5) * coth)
     }
-    console.log("HEeffectiveness", HEeffectiveness)
+    // console.log("HEeffectiveness", HEeffectiveness)
     o.HEeffectiveness = HEeffectiveness.toFixed(6);
 
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
     //Heat Transfer Rate
     const Q = HEeffectiveness * C_min * Math.abs(shellIT - tubeIT)
-    console.log("Q", Q)
+    // console.log("Q", Q)
     //Shell exit temperature
     const shellOT2 = shellIT - HEeffectiveness * C_star * (shellIT - tubeIT)
     o.shellOT = shellOT2.toFixed(6);
@@ -306,10 +312,10 @@ export function EShellThermalCalculation(data, State) {
     //check mean temp, if difference is more than 1°C, we iterate again
     o.newShellMeanT = (shellOT2 + shellIT) / 2
     o.newTubeMeanT = (tubeOT2 + tubeIT) / 2
-    console.log("newShellMeanT " + o.newShellMeanT)
-    console.log("shellMeanT " + o.shellMeanT)
-    console.log("newTubeMeanT " + o.newTubeMeanT)
-    console.log("tubeMeanT " + o.tubeMeanT)
+    // console.log("newShellMeanT " + o.newShellMeanT)
+    // console.log("shellMeanT " + o.shellMeanT)
+    // console.log("newTubeMeanT " + o.newTubeMeanT)
+    // console.log("tubeMeanT " + o.tubeMeanT)
 
     console.log("ShellOT ", shellOT2)
     console.log("TubeOT ", tubeOT2)
@@ -364,7 +370,7 @@ export function EShellThermalCalculation(data, State) {
         const firstTerm = (4 * frictionFactor * tubeLength / tubeInnerD)
         const tubePressureDrop = coeff_in_front * (firstTerm + entranceEffect - exitEffect) * numberPasses
         o.tubePressureDrop = tubePressureDrop
-        console.log("tubePressureDrop ", tubePressureDrop)
+        // console.log("tubePressureDrop ", tubePressureDrop)
     }
 
 

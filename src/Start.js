@@ -10,11 +10,11 @@ const Start = () => {
                         <h2 className="buttonText">Rating Analysis</h2>
                     </Link>
                 </div>
-                {/* <div className="navButtons" >
+                <div className="navButtons" >
                     <Link to={"/SizingAnalysis"} className="navLink">
                         <h2 className="buttonText">Sizing Analysis</h2>
                     </Link>
-                </div> */}
+                </div>
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Start from './Start';
 import RatingAnalysis from './Rating/RatingAnalysis';
-import SizingAnalysis from './SizingAnalysis';
+import SizingAnalysis from './Sizing/SizingAnalysis';
 
 
 function App() {
@@ -17,9 +17,9 @@ function App() {
             <Route path="/RatingAnalysis">
               <RatingAnalysis />
             </Route>
-            {/* <Route path="/SizingAnalysis">
+            <Route path="/SizingAnalysis">
               <SizingAnalysis />
-            </Route> */}
+            </Route>
           </Switch>
         </Router>
       </div>
