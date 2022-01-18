@@ -82,7 +82,7 @@ const Tab2 = (props) => {
         let tubeDrawn = 0
         let currentRow //change this to 2 to leave center row empty for longitudinal baffle, 1 to fill the center row
 
-        if (shell == "E"){
+        if (shell == "E" || shell == "J"){
             currentRow = 1 
         } else {
             currentRow = 2

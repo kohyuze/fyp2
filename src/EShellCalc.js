@@ -81,7 +81,7 @@ export function EShellThermalCalculation(data, State, Length) {
     }
 
     // calculate the centralBaffleSpacing from the numberBaffles
-    centralBaffleSpacing = (tubeLength - 2 * clearance)/(numberBaffles - 1)
+    centralBaffleSpacing = Math.exp((tubeLength - 2 * clearance)/(numberBaffles - 1))
     console.log("Baffle Spacing ", centralBaffleSpacing)
 
     const D_otl = shellInnerDiameter - 0.015 //Diameter of the outer tube limit, can add to input, or we decide ourself just take D-15mm

@@ -93,7 +93,7 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
 
     // calculate the centralBaffleSpacing from the numberBaffles
-    centralBaffleSpacing = (tubeLength - 2 * clearance)/(numberBaffles - 1)
+    centralBaffleSpacing = Math.exp((tubeLength - 2 * clearance)/(numberBaffles - 1))
     console.log("Baffle Spacing ", centralBaffleSpacing)
 
     

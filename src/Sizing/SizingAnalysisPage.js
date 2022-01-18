@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import Tab1Graphics from './SizingTab1Graphics';
-import Tab2Graphics from './SizingTab2Graphics';
+import Tab1Graphics from '../Tab1Graphics';
+import Tab2Graphics from '../Tab2Graphics';
 import Tab1Form from './SizingTab1Form';
 import Tab2Form from './SizingTab2Form';
 import Tab3Form from './SizingTab3Form';

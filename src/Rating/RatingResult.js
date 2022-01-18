@@ -161,7 +161,7 @@ class RatingResult extends React.Component {
         this.props.handleSubmit({
             shellFluid: 'engine oil',
             tubeFluid: 'water',
-            shell: 'H',
+            shell: 'E',
             shellIT: 65.6,
             shellMFR: 36.3,
             shellFF: 0.000176,
@@ -176,6 +176,13 @@ class RatingResult extends React.Component {
             tubePitch: 0.025,            
             layoutAngle: "rotated-square",
             
+            numberPasses: 2,
+            tubeLength: 4.3,            
+            baffleCutPercent: 25.8, //0.0867, //this value is in m, refers to the open space of the baffles
+            numberBaffles: 14,
+            //centralBaffleSpacing: 0.279,
+            clearance: 0.318,
+            recalculate: 1
             
 
             // tubeIT: 65.6,
@@ -193,13 +200,7 @@ class RatingResult extends React.Component {
             // tubeFluid: 'engine oil',
             // shellFluid: 'water',
 
-            numberPasses: 2,
-            tubeLength: 4.3,            
-            baffleCutPercent: 25.8, //0.0867, //this value is in m, refers to the open space of the baffles
-            numberBaffles: 10,
-            centralBaffleSpacing: 0.279,
-            clearance: 0.318,
-            recalculate: 1
+            
         })
         this.props.updateShellProperties(65.6, 'engine oil')
         this.props.updateTubeProperties(32.2, 'water')

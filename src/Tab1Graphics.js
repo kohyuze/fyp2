@@ -1,15 +1,13 @@
 import { useEffect, useRef } from "react";
-import E from '../Resources/E.png'
-//import F from '../Resources/F.png'
-//import U from '../Resources/U.png'
-import A_1 from '../Resources/A_1.png'
-import A_2 from '../Resources/A_2.png'
-import B_1 from '../Resources/B_1.png'
-import B_2 from '../Resources/B_2.png'
-import L_1 from '../Resources/L_1.png'
-import L_0 from '../Resources/L_0.png'
-import M_1 from '../Resources/M_1.png'
-import M_0 from '../Resources/M_0.png'
+import E from './Resources/E.png'
+import A_1 from './Resources/A_1.png'
+import A_2 from './Resources/A_2.png'
+import B_1 from './Resources/B_1.png'
+import B_2 from './Resources/B_2.png'
+import L_1 from './Resources/L_1.png'
+import L_0 from './Resources/L_0.png'
+import M_1 from './Resources/M_1.png'
+import M_0 from './Resources/M_0.png'
 
 const Tab1 = (props) => {
 
@@ -260,8 +258,8 @@ const Tab1 = (props) => {
                     numberBafflesPerSide = Math.floor(numberBaffles / 2)
                     centralBaffleSpacing = (tubeLengthPerSide - 2 * clearance) / (numberBafflesPerSide - 1)
                     baffleSpacing = (centralBaffleSpacing / tubeLength) * shellInsideWidth //central baffle spacing
-                    console.log("NUMBER BAFFLES ", numberBaffles)
-                    console.log("NUMBER BAFFLES PER SIDE", numberBafflesPerSide)
+                    // console.log("NUMBER BAFFLES ", numberBaffles)
+                    // console.log("NUMBER BAFFLES PER SIDE", numberBafflesPerSide)
 
                     var inputNozzleX = shellTopLeftX + 0.5 * shellInsideWidth;
                     var inputNozzleY = shellTopLeftY - nozzleHeight;
@@ -308,8 +306,8 @@ const Tab1 = (props) => {
                     numberBafflesPerSide = Math.floor(numberBaffles / 4)
                     centralBaffleSpacing = (tubeLengthPerSide - 2 * clearance) / (numberBafflesPerSide - 1)
                     baffleSpacing = (centralBaffleSpacing / tubeLength) * shellInsideWidth //central baffle spacing
-                    console.log("NUMBER BAFFLES ", numberBaffles)
-                    console.log("NUMBER BAFFLES PER SIDE", numberBafflesPerSide)
+                    // console.log("NUMBER BAFFLES ", numberBaffles)
+                    // console.log("NUMBER BAFFLES PER SIDE", numberBafflesPerSide)
 
 
                     var inputNozzleLX = shellTopLeftX + 0.25 * shellInsideWidth;
@@ -388,8 +386,8 @@ const Tab1 = (props) => {
                     centralBaffleSpacing = (tubeLengthPerSide - 2 * clearance) / (numberBafflesPerSide - 1)
                     baffleSpacing = (centralBaffleSpacing / tubeLength) * shellInsideWidth //central baffle spacing
 
-                    console.log("NUMBER BAFFLES ", numberBaffles)
-                    console.log("NUMBER BAFFLES PER SIDE", numberBafflesPerSide)
+                    // console.log("NUMBER BAFFLES ", numberBaffles)
+                    // console.log("NUMBER BAFFLES PER SIDE", numberBafflesPerSide)
 
                     var inputNozzleX = shellTopLeftX + 0.5 * shellInsideWidth;
                     var inputNozzleY = shellTopLeftY - nozzleHeight;

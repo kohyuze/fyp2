@@ -81,6 +81,8 @@ class SizingTab1Form extends React.Component {
                                 <option value="E">E</option>
                                 <option value="F">F</option>
                                 <option value="G">G</option>
+                                <option value="H">H</option>
+                                <option value="J">J</option>
                             </MySelect>
                             <MySelect label="Rear" name="rear" >
                                 <option value="">Select rear</option>

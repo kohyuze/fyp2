@@ -28,7 +28,7 @@ class SizingResult extends React.Component {
     }
 
     calculate() {
-        const {
+        let {
             shell,
             shellFluid,
             tubeFluid,
@@ -79,7 +79,7 @@ class SizingResult extends React.Component {
             updateShellProperties
         } = this.props;
 
-
+        
 
         console.log("Iteration " + this.state.iteration)
         this.setState({ iteration: this.state.iteration + 1 })
@@ -91,12 +91,17 @@ class SizingResult extends React.Component {
 
         let o;
 
+        //min tubeLength need to be 2x clearance. We'll set the min here to be 3xClearance and start iterating from here
+        if (this.state.iteration == 1){
+            tubeLength = 3 * clearance
+        }
+
         switch (shell) {
             case 'E':
                 o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
 
-                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 3) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
                     const newTubeLength = tubeLength + 0.1
                     handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
                 }
@@ -193,23 +198,33 @@ class SizingResult extends React.Component {
 
     componentDidMount() {
         this.props.handleSubmit({
+            shellFluid: 'engine oil',
+            tubeFluid: 'water',
+            shell: 'F',
             shellIT: 65.6,
             shellMFR: 36.3,
             shellFF: 0.000176,
             tubeIT: 32.2,
             tubeMFR: 18.1,
             tubeFF: 0.000088,
+            
+            tubeOTreq: 35.9,
+            shellOTreq: 61.9,
+            
+            numberTube: 102,
             tubeInnerD: 0.0166,
             tubeOuterD: 0.019,
-            tubePitch: 0.025,
-            numberTube: 102,
+            shellInnerDiameter: 0.336,
+            tubePitch: 0.025,            
+            layoutAngle: "rotated-square",
+
             numberPasses: 2,
-            shellFluid: 'engine oil',
-            tubeFluid: 'water',
-            shell: 'F',
-            tubeOTreq: 37.36,
-            shellOTreq: 60.44,
-            tubeLength: 0,//4.3,
+            tubeLength: 0, //4.3,            
+            baffleCutPercent: 25.8,
+            numberBaffles: 14,
+            //centralBaffleSpacing: 0.279,
+            clearance: 0.318,
+            recalculate: 1
 
             // tubeIT: 65.6,
             // tubeMFR: 36.3,
@@ -226,13 +241,7 @@ class SizingResult extends React.Component {
             // tubeFluid: 'engine oil',
             // shellFluid: 'water',
 
-
-            layoutAngle: "rotated-square",
-            shellInnerDiameter: 0.336,
-            baffleCutPercent: 25.8, //0.0867, //this value is in m, refers to the open space of the baffles
-            centralBaffleSpacing: 0.279,
-            clearance: 0.318,
-            recalculate: 1
+            
         })
         this.props.updateShellProperties(65.6, 'engine oil')
         this.props.updateTubeProperties(32.2, 'water')

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import Tab1Graphics from './RatingTab1Graphics';
-import Tab2Graphics from './RatingTab2Graphics';
+import Tab1Graphics from '../Tab1Graphics';
+import Tab2Graphics from '../Tab2Graphics';
 import Tab1Form from './RatingTab1Form';
 import Tab2Form from './RatingTab2Form';
 import Tab3Form from './RatingTab3Form';
