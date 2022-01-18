@@ -40,6 +40,7 @@ export function EShellThermalCalculation(data, State, Length) {
         shellInnerDiameter,
         baffleCutPercent,
         centralBaffleSpacing,
+        numberBaffles,
         clearance,
         shellSideFluidDynamicViscocity,
         tubeMaterialThermalConductivity,
@@ -79,7 +80,9 @@ export function EShellThermalCalculation(data, State, Length) {
         tubeLength = Length
     }
 
-    
+    // calculate the centralBaffleSpacing from the numberBaffles
+    centralBaffleSpacing = (tubeLength - 2 * clearance)/(numberBaffles - 1)
+    console.log("Baffle Spacing ", centralBaffleSpacing)
 
     const D_otl = shellInnerDiameter - 0.015 //Diameter of the outer tube limit, can add to input, or we decide ourself just take D-15mm
 
@@ -163,7 +166,8 @@ export function EShellThermalCalculation(data, State, Length) {
 
 
     //Now, compute the number of baffles from Eq. (8.126) as
-    const N_b = Math.floor((tubeLength - clearance - clearance) / centralBaffleSpacing + 1)
+    const N_b = numberBaffles
+    //Math.floor((tubeLength - clearance - clearance) / centralBaffleSpacing + 1)
 
     //Bypass and Leakage Flow Areas. To calculate the fraction of crossflow area available for
     //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area

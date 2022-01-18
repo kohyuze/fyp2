@@ -64,7 +64,7 @@ class RatingTab2Form extends React.Component {
                     }}
                 >
                     <Form>
-                        <h2 className='categoryHeader'>Tube Side configs</h2>
+                        <h2 className='categoryHeader'>Configurations</h2>
                         <MyTextInput
                             label="Number of Tubes"
                             name="numberTube"
@@ -99,7 +99,7 @@ class RatingTab2Form extends React.Component {
                             type="text"
                             placeholder="Tube Pitch"
                             unit="m"
-                        />
+                        />                        
                         <MySelect label="Tube Layout" name="layoutAngle">
                             <option value="">Select a Layout</option>
                             <option value="triangular">triangular</option>

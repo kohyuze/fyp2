@@ -3,6 +3,8 @@ import * as dfd from 'danfojs';
 import * as EShellThermalCalc from '../EShellCalc';
 import * as FShellThermalCalc from '../FShellCalc';
 import * as GShellThermalCalc from '../GShellCalc';
+import * as HShellThermalCalc from '../HShellCalc';
+import * as JShellThermalCalc from '../JShellCalc';
 
 
 class RatingResult extends React.Component {
@@ -104,7 +106,7 @@ class RatingResult extends React.Component {
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
                     this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid) 
+                    updateShellProperties(o.newShellMeanT, shellFluid)
                 }
                 if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
@@ -117,7 +119,33 @@ class RatingResult extends React.Component {
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
                     this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid) 
+                    updateShellProperties(o.newShellMeanT, shellFluid)
+                }
+                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
+                    this.setState({ tubeMeanT: o.newTubeMeanT })
+                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+                }
+                break;
+            case 'H':
+                o = HShellThermalCalc.HShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
+                this.setState(o)
+
+                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
+                    this.setState({ shellMeanT: o.newShellMeanT })
+                    updateShellProperties(o.newShellMeanT, shellFluid)
+                }
+                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
+                    this.setState({ tubeMeanT: o.newTubeMeanT })
+                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+                }
+                break;
+            case 'J':
+                o = JShellThermalCalc.JShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
+                this.setState(o)
+
+                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
+                    this.setState({ shellMeanT: o.newShellMeanT })
+                    updateShellProperties(o.newShellMeanT, shellFluid)
                 }
                 if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
@@ -131,21 +159,24 @@ class RatingResult extends React.Component {
 
     componentDidMount() {
         this.props.handleSubmit({
+            shellFluid: 'engine oil',
+            tubeFluid: 'water',
+            shell: 'H',
             shellIT: 65.6,
             shellMFR: 36.3,
             shellFF: 0.000176,
             tubeIT: 32.2,
-            tubeMFR: 18.1,  
+            tubeMFR: 18.1,
             tubeFF: 0.000088,
+            
+            numberTube: 102,
             tubeInnerD: 0.0166,
             tubeOuterD: 0.019,
-            tubePitch: 0.025,
-            numberTube: 102,
-            numberPasses: 2,
-            tubeLength: 4.3,
-            shellFluid: 'engine oil',
-            tubeFluid: 'water',
-            shell: 'E',
+            shellInnerDiameter: 0.336,
+            tubePitch: 0.025,            
+            layoutAngle: "rotated-square",
+            
+            
 
             // tubeIT: 65.6,
             // tubeMFR: 36.3,
@@ -162,10 +193,10 @@ class RatingResult extends React.Component {
             // tubeFluid: 'engine oil',
             // shellFluid: 'water',
 
-
-            layoutAngle: "rotated-square",
-            shellInnerDiameter: 0.336,
+            numberPasses: 2,
+            tubeLength: 4.3,            
             baffleCutPercent: 25.8, //0.0867, //this value is in m, refers to the open space of the baffles
+            numberBaffles: 10,
             centralBaffleSpacing: 0.279,
             clearance: 0.318,
             recalculate: 1

@@ -39,6 +39,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         shellInnerDiameter,
         baffleCutPercent,
         centralBaffleSpacing,
+        numberBaffles,
         clearance,
         shellSideFluidDynamicViscocity,
         tubeMaterialThermalConductivity,
@@ -75,8 +76,13 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     //characteristics summarized in Section 8.5
 
     //for G shells, tube length needs to be halved, massFlowRate needs to be halved too.
-    tubeLength = 0.5 * tubeLength
+    let tubeLengthPerSide = 0.5 * tubeLength
     shellMFR = 0.5 * shellMFR
+
+    // calculate the centralBaffleSpacing from the numberBaffles
+    let numberBafflesPerSide = Math.floor(numberBaffles/2)
+    centralBaffleSpacing = (tubeLengthPerSide - 2 * clearance)/(numberBafflesPerSide - 1)
+    console.log("Baffle Spacing ", centralBaffleSpacing)
 
 
     let X_l, X_t;
@@ -168,7 +174,8 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
 
     //Now, compute the number of baffles from Eq. (8.126) as
-    const N_b = Math.floor((tubeLength - clearance - clearance) / centralBaffleSpacing + 1)
+    const N_b = numberBafflesPerSide
+    //Math.floor((tubeLengthPerSide - clearance - clearance) / centralBaffleSpacing + 1)
     console.log("Nb", N_b)
 
     //Bypass and Leakage Flow Areas. To calculate the fraction of crossflow area available for
@@ -276,7 +283,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
     //------------- Heat Transfer Effectiveness------------------
     //Total tube outside heat transfer area
-    const A_s = Math.PI * tubeLength * tubeOuterD * numberTube / 2 //one pass has half the tubes
+    const A_s = Math.PI * tubeLengthPerSide * tubeOuterD * numberTube / 2 //one pass has half the tubes
     const C_tube = tubeMFR * tubeSHC
     const C_shell = shellMFR * shellSHC
     let C_min
@@ -441,8 +448,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     o.shellPressureDrop = shellPressureDrop
 
     //------------------Tube side pressure drop shah pg657----------------------
-    //need to change tubeLength back to its original value
-    tubeLength = 2 * tubeLength
+    //need to use back the original full tube length
 
     const frictionFactor = 0.046 * tubeRe ** -0.2; //eqn 7.72
 
@@ -458,6 +464,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         const firstTerm = (4 * frictionFactor * tubeLength / tubeInnerD)
         const tubePressureDrop = coeff_in_front * (firstTerm + entranceEffect - exitEffect) * numberPasses
         o.tubePressureDrop = tubePressureDrop
+        console.log("shellPressureDrop ", shellPressureDrop)
         console.log("tubePressureDrop ", tubePressureDrop)
     }
 

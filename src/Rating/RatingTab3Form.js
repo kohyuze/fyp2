@@ -85,20 +85,40 @@ class RatingTab3Form extends React.Component {
                     }}
                 >
                     <Form>
-                        <h2 className='categoryHeader'>Shell Side Fluid</h2>
+                        <h2 className='categoryHeader'>Configurations</h2>
+                        <MyTextInput
+                            label="Tube Length"
+                            name="tubeLength"
+                            type="text"
+                            placeholder="Tube Length"
+                            unit=""
+                        />
+                        <MySelect label="Number of Passes" name="numberPasses">
+                            <option value="">Number of Passes</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                        </MySelect>
+                        {/* <MyTextInput
+                            label="Central Baffles Spacing"
+                            name="centralBaffleSpacing"
+                            type="text"
+                            placeholder="Central Baffles Spacing"
+                            unit="m"
+                        /> */}
+                        <MyTextInput
+                            label="Number of Baffles"
+                            name="numberBaffles"
+                            type="text"
+                            placeholder="Number of Baffles"
+                            unit=""
+                        />
                         <MyTextInput
                             label="Baffle Cut"
                             name="baffleCutPercent"
                             type="text"
                             placeholder="Baffle Cut"
                             unit="%"
-                        />
-                        <MyTextInput
-                            label="Central Baffles Spacing"
-                            name="centralBaffleSpacing"
-                            type="text"
-                            placeholder="Central Baffles Spacing"
-                            unit="m"
                         />
                         <MyTextInput
                             label="Clearance"
