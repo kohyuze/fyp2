@@ -191,7 +191,7 @@ export function EShellThermalCalculation(data, State, Length) {
     //This concludes all geometrical characteristics needed for the thermal design/rating of a
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
-    const k_w = 111 //thermal conductivity of tube wall. user input.<====================================================================================================================
+    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input.<====================================================================================================================
 
     //////////////Thermal calculations, Shah pg653//////////////////////////
     //-----Shell-Side Heat Transfer Coefficient-----------------------

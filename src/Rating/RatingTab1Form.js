@@ -97,6 +97,9 @@ class RatingTab1Form extends React.Component {
                             <option value="">Select a Shell Fluid</option>
                             <option value="water">Water</option>
                             <option value="engine oil">Engine Oil</option>
+                            <option value="50% Ethylene Glycol">50% Ethylene Glycol</option>
+                            <option value="Ethylene Glycol">Ethylene Glycol</option>
+                            <option value="Glycerin">Glycerin</option>
                         </MySelect>
                         <MyTextInput
                             label="Inlet Temperature" //text infront of box
@@ -117,6 +120,9 @@ class RatingTab1Form extends React.Component {
                             <option value="">Select a Tube Fluid</option>
                             <option value="water">Water</option>
                             <option value="engine oil">Engine Oil</option>
+                            <option value="50% Ethylene Glycol">50% Ethylene Glycol</option>
+                            <option value="Ethylene Glycol">Ethylene Glycol</option>
+                            <option value="Glycerin">Glycerin</option>
                         </MySelect>
                         <MyTextInput
                             label="Inlet Temperature" //text infront of box

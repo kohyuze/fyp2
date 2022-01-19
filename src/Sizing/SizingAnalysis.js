@@ -54,13 +54,14 @@ class SizingAnalysis extends React.Component {
             clearance: 0,
             shellSideFluidDynamicViscocity: 0,
             tubeMaterialThermalConductivity: 0,
+            tubeMaterial: "Admiralty (70% Cu, 30% Ni)",
             tubeLength: 0, //new
             // Constant for material design
-            tubeUnsupportedLength: 0,
-            tubeYoungModule: 0,
-            tubeLongitudeStress: 0,
-            addedMassCoefficient: 0,
-            metalMassUnitLength: 0,
+            // tubeUnsupportedLength: 0,
+            // tubeYoungModule: 0,
+            // tubeLongitudeStress: 0,
+            // addedMassCoefficient: 0,
+            // metalMassUnitLength: 0,
             //TEMA configs
             head: 'A_1',
             shell: 'E',

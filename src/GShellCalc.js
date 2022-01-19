@@ -201,7 +201,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
 
-    const k_w = 111 //thermal conductivity of tube wall. user input. <====================================================================================================================
+    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input. <====================================================================================================================
 
 
     //////////////Thermal calculations, Shah pg653//////////////////////////
@@ -252,7 +252,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
     //This heat transfer coefficient should be corrected for the fluid property variationsas outlined in Section 7.6.1
     // once the wall temperature is calculated in the next iteration.
-    o.shellHEcoeff = h_s.toFixed(6);
+    o.shellHEcoeff = h_s.toFixed(2);
 
     //-----Tube-Side Heat Transfer Coefficient-----------------------
     //Number of tubes per pass
@@ -273,13 +273,13 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     //Heat transfer coefficient
     const h_t = (tubeNu * tubeTC) / tubeInnerD
     //console.log("h_t", h_t)
-    o.tubeHEcoeff = h_t.toFixed(6);
+    o.tubeHEcoeff = h_t.toFixed(2);
 
     //---------------Overall Heat Transfer Coefficient------------
     const U_inverse = (1 / h_s) + shellFF + ((tubeOuterD * Math.log(tubeOuterD / tubeInnerD)) / (2 * k_w)) + tubeFF * (tubeOuterD / tubeInnerD) + (1 / h_t) * (tubeOuterD / tubeInnerD)
     const overallHEcoeff = 1 / U_inverse
     //console.log("overallHEcoeff", overallHEcoeff)
-    o.overallHEcoeff = overallHEcoeff.toFixed(6);
+    o.overallHEcoeff = overallHEcoeff.toFixed(2);
 
     //------------- Heat Transfer Effectiveness------------------
     //Total tube outside heat transfer area
@@ -318,7 +318,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     }
 
     // console.log("HEeffectiveness", HEeffectiveness)
-    // o.HEeffectiveness = HEeffectiveness.toFixed(6);
+    // o.HEeffectiveness = HEeffectiveness.toFixed(2);
 
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
     // Refer to report on this segment. Pg ___
@@ -401,8 +401,8 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         tubeOT2 = Number(T_ho)
     }
 
-    o.shellOT = shellOT2.toFixed(6);
-    o.tubeOT = tubeOT2.toFixed(6);
+    o.shellOT = shellOT2.toFixed(2);
+    o.tubeOT = tubeOT2.toFixed(2);
 
     //check mean temp, if difference is more than 1°C, we iterate again
     o.newShellMeanT = (shellOT2 + shellIT) / 2
@@ -445,7 +445,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw / N_rcc)) * C_b * C_s
 
     const shellPressureDrop = (deltaP_cr + deltaP_w + deltaP_io) * 2 //since F shell is 2 shells
-    o.shellPressureDrop = shellPressureDrop
+    o.shellPressureDrop = shellPressureDrop.toFixed(2)
 
     //------------------Tube side pressure drop shah pg657----------------------
     //need to use back the original full tube length
@@ -463,7 +463,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         const coeff_in_front = tubeMFR ** 2 / (2 * tubeD * A_ot ** 2)
         const firstTerm = (4 * frictionFactor * tubeLength / tubeInnerD)
         const tubePressureDrop = coeff_in_front * (firstTerm + entranceEffect - exitEffect) * numberPasses
-        o.tubePressureDrop = tubePressureDrop
+        o.tubePressureDrop = tubePressureDrop.toFixed(2)
         console.log("shellPressureDrop ", shellPressureDrop)
         console.log("tubePressureDrop ", tubePressureDrop)
     }

@@ -34,6 +34,7 @@ class SizingResult extends React.Component {
             tubeFluid,
             Kc,
             Ke,
+            tubeMaterial,
             // constants for shell
             shellIT,
             shellOT,
@@ -84,10 +85,42 @@ class SizingResult extends React.Component {
         console.log("Iteration " + this.state.iteration)
         this.setState({ iteration: this.state.iteration + 1 })
 
+        //need to update the tube materials conductivity
+        switch (tubeMaterial) {
+            case "Admiralty (70% Cu, 30% Ni)":
+                handleSubmit({tubeMaterialThermalConductivity: 111})
+                break
+            case "Stainless Steel":
+                handleSubmit({tubeMaterialThermalConductivity: 25})
+                break
+            case "Mild Steel":
+                handleSubmit({tubeMaterialThermalConductivity: 50})
+                break
+            case "Copper":
+                handleSubmit({tubeMaterialThermalConductivity: 386})
+                break
+            case "Nickle":
+                handleSubmit({tubeMaterialThermalConductivity: 92})
+                break
+            case "Aluminium":
+                handleSubmit({tubeMaterialThermalConductivity: 239})
+                break
+            case "Borosilicate Glass":
+                handleSubmit({tubeMaterialThermalConductivity: 1.15})
+                break
+            case "Zinc":
+                handleSubmit({tubeMaterialThermalConductivity: 113})
+                break
+            case "Titanium Alloy":
+                handleSubmit({tubeMaterialThermalConductivity: 7.5})
+                break
+            default: //Admiralty
+                handleSubmit({tubeMaterialThermalConductivity: 111})
+                break
+        }
+
         //procedure for sizing: we need to determine the length of the HX needed to meet the HT load. 
         //we assume one small value for the length first, then we do the rating exercise. Increase the value and repeat until HT load is met.
-
-
 
         let o;
 

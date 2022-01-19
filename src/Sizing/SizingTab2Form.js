@@ -106,6 +106,18 @@ class SizingTab2Form extends React.Component {
                             <option value="square">square</option>
                             <option value="rotated-square">rotated-square</option>
                         </MySelect>
+                        <MySelect label="Tube Material" name="tubeMaterial">
+                            <option value="">Select a tube material</option>
+                            <option value="Admiralty (70% Cu, 30% Ni)">Admiralty (70% Cu, 30% Ni)</option>
+                            <option value="Stainless Steel">Stainless Steel</option>
+                            <option value="Mild Steel">Mild Steel</option>
+                            <option value="Copper">Copper</option>
+                            <option value="Nickle">Nickle</option>
+                            <option value="Aluminium">Aluminium</option>
+                            <option value="Borosilicate Glass">Borosilicate Glass</option>
+                            <option value="Zinc">Zinc</option>
+                            <option value="Titanium Alloy">Titanium Alloy</option>
+                        </MySelect>
                         <button className='applyButton' type="submit" >Apply</button>
                         {/* button is not done, dk what to do with it yet */}                       
                     </Form>

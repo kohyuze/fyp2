@@ -117,9 +117,9 @@ const Tab2 = (props) => {
                                     c.stroke();
                                     tubeDrawn++
                                 }
-                                console.log(tubeDrawn, i)
+                                //console.log(tubeDrawn, i)
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                         else if (currentRow % 2 === 0) {
@@ -137,7 +137,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -156,7 +156,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -178,9 +178,9 @@ const Tab2 = (props) => {
                                     c.stroke();
                                     tubeDrawn++
                                 }
-                                console.log(tubeDrawn, i)
+                                //console.log(tubeDrawn, i)
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                         else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
@@ -210,7 +210,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -241,7 +241,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -264,9 +264,9 @@ const Tab2 = (props) => {
                                     c.stroke();
                                     tubeDrawn++
                                 }
-                                console.log(tubeDrawn, i)
+                                //console.log(tubeDrawn, i)
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                         else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
@@ -296,7 +296,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -327,7 +327,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            console.log(tubeDrawn, currentRow)
+                            //console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                     }
@@ -335,18 +335,18 @@ const Tab2 = (props) => {
             }
             
             const calculatedTubePitch = (imgTubePitch * (shellDiameter / shellImgDiameter)).toPrecision(2)
-            console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
+            //console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
 
             if (currentRow >= tubeDrawn) { //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
-                console.log("Tubes not fully drawn")
+                //console.log("Tubes not fully drawn")
                 imgTubePitch = imgTubePitch * 0.95
             }
             else {
-                console.log("Tubes fully drawn")
+                //console.log("Tubes fully drawn")
                 draw = false;
                 if (tubePitch == 0 ){
                     props.handleSubmit({tubePitch: calculatedTubePitch})
-                    console.log('rewriting tube pitch!')
+                    //console.log('rewriting tube pitch!')
                 }
             }
         }

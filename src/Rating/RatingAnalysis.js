@@ -27,7 +27,7 @@ class RatingAnalysis extends React.Component {
             shellKV: 0.01,
             shellTC: 0.01,
             shellD: 0.01,
-            shellFF: 0.01,
+            shellFF: 0,
             // Constant for tube
             tubeIT: 0,//required
             tubeOT: 0,
@@ -37,7 +37,7 @@ class RatingAnalysis extends React.Component {
             tubeKV: 0.01,
             tubeTC: 0.01,
             tubeD: 0.01,
-            tubeFF: 0.01,
+            tubeFF: 0,
             // Constant for Constraints and physical Dimensions
             tubeInnerD: 0.010,
             tubeOuterD: 0.012,
@@ -53,12 +53,13 @@ class RatingAnalysis extends React.Component {
             shellSideFluidDynamicViscocity: 0,
             tubeMaterialThermalConductivity: 0,
             tubeLength: 0, //new
+            tubeMaterial: "Admiralty (70% Cu, 30% Ni)",
             // Constant for material design
-            tubeUnsupportedLength: 0,
-            tubeYoungModule: 0,
-            tubeLongitudeStress: 0,
-            addedMassCoefficient: 0,
-            metalMassUnitLength: 0,
+            // tubeUnsupportedLength: 0,
+            // tubeYoungModule: 0,
+            // tubeLongitudeStress: 0,
+            // addedMassCoefficient: 0,
+            // metalMassUnitLength: 0,
             //TEMA configs
             head: 'A_1',
             shell: 'E',

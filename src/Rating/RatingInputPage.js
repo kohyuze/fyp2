@@ -51,6 +51,7 @@ class InputPage extends React.Component {
             tubeLength,
             shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
+            tubeMaterial,
             // Constant for material design
             tubeUnsupportedLength,
             tubeYoungModule,
@@ -97,6 +98,8 @@ class InputPage extends React.Component {
                     <div><p>Number of baffles</p> <h5>{numberBaffles}</h5></div>                    
                     <div><p>Clearance</p> <h5>{clearance}m</h5></div>
                     <div><p>Number of Tube Passes</p> <h5>{numberPasses}</h5></div>
+                    <div><p>Tube Material</p> <h5>{tubeMaterial}</h5></div>
+                    <div><p>Tube Wall Thermal Conductivity</p> <h5>{tubeMaterialThermalConductivity}W/m.K</h5></div>
                     <button className='calculate' onClick={() => handlePageChange({ currentPage: 'result' })}>Calculate</button>
                 </div>
             </div>

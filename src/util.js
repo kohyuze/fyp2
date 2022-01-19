@@ -22,6 +22,15 @@ export function fetchProperties(AveT, fluid, callback) {
         case 'engine oil':
             fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/engineOilUnused"
             break;
+        case '50% Ethylene Glycol':
+            fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/50%25%20Ethylene%20Glycol.csv"
+            break;
+        case 'Ethylene Glycol':
+            fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/Ethylene%20Glycol.csv"
+            break;
+        case 'Glycerin':
+            fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/Glycerin.csv"
+            break;
         default:
             //think of a way to catch this error
             fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
