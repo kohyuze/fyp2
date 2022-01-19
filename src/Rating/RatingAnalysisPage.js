@@ -29,7 +29,7 @@ class RatingAnalysis extends React.Component {
             <Tab1Graphics data={this.props.data}/>
           </div>
           <div className={`${this.state.currentTab === "tab-2" ? "" : "hide"}`}>
-            <Tab2Graphics data={this.props.data}/>
+            <Tab2Graphics data={this.props.data} handleSubmit={this.props.handleSubmit}/>
           </div>
           <div className={`${this.state.currentTab === "tab-3" ? "" : "hide"}`}>
             <Tab1Graphics data={this.props.data}/>

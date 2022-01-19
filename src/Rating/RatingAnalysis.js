@@ -41,7 +41,7 @@ class RatingAnalysis extends React.Component {
             // Constant for Constraints and physical Dimensions
             tubeInnerD: 0.010,
             tubeOuterD: 0.012,
-            tubePitch: 0,
+            tubePitch: 0, //default is 0, then will auto calculate
             numberTube: 130,
             numberPasses: 1,
             layoutAngle: "square",
@@ -75,88 +75,9 @@ class RatingAnalysis extends React.Component {
         };
     }
 
-
-
-    interpolate(x, x1, x2, y1, y2) {
-        return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
-    }
-
-    //After fluid and temperature are given, the properties are fetched
-    fetchProperties(AveT, fluid, callback) {
-        let averageTemp = Number(AveT)
-
-        console.log("fetching " + fluid)
-        let fluidProperties = ''
-        switch (fluid) {
-            case 'water':
-                fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
-                break;
-            case 'engine oil':
-                fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/engineOilUnused"
-                break;
-            default:
-                //think of a way to catch this error
-                fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
-                console.log("ERROR: Default steam table used for fluid properties.")
-        }
-
-        dfd.read_csv(fluidProperties)
-            .then(df => {
-                //first we read the entire table, then we pick out only the temp and specific columns
-                let sub_df = df.loc({ columns: ["temp", "densityL", "specHeatL", "dynamicViscL", "therCondL"] })
-                // sub_df.head().print()
-                // sub_df.iloc({rows:[2]}).print();
-                // console.log(sub_df.iloc({ rows: [2] }).$data[0][0])
-
-                // find the row in the steam table with the temperature
-                // the $data[0] is gotten by referencing the object when u console.log the fkin thing,
-                // trying to extract the fkin value from the dataframe was a huge headache.
-                let j = 0;
-                while (averageTemp > Number(sub_df.iloc({ rows: [j] }).$data[0][0])) {
-                    j++
-                }
-
-                let density = this.interpolate(
-                    averageTemp,
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][1]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][1])
-                )
-                let specificHeat = this.interpolate(
-                    averageTemp,
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][2]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][2])
-                )
-                let dynamicVis = this.interpolate(
-                    averageTemp,
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][3]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][3])
-                )
-                let kinematicVis = dynamicVis / density;
-                let therConductivity = this.interpolate(
-                    averageTemp,
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][4]),
-                    Number(sub_df.iloc({ rows: [j] }).$data[0][4])
-                )
-
-                const Properties = [density, specificHeat, dynamicVis, kinematicVis, therConductivity];
-                console.log(Properties)
-                callback(Properties);
-            }).catch(err => {
-                console.log(err);
-            })
-    }
-
     //call this function as u iterate to update the new fluid properties
     updateTubeProperties(tubeAveT, tubeFluid, tubeRe, sigma) {
-        this.fetchProperties(tubeAveT, tubeFluid, (tubeProperties) => {
+        util.fetchProperties(tubeAveT, tubeFluid, (tubeProperties) => {
             this.handleSubmit({ tubeD: tubeProperties[0] })
             this.handleSubmit({ tubeSHC: tubeProperties[1] })
             this.handleSubmit({ tubeDV: tubeProperties[2] })
@@ -183,7 +104,7 @@ class RatingAnalysis extends React.Component {
     }
 
     updateShellProperties(shellAveT, shellFluid) {
-        this.fetchProperties(shellAveT, shellFluid, (shellProperties) => {
+        util.fetchProperties(shellAveT, shellFluid, (shellProperties) => {
             this.handleSubmit({ shellD: shellProperties[0] })
             this.handleSubmit({ shellSHC: shellProperties[1] })
             this.handleSubmit({ shellDV: shellProperties[2] })

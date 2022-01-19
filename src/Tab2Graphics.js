@@ -9,17 +9,14 @@ const Tab2 = (props) => {
         tubeOuterD,
         tubePitch,
         numberTube,
-        layoutAngle,
+        layoutAngle,//square, triangular, rotated square
+
         shellInnerDiameter,
         shell,
     } = props.data;
 
-
-
-    const tubeNo = numberTube
-    const tubeDiameter = tubeInnerD
+    const tubeDiameter = tubeInnerD //we just use the tube inner D for drawing
     const shellDiameter = shellInnerDiameter
-    const tubeConfig = layoutAngle //square, triangular, rotated square
 
     const canvasRef = useRef(null);
 
@@ -27,45 +24,47 @@ const Tab2 = (props) => {
         prepareCanvas();
     });
 
+    //where the naming has "img" in it, it refers to the size in the drawing. Else it refers to the actual HX size.
+
     const prepareCanvas = () => {
-        
+
         const canvas = canvasRef.current
         const shellImgDiameter = canvas.height / 1.1
         const c = canvas.getContext("2d")
-        c.clearRect(0, 0, canvas.width, canvas.height);
-        c.beginPath();
-        c.arc(canvas.width / 2, canvas.height / 2, shellImgDiameter / 2, 0, 2 * Math.PI);
-        c.stroke();
+
 
         const tubeImgDiameter = (tubeDiameter / shellDiameter) * shellImgDiameter
-        
-        
-        const findTubeImgSpacing = (shellImgDiameter, tubeNo, tubeImgDiameter, tubeConfig) => { //horizontal distance between two tubes
-            if (tubeConfig === "triangular"){
-                //recalculate tubeImgSpacing since triangular layout is more compact
+
+        //user will enter tubePitch = 0 if they want to auto calculate.
+        const findingTubePitch = (shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) => { //horizontal distance between two tubes
+            if (tubePitch == 0 ){
+                const imgTubePitch = tubePitch * shellImgDiameter / shellDiameter
+                return (imgTubePitch)
+            } else if (layoutAngle === "triangular") {
+                //recalculate imgTubePitch since triangular layout is more compact
                 // sin60 = 0.866
                 const shellImgArea = Math.PI * (shellImgDiameter ** 2) / 4 - tubeImgDiameter;
-                const tubeImgArea = shellImgArea/(tubeNo / 0.35714 ) //each triangle has 0.35714 tubes
-                const tubeImgSpacing = (4*tubeImgArea/0.866)**0.5
-                return (tubeImgSpacing)
+                const tubeImgArea = shellImgArea / (numberTube / 0.35714) //each triangle has 0.35714 tubes
+                const imgTubePitch = (4 * tubeImgArea / 0.866) ** 0.5
+                return (imgTubePitch)
             }
             else {
                 //each tube occupy a square space, how much space can each square have?
                 //method inspired by the die in wafer problem, see https://math.stackexchange.com/questions/3007527/how-many-squares-fit-in-a-circle
                 const shellImgArea = Math.PI * (shellImgDiameter ** 2) / 4;
-                const B = (Math.PI * shellImgDiameter) / (Math.sqrt(2) * tubeNo);
-                const C = ((-1) * shellImgArea) / (tubeNo)
-                const tubeImgSpacing = (-B + (B ** 2 - 4 * C) ** 0.5) / 2
-                return (tubeImgSpacing)
+                const B = (Math.PI * shellImgDiameter) / (Math.sqrt(2) * numberTube);
+                const C = ((-1) * shellImgArea) / (numberTube)
+                const imgTubePitch = (-B + (B ** 2 - 4 * C) ** 0.5) / 2
+                return (imgTubePitch)
             }
         }
 
-        let tubeImgSpacing = findTubeImgSpacing(shellImgDiameter, tubeNo, tubeConfig)
-        
+        let imgTubePitch = findingTubePitch(shellImgDiameter, numberTube, layoutAngle)
+
         //express the diameter in terms of tube
-        const tubeStayWithinDiameter = shellImgDiameter - tubeImgSpacing
-        const noTubeCenterRow = tubeStayWithinDiameter / tubeImgSpacing * 1.02 //give it abit of margin
-        tubeImgSpacing = (tubeStayWithinDiameter / Math.floor(noTubeCenterRow))//reset tubeImgSpacing so that the rows are evenly spread out
+        const tubeStayWithinDiameter = shellImgDiameter - imgTubePitch
+        const numTubeInCenterRow = tubeStayWithinDiameter / imgTubePitch * 1.07 //give it abit of margin
+        imgTubePitch = (tubeStayWithinDiameter / Math.floor(numTubeInCenterRow)) //reset imgTubePitch so that the rows are evenly spread out
 
         const xleft = canvas.width / 2 - tubeStayWithinDiameter / 2
         const ycenter = canvas.height / 2
@@ -78,255 +77,289 @@ const Tab2 = (props) => {
             else { return false }
         }
 
+        let draw = true;
+        // this is a loop cos sometimes we cannot fit all the tubes in, then we reduce tubepitch and try again
+        while (draw) {
+            //start drawing
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            c.beginPath();
+            c.arc(canvas.width / 2, canvas.height / 2, shellImgDiameter / 2, 0, 2 * Math.PI); //this draw the shell
+            c.stroke();
 
-        let tubeDrawn = 0
-        let currentRow //change this to 2 to leave center row empty for longitudinal baffle, 1 to fill the center row
+            let tubeDrawn = 0
+            let currentRow //change this to 2 to leave center row empty for longitudinal baffle, 1 to fill the center row
 
-        if (shell == "E" || shell == "J"){
-            currentRow = 1 
-        } else {
-            currentRow = 2
-            //draw longitudinal baffle
-            let baffleImgHeight = 0.02 * shellImgDiameter
-            c.fillRect(xcenter - 0.5 * shellImgDiameter, ycenter - 0.5 * baffleImgHeight, shellImgDiameter, baffleImgHeight)
-        }
-
-
-        if (tubeConfig === "square") {
-            while (tubeDrawn < tubeNo && currentRow < tubeNo) {
-                if (currentRow === 1) {
-                    //draw center row
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        const x = xleft + (i * tubeImgSpacing)
-                        const y = ycenter
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                        // console.log(tubeDrawn, i)
-                    }
-                    //console.log(tubeDrawn, currentRow)
-                    currentRow++
-                }
-                else if (currentRow % 2 === 0) {
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        //move up draw another row above
-                        const x = xleft + (i * tubeImgSpacing)
-                        const y = ycenter + ((currentRow / 2) * tubeImgSpacing)
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                    }
-                    //console.log(tubeDrawn, currentRow)
-                    currentRow++
-
-                }
-                else if (currentRow % 2 === 1) {
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        //draw row below
-                        const x = xleft + (i * tubeImgSpacing)
-                        const y = ycenter - ((currentRow / 2 - 0.5) * tubeImgSpacing)
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                    }
-                    //console.log(tubeDrawn, currentRow)
-                    currentRow++
-
-                }
+            if (shell == "E" || shell == "J") {
+                currentRow = 1
+            } else {
+                currentRow = 2
+                //draw longitudinal baffle
+                let baffleImgHeight = 0.02 * shellImgDiameter
+                c.fillRect(xcenter - 0.5 * shellImgDiameter, ycenter - 0.5 * baffleImgHeight, shellImgDiameter, baffleImgHeight)
             }
-        }
 
 
-        else if (tubeConfig === "rotated-square"){
-            while (tubeDrawn < tubeNo && currentRow < tubeNo) {
-                if (currentRow === 1) {
-                    //draw center row
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        const x = xleft + (i * Math.sqrt(2) * tubeImgSpacing)
-                        const y = ycenter
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                        // console.log(tubeDrawn, i)
-                    }
-                   // console.log(tubeDrawn, currentRow)
-                    currentRow++
-                }
-                else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        //move up draw another row above
-                        let x = xleft + (i * Math.sqrt(2) * tubeImgSpacing) + tubeImgSpacing/Math.sqrt(2)
-                        let y = ycenter - ((currentRow ) * tubeImgSpacing/Math.sqrt(2)) + tubeImgSpacing/Math.sqrt(2)
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                        //draw one below
-                        x = xleft + (i * Math.sqrt(2) * tubeImgSpacing) + tubeImgSpacing/Math.sqrt(2)
-                        y = ycenter + ((currentRow ) * tubeImgSpacing/Math.sqrt(2)) - tubeImgSpacing/Math.sqrt(2)
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                    }
-                   // console.log(tubeDrawn, currentRow)
-                    currentRow++
 
-                }
-                else if (currentRow % 2 === 1) { 
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        //draw row above
-                        let x = xleft + (i * Math.sqrt(2) * tubeImgSpacing)
-                        let y = ycenter - ((currentRow / 2 - 0.5) * tubeImgSpacing/Math.sqrt(2)) * 2
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
+            switch (layoutAngle) {
+                case 'square':
+                    while (tubeDrawn < numberTube && currentRow < numberTube) {
+                        if (currentRow === 1) {
+                            //draw center row
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                const x = xleft + (i * imgTubePitch)
+                                const y = ycenter
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                                console.log(tubeDrawn, i)
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
                         }
-                        //draw row below
-                        x = xleft + (i * Math.sqrt(2) * tubeImgSpacing)
-                        y = ycenter + ((currentRow / 2 - 0.5) * tubeImgSpacing/Math.sqrt(2)) * 2
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
+                        else if (currentRow % 2 === 0) {
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                //move up draw another row above
+                                const x = xleft + (i * imgTubePitch)
+                                const y = ycenter + ((currentRow / 2) * imgTubePitch)
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
+
+                        }
+                        else if (currentRow % 2 === 1) {
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                //draw row below
+                                const x = xleft + (i * imgTubePitch)
+                                const y = ycenter - ((currentRow / 2 - 0.5) * imgTubePitch)
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
+
                         }
                     }
-                    //console.log(tubeDrawn, currentRow)
-                    currentRow++
+                    break;
+                case 'rotated-square':
+                    while (tubeDrawn < numberTube && currentRow < numberTube) {
+                        if (currentRow === 1) {
+                            //draw center row
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                const x = xleft + (i * Math.sqrt(2) * imgTubePitch)
+                                const y = ycenter
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                                console.log(tubeDrawn, i)
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
+                        }
+                        else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                //move up draw another row above
+                                let x = xleft + (i * Math.sqrt(2) * imgTubePitch) + imgTubePitch / Math.sqrt(2)
+                                let y = ycenter - ((currentRow) * imgTubePitch / Math.sqrt(2)) + imgTubePitch / Math.sqrt(2)
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                                //draw one below
+                                x = xleft + (i * Math.sqrt(2) * imgTubePitch) + imgTubePitch / Math.sqrt(2)
+                                y = ycenter + ((currentRow) * imgTubePitch / Math.sqrt(2)) - imgTubePitch / Math.sqrt(2)
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
 
-                }
+                        }
+                        else if (currentRow % 2 === 1) {
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                //draw row above
+                                let x = xleft + (i * Math.sqrt(2) * imgTubePitch)
+                                let y = ycenter - ((currentRow / 2 - 0.5) * imgTubePitch / Math.sqrt(2)) * 2
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                                //draw row below
+                                x = xleft + (i * Math.sqrt(2) * imgTubePitch)
+                                y = ycenter + ((currentRow / 2 - 0.5) * imgTubePitch / Math.sqrt(2)) * 2
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
+
+                        }
+                    }
+                    break;
+                case 'triangular':
+                    // sin60 = 0.866
+                    while (tubeDrawn < numberTube && currentRow < numberTube) {
+                        if (currentRow === 1) {
+                            //draw center row
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                const x = xleft + (i * imgTubePitch)
+                                const y = ycenter
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                                console.log(tubeDrawn, i)
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
+                        }
+                        else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                //move up draw another row above
+                                let x = xleft + (i * imgTubePitch) + imgTubePitch / 2
+                                let y = ycenter - ((currentRow) * 0.866 * imgTubePitch) + 0.866 * imgTubePitch
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                                //draw one below
+                                x = xleft + (i * imgTubePitch) + imgTubePitch / 2
+                                y = ycenter + ((currentRow) * 0.866 * imgTubePitch) - 0.866 * imgTubePitch
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
+
+                        }
+                        else if (currentRow % 2 === 1) {
+                            for (let i = 0; i <= numTubeInCenterRow; i++) {
+                                //draw row above
+                                let x = xleft + (i * imgTubePitch)
+                                let y = ycenter - ((currentRow / 2 - 0.5) * 0.866 * imgTubePitch) * 2
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                                //draw row below
+                                x = xleft + (i * imgTubePitch)
+                                y = ycenter + ((currentRow / 2 - 0.5) * 0.866 * imgTubePitch) * 2
+                                if (!CheckTubePosition(x, y) && x < xcenter) { continue }
+                                else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
+                                else if (tubeDrawn >= numberTube) { break }
+                                else {
+                                    c.beginPath();
+                                    c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
+                                    c.stroke();
+                                    tubeDrawn++
+                                }
+                            }
+                            console.log(tubeDrawn, currentRow)
+                            currentRow++
+                        }
+                    }
+                    break
             }
-        }
+            
+            const calculatedTubePitch = (imgTubePitch * (shellDiameter / shellImgDiameter)).toPrecision(2)
+            console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
 
-        else if (tubeConfig === "triangular"){
-            // sin60 = 0.866
-            while (tubeDrawn < tubeNo && currentRow < tubeNo) {
-                if (currentRow === 1) {
-                    //draw center row
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        const x = xleft + (i * tubeImgSpacing)
-                        const y = ycenter
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                        // console.log(tubeDrawn, i)
-                    }
-                    //console.log(tubeDrawn, currentRow)
-                    currentRow++
-                }
-                else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        //move up draw another row above
-                        let x = xleft + (i * tubeImgSpacing) + tubeImgSpacing/2
-                        let y = ycenter - ((currentRow ) * 0.866*tubeImgSpacing) + 0.866*tubeImgSpacing
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                        //draw one below
-                        x = xleft + (i * tubeImgSpacing) + tubeImgSpacing/2
-                        y = ycenter + ((currentRow ) * 0.866*tubeImgSpacing) - 0.866*tubeImgSpacing
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                    }
-                    //console.log(tubeDrawn, currentRow)
-                    currentRow++
-
-                }
-                else if (currentRow % 2 === 1) { 
-                    for (let i = 0; i <= noTubeCenterRow; i++) {
-                        //draw row above
-                        let x = xleft + (i * tubeImgSpacing)
-                        let y = ycenter - ((currentRow / 2 - 0.5) * 0.866*tubeImgSpacing) * 2
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                        //draw row below
-                        x = xleft + (i * tubeImgSpacing)
-                        y = ycenter + ((currentRow / 2 - 0.5) * 0.866*tubeImgSpacing) * 2
-                        if (!CheckTubePosition(x, y) && x < xcenter) { continue }
-                        else if (!CheckTubePosition(x, y) && x >= xcenter) { break }
-                        else if (tubeDrawn >= tubeNo) { break }
-                        else {
-                            c.beginPath();
-                            c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
-                            c.stroke();
-                            tubeDrawn++
-                        }
-                    }
-                    //console.log(tubeDrawn, currentRow)
-                    currentRow++
+            if (currentRow >= tubeDrawn) { //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
+                console.log("Tubes not fully drawn")
+                imgTubePitch = imgTubePitch * 0.95
+            }
+            else {
+                console.log("Tubes fully drawn")
+                draw = false;
+                if (tubePitch == 0 ){
+                    props.handleSubmit({tubePitch: calculatedTubePitch})
+                    console.log('rewriting tube pitch!')
                 }
             }
         }
     }
+
+    // if (currentRow>=tubeDrawn){ //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
+    //     imgTubePitch = imgTubePitch * 0.95
+    // }
+    // else{
+    //     draw = false;
+    // }
+    // draw = false;
+    // }
 
     return (
         <div id='Tab2'>

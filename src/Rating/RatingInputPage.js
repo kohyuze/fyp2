@@ -46,7 +46,9 @@ class InputPage extends React.Component {
             shellInnerDiameter,
             baffleCutPercent,
             centralBaffleSpacing,
+            numberBaffles,
             clearance,
+            tubeLength,
             shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
             // Constant for material design
@@ -85,13 +87,14 @@ class InputPage extends React.Component {
                     <div><p>Density:</p> <h5>{tubeD}kg/m³</h5></div>
                     <h2>Physical Dimensions</h2>
                     <div><p>Number of Tubes:</p> <h5>{numberTube}</h5></div>
+                    <div><p>Tube Length</p> <h5>{tubeLength}m</h5></div>
                     <div><p>Tube Inner Diameter</p> <h5>{tubeInnerD}m</h5></div>
                     <div><p>Tube Outer Diameter</p> <h5>{tubeOuterD}m</h5></div>
                     <div><p>Shell Inner Diameter</p> <h5>{shellInnerDiameter}m</h5></div>
                     <div><p>Tube Pitch</p> <h5>{tubePitch}m</h5></div>
                     <div><p>Tube Layout</p> <h5>{layoutAngle}</h5></div>
                     <div><p>Baffle Cut</p> <h5>{baffleCutPercent}%</h5></div>
-                    <div><p>Central Baffles Spacing</p> <h5>{centralBaffleSpacing}m</h5></div>
+                    <div><p>Number of baffles</p> <h5>{numberBaffles}</h5></div>                    
                     <div><p>Clearance</p> <h5>{clearance}m</h5></div>
                     <div><p>Number of Tube Passes</p> <h5>{numberPasses}</h5></div>
                     <button className='calculate' onClick={() => handlePageChange({ currentPage: 'result' })}>Calculate</button>

@@ -46,6 +46,7 @@ class InputPage extends React.Component {
             shellInnerDiameter,
             baffleCutPercent,
             centralBaffleSpacing,
+            numberBaffles,
             clearance,
             shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
@@ -93,7 +94,7 @@ class InputPage extends React.Component {
                     <div><p>Tube Pitch</p> <h5>{tubePitch}m</h5></div>
                     <div><p>Tube Layout</p> <h5>{layoutAngle}</h5></div>
                     <div><p>Baffle Cut</p> <h5>{baffleCutPercent}%</h5></div>
-                    <div><p>Central Baffles Spacing</p> <h5>{centralBaffleSpacing}m</h5></div>
+                    <div><p>Number of baffles</p> <h5>{numberBaffles}</h5></div>
                     <div><p>Clearance</p> <h5>{clearance}m</h5></div>
                     <div><p>Number of Tube Passes</p> <h5>{numberPasses}</h5></div>
                     <button className='calculate' onClick={() => handlePageChange({ currentPage: 'result' })}>Calculate</button>

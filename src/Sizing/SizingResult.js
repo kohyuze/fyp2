@@ -189,7 +189,7 @@ class SizingResult extends React.Component {
                 break;
         }
 
-        this.setState({ tubeLength: tubeLength })
+        this.setState({ tubeLength: tubeLength.toFixed(2) })
         console.log("FINAL TUBE LENGTH", tubeLength)
 
 
@@ -200,7 +200,7 @@ class SizingResult extends React.Component {
         this.props.handleSubmit({
             shellFluid: 'engine oil',
             tubeFluid: 'water',
-            shell: 'F',
+            shell: 'E',
             shellIT: 65.6,
             shellMFR: 36.3,
             shellFF: 0.000176,

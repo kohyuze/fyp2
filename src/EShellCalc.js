@@ -241,7 +241,7 @@ export function EShellThermalCalculation(data, State, Length) {
 
     //This heat transfer coefficient should be corrected for the fluid property variationsas outlined in Section 7.6.1
     // once the wall temperature is calculated in the next iteration.
-    o.shellHEcoeff = h_s.toFixed(6);
+    o.shellHEcoeff = h_s.toFixed(2);
 
     //-----Tube-Side Heat Transfer Coefficient-----------------------
     //Number of tubes per pass
@@ -262,13 +262,13 @@ export function EShellThermalCalculation(data, State, Length) {
     //Heat transfer coefficient
     const h_t = (tubeNu * tubeTC) / tubeInnerD
     //console.log("h_t", h_t)
-    o.tubeHEcoeff = h_t.toFixed(6);
+    o.tubeHEcoeff = h_t.toFixed(2);
 
     //---------------Overall Heat Transfer Coefficient------------
     const U_inverse = (1 / h_s) + shellFF + ((tubeOuterD * Math.log(tubeOuterD / tubeInnerD)) / (2 * k_w)) + tubeFF * (tubeOuterD / tubeInnerD) + (1 / h_t) * (tubeOuterD / tubeInnerD)
     const overallHEcoeff = 1 / U_inverse
     //console.log("overallHEcoeff", overallHEcoeff)
-    o.overallHEcoeff = overallHEcoeff.toFixed(6);
+    o.overallHEcoeff = overallHEcoeff.toFixed(2);
 
     //------------- Heat Transfer Effectiveness------------------
     //Total tube outside heat transfer area
@@ -297,7 +297,7 @@ export function EShellThermalCalculation(data, State, Length) {
         HEeffectiveness = 2 / (((1 + C_star) + (1 + C_star ** 2) ** 0.5) * coth)
     }
     // console.log("HEeffectiveness", HEeffectiveness)
-    o.HEeffectiveness = HEeffectiveness.toFixed(6);
+    o.HEeffectiveness = HEeffectiveness.toFixed(2);
 
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
     //Heat Transfer Rate
@@ -305,11 +305,11 @@ export function EShellThermalCalculation(data, State, Length) {
     // console.log("Q", Q)
     //Shell exit temperature
     const shellOT2 = shellIT - HEeffectiveness * C_star * (shellIT - tubeIT)
-    o.shellOT = shellOT2.toFixed(6);
+    o.shellOT = shellOT2.toFixed(2);
     //console.log("shellOT", shellOT2)
     //Tube exit temperature
     const tubeOT2 = tubeIT + HEeffectiveness * C_star * (shellIT - tubeIT)
-    o.tubeOT = tubeOT2.toFixed(6);
+    o.tubeOT = tubeOT2.toFixed(2);
     //console.log("tubeOT", tubeOT2)
 
 
@@ -358,7 +358,7 @@ export function EShellThermalCalculation(data, State, Length) {
     const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw/N_rcc)) * C_b * C_s
 
     const shellPressureDrop = deltaP_cr + deltaP_w + deltaP_io
-    o.shellPressureDrop = shellPressureDrop
+    o.shellPressureDrop = shellPressureDrop.toFixed(2)
 
     //------------------Tube side pressure drop shah pg657----------------------
     const frictionFactor = 0.046 * tubeRe ** -0.2; //eqn 7.72
@@ -373,7 +373,7 @@ export function EShellThermalCalculation(data, State, Length) {
         const coeff_in_front = tubeMFR ** 2 / (2 * tubeD * A_ot ** 2)
         const firstTerm = (4 * frictionFactor * tubeLength / tubeInnerD)
         const tubePressureDrop = coeff_in_front * (firstTerm + entranceEffect - exitEffect) * numberPasses
-        o.tubePressureDrop = tubePressureDrop
+        o.tubePressureDrop = tubePressureDrop.toFixed(2)
         // console.log("tubePressureDrop ", tubePressureDrop)
     }
 

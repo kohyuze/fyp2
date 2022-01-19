@@ -173,14 +173,15 @@ class RatingResult extends React.Component {
             tubeInnerD: 0.0166,
             tubeOuterD: 0.019,
             shellInnerDiameter: 0.336,
-            tubePitch: 0.025,            
+            // tubePitch: 0.025,    
+            tubePitch: 0,             
             layoutAngle: "rotated-square",
             
             numberPasses: 2,
             tubeLength: 4.3,            
             baffleCutPercent: 25.8, //0.0867, //this value is in m, refers to the open space of the baffles
             numberBaffles: 14,
-            //centralBaffleSpacing: 0.279,
+            //centralBaffleSpacing: 0.279, //not using this
             clearance: 0.318,
             recalculate: 1
             

@@ -70,7 +70,7 @@ class RatingTab2Form extends React.Component {
                             name="numberTube"
                             type="text"
                             placeholder="Number of Tubes"
-                            unit="-"
+                            unit=""
                         />       
                         <MyTextInput
                             label="Tube Inner Diameter"
