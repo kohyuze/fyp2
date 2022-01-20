@@ -344,22 +344,16 @@ const Tab2 = (props) => {
             else {
                 //console.log("Tubes fully drawn")
                 draw = false;
-                if (tubePitch == 0 ){
+                
+                //tubePitch == 0 means the user wants auto calculate. 
+                //tubePitch > calculatedTubePitch means the user input tubePitch cannot fit all the tubes, then we auto resize the tubePitch
+                if (tubePitch == 0 || tubePitch > calculatedTubePitch){  
                     props.handleSubmit({tubePitch: calculatedTubePitch})
                     //console.log('rewriting tube pitch!')
                 }
             }
         }
     }
-
-    // if (currentRow>=tubeDrawn){ //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
-    //     imgTubePitch = imgTubePitch * 0.95
-    // }
-    // else{
-    //     draw = false;
-    // }
-    // draw = false;
-    // }
 
     return (
         <div id='Tab2'>
