@@ -5,6 +5,7 @@ import * as dfd from 'danfojs';
 
 
 export function interpolate(x, x1, x2, y1, y2) {
+    console.log("interpolate ".x1 ,x2,y1,y2)
     return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
 }
 
@@ -53,23 +54,23 @@ export function fetchProperties(AveT, fluid, callback) {
                 j++
             }
 
-            console.log(averageTemp)
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][1]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][1]))
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][2]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][2]))
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][3]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][3]))
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][4]))
-            console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][4]))
+            // console.log(averageTemp)
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][1]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][1]))
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][2]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][2]))
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][3]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][3]))
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
+            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][4]))
+            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][4]))
 
             let density = this.interpolate(
                 averageTemp,
