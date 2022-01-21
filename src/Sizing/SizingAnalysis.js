@@ -136,7 +136,7 @@ class SizingAnalysis extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={() => console.log(this.state)}>log state</button>
+                {/* <button onClick={() => console.log(this.state)}>log state</button> */}
 
                 <div className={`${this.state.currentPage === "forms" ? "" : "hide"}`}>
                     <SizingAnalysisPage

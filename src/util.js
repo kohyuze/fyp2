@@ -1,6 +1,3 @@
-
-
-
 import * as dfd from 'danfojs';
 
 
@@ -89,7 +86,7 @@ export function fetchProperties(AveT, fluid, callback) {
             )
 
             const Properties = [density.toPrecision(4), specificHeat.toPrecision(4), dynamicVis.toPrecision(4), kinematicVis.toPrecision(4), therConductivity.toPrecision(4)];
-            console.log(Properties)
+            // console.log(Properties)
             callback(Properties);
         }).catch(err => {
             console.log(err);

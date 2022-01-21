@@ -277,7 +277,7 @@ class RatingResult extends React.Component {
                     <div><p>Shell pressure drop:</p> <h5>{this.state.shellPressureDrop}Pa</h5></div>
                     <div><p>Tube pressure drop:</p> <h5>{this.state.tubePressureDrop}Pa</h5></div>
                 </div>
-                <button onClick={() => console.log(this.state)}>log state</button>
+                {/* <button onClick={() => console.log(this.state)}>log state</button> */}
             </div>
         );
     }

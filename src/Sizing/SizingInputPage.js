@@ -65,7 +65,7 @@ class InputPage extends React.Component {
         return (
             <div>
                 <button className="previous" onClick={() => handlePageChange({ currentPage: 'forms' })}>&laquo; Edit Inputs</button>
-                <button onClick={() => console.log(this.props.data)}>log props</button>
+                {/* <button onClick={() => console.log(this.props.data)}>log props</button> */}
 
                 <h2>Inputs</h2>
 

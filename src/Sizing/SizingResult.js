@@ -315,7 +315,7 @@ class SizingResult extends React.Component {
                     <div><p></p> <h5></h5></div>
                     <div><p>Minimum tube length:</p> <h5>{this.state.tubeLength}m</h5></div>
                 </div>
-                <button onClick={() => console.log(this.state)}>log state</button>
+                {/* <button onClick={() => console.log(this.state)}>log state</button> */}
             </div>
         );
     }
