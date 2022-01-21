@@ -41,7 +41,7 @@ export function fetchProperties(AveT, fluid, callback) {
         .then(df => {
             //first we read the entire table, then we pick out only the temp and specific columns
             let sub_df = df.loc({ columns: ["temp", "densityL", "specHeatL", "dynamicViscL", "therCondL"] })
-            sub_df.head().print()
+            // sub_df.head().print()
             // sub_df.iloc({rows:[2]}).print();
             // console.log(sub_df.iloc({ rows: [2] }).$data[0][0])
 
@@ -52,6 +52,8 @@ export function fetchProperties(AveT, fluid, callback) {
             while (averageTemp > Number(sub_df.iloc({ rows: [j] }).$data[0][0])) {
                 j++
             }
+
+            console.log(sub_df.iloc({ rows: [j - 1] }).$data)
 
             let density = this.interpolate(
                 averageTemp,
