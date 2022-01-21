@@ -348,7 +348,9 @@ const Tab2 = (props) => {
                 //tubePitch == 0 means the user wants auto calculate. 
                 //tubePitch > calculatedTubePitch means the user input tubePitch cannot fit all the tubes, then we auto resize the tubePitch
                 if (tubePitch == 0 || tubePitch > calculatedTubePitch){  
-                    props.handleSubmit({tubePitch: calculatedTubePitch})
+                    props.handleSubmit({tubePitch: calculatedTubePitch,
+                                        //recalculate: 1
+                                    })
                     //console.log('rewriting tube pitch!')
                 }
             }

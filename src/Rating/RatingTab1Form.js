@@ -57,6 +57,7 @@ class RatingTab1Form extends React.Component {
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
+                        this.props.handleSubmit({recalculate: 1});
                         console.log(values)
                         setSubmitting(false);
                         this.setState({popUp: true})   

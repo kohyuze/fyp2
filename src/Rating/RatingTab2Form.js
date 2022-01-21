@@ -58,6 +58,7 @@ class RatingTab2Form extends React.Component {
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
+                        this.props.handleSubmit({recalculate: 1});
                         console.log("submitted values:");
                         console.log(values);
                         setSubmitting(false);

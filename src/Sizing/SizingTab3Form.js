@@ -44,7 +44,7 @@ class SizingTab3Form extends React.Component {
     }
     render() {
         //this function will change the number of tubepasses allowed to be input
-        const project = () => {
+        const tubePasses = () => {
             switch (this.props.formData.shell) {
                 case "E": return <MySelect label="Number of Tube Passes" name="numberPasses">
                     <option value="">Number of Tube Passes</option>
@@ -61,6 +61,19 @@ class SizingTab3Form extends React.Component {
                     <option value="">Number of Tube Passes</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
+                    <option value="4">4</option>
+                </MySelect>
+                case "H": return <MySelect label="Number of Tube Passes" name="numberPasses">
+                    <option value="">Number of Tube Passes</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                </MySelect>
+                case "J": return <MySelect label="Number of Tube Passes" name="numberPasses">
+                    <option value="">Number of Tube Passes</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
                 </MySelect>
                 default: return
             }
@@ -79,13 +92,15 @@ class SizingTab3Form extends React.Component {
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
+                        this.props.handleSubmit({recalculate: 1});
                         console.log("submitted values:" + values);
                         setSubmitting(false);
                         this.setState({ popUp: true })
                     }}
                 >
                     <Form>
-                        <h2 className='categoryHeader'>Shell Side Fluid</h2>
+                        <h2 className='categoryHeader'>Configurations</h2>
+                        <div>{tubePasses()}</div>  
                         <MyTextInput
                             label="Baffle Cut"
                             name="baffleCutPercent"
@@ -107,7 +122,7 @@ class SizingTab3Form extends React.Component {
                             placeholder="Clearance"
                             unit="m"
                         />
-                        <div>{project()}</div>
+                        
                         <button className='applyButton' type="submit" >Apply</button>
                         {/* button is not done, dk what to do with it yet */}
                     </Form>

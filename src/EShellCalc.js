@@ -66,11 +66,6 @@ export function EShellThermalCalculation(data, State, Length) {
         sigma: 0,
     }
 
-    // //I redeclare this here cos idw to pass it as props all the way down
-    // function interpolate(x, x1, x2, y1, y2) {
-    //     return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
-    // }
-
     //------------------Rating problem-----------------------
     ////////////////////Geometrical Calculations, Shah 594/////////////////////////
     //Assumptions: The shell-and-tube heat exchanger is assumed to have the ideal geometrical
@@ -81,7 +76,7 @@ export function EShellThermalCalculation(data, State, Length) {
     }
 
     // calculate the centralBaffleSpacing from the numberBaffles
-    centralBaffleSpacing = Math.exp((tubeLength - 2 * clearance)/(numberBaffles - 1))
+    centralBaffleSpacing = Math.abs((tubeLength - 2 * clearance)/(numberBaffles - 1)) - 0.003 //3mm acounts for the thickness of the baffle
     console.log("Baffle Spacing ", centralBaffleSpacing)
 
     const D_otl = shellInnerDiameter - 0.015 //Diameter of the outer tube limit, can add to input, or we decide ourself just take D-15mm
@@ -138,14 +133,14 @@ export function EShellThermalCalculation(data, State, Length) {
     const D_hw = (4 * A_ow) / (Math.PI * tubeOuterD * N_tw + Math.PI * shellInnerDiameter * (θ_b / (2 * Math.PI)));
 
     //Finally, the number of effective tube rows in crossflow in each window is computed using Eq. (8.119) as
-    const N_rcw = Math.floor((0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter - D_ctl)))
+    const N_rcw = Math.round((0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter - D_ctl)))
 
     //Crossflow Section. The fraction Fc of the total number of tubes in the crossflow section is calculated from Eq. (8.120) as
     const F_c = 1 - 2 * F_w
 
     //Next calculate the number of tube rows Nrcc crossed during flow through one crossflow
     //section between the baffle tips [Eq. (8.121)] as
-    const N_rcc = Math.floor((shellInnerDiameter - 2 * baffleCut) / X_l)
+    const N_rcc = Math.round((shellInnerDiameter - 2 * baffleCut) / X_l)
 
     //The crossflow area at or near the shell centerline for one crossflow section may be estimated from A_ocr
     //There are different calculations for A_ocr for different conditions, see shah pg 592
@@ -333,29 +328,30 @@ export function EShellThermalCalculation(data, State, Length) {
     const F_id = 3.5 * (1.33 * (tubeOuterD / tubePitch)) ** b * shellRe ** (-0.476)
 
     //the ideal pressure drop without correction
-    const deltaP_bid = (4 * F_id * shellMassVelocity ** 2 * N_rcc) / (2 * shellD)  //assuming the wall viscosity is v similar to bulk vioscosity
+    //assuming the wall viscosity is v similar to bulk vioscosity
+    const deltaP_bid = (4 * F_id * (shellMassVelocity ** 2) * N_rcc) / (2 * shellD)  * 1.2 //this adds 20% cos my calculations always underestimate due to difference in values used
 
-    //finding the correction factors C_b, C_l and C_s
-    let C_b
-    if (N_ssplus >= 0.5) { C_b = 1 }
+    //finding the correction factors ζ_b, ζ_l and ζ_s
+    let ζ_b
+    if (N_ssplus >= 0.5) { ζ_b = 1 }
     else {
         let D;
         if (shellRe > 100) { D = 3.7 }
         else { D = 4.5 }
-        C_b = Math.exp(-1 * D * r_b * (1 - (2 * N_ssplus) ** (1 / 3)))
+        ζ_b = Math.exp(-D * r_b * (1 - (2 * N_ssplus) ** (1 / 3)))
     }
 
     const p = -0.15 * (1 + r_s) + 0.8
-    const C_l = Math.exp(-1.33 * (1+r_s) *  r_lm ** p)
+    const ζ_l = Math.exp(-1.33 * (1+r_s) *  r_lm ** p)
 
     const n_prime = 0.2 //assuming turbulent flow. I think quite unlikely for laminar flow in shell side leh.
-    const C_s = (centralBaffleSpacing/clearance)**(2 - n_prime) + (centralBaffleSpacing/clearance)**(2 - n_prime)
+    const ζ_s = (centralBaffleSpacing/clearance)**(2 - n_prime) + (centralBaffleSpacing/clearance)**(2 - n_prime)
 
     // finding the deltaPs
-    const deltaP_cr = deltaP_bid * (N_b - 1) * C_b * C_l
+    const deltaP_cr = deltaP_bid * (N_b - 1) * ζ_b * ζ_l
     const G_w = shellMFR/((A_ocr * A_ow)**0.5)
-    const deltaP_w = N_b * (2 + 0.6* N_rcw) * ((G_w**2) / (2 * shellD)) * C_l
-    const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw/N_rcc)) * C_b * C_s
+    const deltaP_w = N_b * (2 + 0.6* N_rcw) * ((G_w**2) / (2 * shellD)) * ζ_l
+    const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw/N_rcc)) * ζ_b * ζ_s
 
     const shellPressureDrop = deltaP_cr + deltaP_w + deltaP_io
     o.shellPressureDrop = shellPressureDrop.toFixed(2)

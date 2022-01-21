@@ -194,15 +194,16 @@ class RatingResult extends React.Component {
 
     componentDidMount() {
         this.props.handleSubmit({
-            shellFluid: 'engine oil',
-            tubeFluid: 'water',
-            shell: 'E',
-            shellIT: 65.6,
-            shellMFR: 36.3,
-            shellFF: 0.000176,
-            tubeIT: 32.2,
-            tubeMFR: 18.1,
-            tubeFF: 0.000088,
+            shell: 'F',
+            
+            // shellFluid: 'engine oil',
+            // tubeFluid: 'water',
+            // shellIT: 65.6,
+            // shellMFR: 36.3,
+            // shellFF: 0.000176,
+            // tubeIT: 32.2,
+            // tubeMFR: 18.1,
+            // tubeFF: 0.000088,
             
             numberTube: 102,
             tubeInnerD: 0.0166,
@@ -218,24 +219,25 @@ class RatingResult extends React.Component {
             numberBaffles: 14,
             //centralBaffleSpacing: 0.279, //not using this
             clearance: 0.318,
-            recalculate: 1
+            recalculate: 1,
             
 
-            // tubeIT: 65.6,
-            // tubeMFR: 36.3,
-            // tubeFF: 0.000176,
-            // shellIT: 32.2,
-            // shellMFR: 18.1,  
-            // shellFF: 0.000088,
+            tubeIT: 65.6,
+            tubeMFR: 36.3,
+            tubeFF: 0.000176,
+            shellIT: 32.2,
+            shellMFR: 18.1,  
+            shellFF: 0.000088,
+            tubeFluid: 'engine oil',
+            shellFluid: 'water',
+
             // tubeInnerD: 0.0166,
             // tubeOuterD: 0.019,
             // tubePitch: 0.025,
             // numberTube: 102,
             // numberPasses: 2,
             // tubeLength: 4.3,
-            // tubeFluid: 'engine oil',
-            // shellFluid: 'water',
-
+            
             
         })
         this.props.updateShellProperties(65.6, 'engine oil')

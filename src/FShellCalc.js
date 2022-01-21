@@ -93,7 +93,7 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
 
     // calculate the centralBaffleSpacing from the numberBaffles
-    centralBaffleSpacing = Math.exp((tubeLength - 2 * clearance)/(numberBaffles - 1))
+    centralBaffleSpacing = Math.abs((tubeLength - 2 * clearance)/(numberBaffles - 1))- 0.003 //3mm acounts for the thickness of the baffle
     console.log("Baffle Spacing ", centralBaffleSpacing)
 
     
@@ -159,14 +159,14 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     const D_hw = (4 * A_ow) / (Math.PI * tubeOuterD * N_tw + Math.PI * shellInnerDiameter_new * (θ_b / (2 * Math.PI)));
 
     //Finally, the number of effective tube rows in crossflow in each window is computed using Eq. (8.119) as
-    const N_rcw = Math.floor((0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter_new - D_ctl)))
+    const N_rcw = Math.round((0.8 / X_l) * (baffleCut - 0.5 * (shellInnerDiameter_new - D_ctl)))
 
     //Crossflow Section. The fraction Fc of the total number of tubes in the crossflow section is calculated from Eq. (8.120) as
     const F_c = 1 - 2 * F_w
 
     //Next calculate the number of tube rows Nrcc crossed during flow through one crossflow
     //section between the baffle tips [Eq. (8.121)] as
-    const N_rcc = Math.floor((shellInnerDiameter_new - 2 * baffleCut) / X_l)
+    const N_rcc = Math.round((shellInnerDiameter_new - 2 * baffleCut) / X_l)
 
     //The crossflow area at or near the shell centerline for one crossflow section may be estimated from A_ocr
     //There are different calculations for A_ocr for different conditions, see shah pg 592
@@ -326,32 +326,25 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
     // Refer to report on this segment. Pg ___
 
-    let T_ci, T_co, T_hi, T_ho, T_1, T_2 = 0; //initial value.
-    let C_c, C_h; 
+    let T_ti, T_to, T_si, T_so, T_1, T_2 = 0; //initial value.
+    let C_t, C_s; 
 
-    if (tubeIT < shellIT){
-        T_ci = tubeIT;
-        C_c = C_tube
-        T_hi = shellIT;
-        C_h = C_shell
-    } else {
-        T_hi = tubeIT;
-        C_h = C_tube
-        T_ci = shellIT;
-        C_c = C_shell
-    }
+    T_ti = tubeIT;
+    C_t = C_tube
+    T_si = shellIT;
+    C_s = C_shell
 
     console.log("ShellIT ", shellIT)
     console.log("TubeIT ", tubeIT)
 
     const EC = HEeffectiveness * C_min
-    let matrixA = math.matrix([[-1*C_c, 0, 0, 0], 
-                                 [0, 0, C_h, 0],
-                                 [-1*(EC-C_c), -C_c, EC, 0],
-                                 [-1*EC, 0, EC-C_h, C_h]]);
+    let matrixA = math.matrix([[-1*C_t, 0, 0, 0], 
+                                 [0, 0, C_s, 0],
+                                 [-1*(EC-C_t), -C_t, EC, 0],
+                                 [-1*EC, 0, EC-C_s, C_s]]);
     
-    let matrixB = math.matrix([[(EC - C_c) * T_ci - EC*T_hi], 
-                                 [EC * T_ci - (EC - C_h) * T_hi],
+    let matrixB = math.matrix([[(EC - C_t) * T_ti - EC*T_si], 
+                                 [EC * T_ti - (EC - C_s) * T_si],
                                  [0],
                                  [0]]);
     
@@ -361,34 +354,29 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         matrixX = math.multiply(math.inv(matrixA), matrixB); 
 
         T_1 = matrixX.get([0, 0])
-        T_co = matrixX.get([1, 0])
+        T_to = matrixX.get([1, 0])
         T_2 = matrixX.get([2, 0])
-        T_ho = matrixX.get([3, 0])
+        T_so = matrixX.get([3, 0])
 
         console.log(matrixX)
-        console.log("T_ci", T_ci)
+        console.log("T_ti", T_ti)
         console.log("T1", T_1)
-        console.log("T_co", T_co)
-        console.log("T_hi", T_hi)
+        console.log("T_to", T_to)
+        console.log("T_si", T_si)
         console.log("T2", T_2)
-        console.log("T_ho", T_ho)
+        console.log("T_so", T_so)
     }                
    
 
     //Heat Transfer Rate
-    const Q_a = HEeffectiveness * C_min  * Math.abs(T_2 - T_ci) 
-    const Q_b = HEeffectiveness * C_min  * Math.abs(T_hi - T_co) 
+    const Q_a = HEeffectiveness * C_min  * Math.abs(T_2 - T_ti) 
+    const Q_b = HEeffectiveness * C_min  * Math.abs(T_si - T_to) 
     const Q = Q_a + Q_b
 
     //Exit temperature
     let shellOT2, tubeOT2;
-    if (tubeIT < shellIT){
-        shellOT2 = Number(T_ho)
-        tubeOT2 = Number(T_co)
-    } else {
-        shellOT2 = Number(T_co)
-        tubeOT2 = Number(T_ho)
-    }
+    shellOT2 = Number(T_so)
+    tubeOT2 = Number(T_to)
 
     o.shellOT = shellOT2.toFixed(2);
     o.tubeOT = tubeOT2.toFixed(2);
@@ -409,29 +397,30 @@ export function FShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     const F_id = 3.5 * (1.33 * (tubeOuterD / tubePitch)) ** b * shellRe ** (-0.476)
 
     //the ideal pressure drop without correction
-    const deltaP_bid = (4 * F_id * shellMassVelocity ** 2 * N_rcc) / (2 * shellD)  //assuming the wall viscosity is v similar to bulk vioscosity
+    //assuming the wall viscosity is v similar to bulk vioscosity
+    const deltaP_bid = (4 * F_id * shellMassVelocity ** 2 * N_rcc) / (2 * shellD)  *1.2 //this adds 20% cos my calculations always underestimate due to difference in values used
 
-    //finding the correction factors C_b, C_l and C_s
-    let C_b
-    if (N_ssplus >= 0.5) { C_b = 1 }
+    //finding the correction factors ζ_b, ζ_l and ζ_s
+    let ζ_b
+    if (N_ssplus >= 0.5) { ζ_b = 1 }
     else {
         let D;
         if (shellRe > 100) { D = 3.7 }
         else { D = 4.5 }
-        C_b = Math.exp(-1 * D * r_b * (1 - (2 * N_ssplus) ** (1 / 3)))
+        ζ_b = Math.exp(-1 * D * r_b * (1 - (2 * N_ssplus) ** (1 / 3)))
     }
 
     const p = -0.15 * (1 + r_s) + 0.8
-    const C_l = Math.exp(-1.33 * (1+r_s) *  r_lm ** p)
+    const ζ_l = Math.exp(-1.33 * (1+r_s) *  r_lm ** p)
 
     const n_prime = 0.2 //assuming turbulent flow. I think quite unlikely for laminar flow in shell side leh.
-    const C_s = (centralBaffleSpacing/clearance)**(2 - n_prime) + (centralBaffleSpacing/clearance)**(2 - n_prime)
+    const ζ_s = (centralBaffleSpacing/clearance)**(2 - n_prime) + (centralBaffleSpacing/clearance)**(2 - n_prime)
 
     // finding the deltaPs
-    const deltaP_cr = deltaP_bid * (N_b - 1) * C_b * C_l
+    const deltaP_cr = deltaP_bid * (N_b - 1) * ζ_b * ζ_l
     const G_w = shellMFR/((A_ocr * A_ow)**0.5)
-    const deltaP_w = N_b * (2 + 0.6* N_rcw) * ((G_w**2) / (2 * shellD)) * C_l
-    const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw/N_rcc)) * C_b * C_s
+    const deltaP_w = N_b * (2 + 0.6* N_rcw) * ((G_w**2) / (2 * shellD)) * ζ_l
+    const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw/N_rcc)) * ζ_b * ζ_s
 
     const shellPressureDrop = (deltaP_cr + deltaP_w + deltaP_io) * 2 //since F shell is 2 shells
     o.shellPressureDrop = shellPressureDrop.toFixed(2)

@@ -58,13 +58,14 @@ class SizingTab2Form extends React.Component {
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
+                        this.props.handleSubmit({recalculate: 1});
                         console.log("submitted values:" + values);
                         setSubmitting(false);
                         this.setState({popUp: true})
                     }}
                 >
                     <Form>
-                        <h2 className='categoryHeader'>Tube Side configs</h2>
+                        <h2 className='categoryHeader'>Configurations</h2>
                         <MyTextInput
                             label="Number of Tubes"
                             name="numberTube"
