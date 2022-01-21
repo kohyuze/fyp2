@@ -194,16 +194,16 @@ class RatingResult extends React.Component {
 
     componentDidMount() {
         this.props.handleSubmit({
-            shell: 'F',
+            shell: 'E',
             
-            // shellFluid: 'engine oil',
-            // tubeFluid: 'water',
-            // shellIT: 65.6,
-            // shellMFR: 36.3,
-            // shellFF: 0.000176,
-            // tubeIT: 32.2,
-            // tubeMFR: 18.1,
-            // tubeFF: 0.000088,
+            shellFluid: 'engine oil',
+            tubeFluid: 'water',
+            shellIT: 65.6,
+            shellMFR: 36.3,
+            shellFF: 0.000176,
+            tubeIT: 32.2,
+            tubeMFR: 18.1,
+            tubeFF: 0.000088,
             
             numberTube: 102,
             tubeInnerD: 0.0166,
@@ -222,14 +222,14 @@ class RatingResult extends React.Component {
             recalculate: 1,
             
 
-            tubeIT: 65.6,
-            tubeMFR: 36.3,
-            tubeFF: 0.000176,
-            shellIT: 32.2,
-            shellMFR: 18.1,  
-            shellFF: 0.000088,
-            tubeFluid: 'engine oil',
-            shellFluid: 'water',
+            // tubeIT: 65.6,
+            // tubeMFR: 36.3,
+            // tubeFF: 0.000176,
+            // shellIT: 32.2,
+            // shellMFR: 18.1,  
+            // shellFF: 0.000088,
+            // tubeFluid: 'engine oil',
+            // shellFluid: 'water',
 
             // tubeInnerD: 0.0166,
             // tubeOuterD: 0.019,
