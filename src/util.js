@@ -4,11 +4,15 @@
 import * as dfd from 'danfojs';
 
 
-export function interpolate(x, x1, x2, y1, y2) {
-    console.log("interpolate ".x1 ,x2,y1,y2)
+// export function interpolate(x, x1, x2, y1, y2) {
+//     // console.log("interpolate ".x1 ,x2,y1,y2)
+//     return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
+// }
+
+const interpolate = (x, x1, x2, y1, y2) => {
+    // console.log("interpolate ".x1 ,x2,y1,y2)
     return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
 }
-
 
 //After fluid and temperature are given, the properties are fetched
 export function fetchProperties(AveT, fluid, callback) {
@@ -54,39 +58,21 @@ export function fetchProperties(AveT, fluid, callback) {
                 j++
             }
 
-            // console.log(averageTemp)
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][1]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][1]))
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][2]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][2]))
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][3]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][3]))
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][0]))
-            // console.log(Number(sub_df.iloc({ rows: [j - 1] }).$data[0][4]))
-            // console.log(Number(sub_df.iloc({ rows: [j] }).$data[0][4]))
-
-            let density = this.interpolate(
+            let density = interpolate(
                 averageTemp,
                 Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
                 Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
                 Number(sub_df.iloc({ rows: [j - 1] }).$data[0][1]),
                 Number(sub_df.iloc({ rows: [j] }).$data[0][1])
             )
-            let specificHeat = this.interpolate(
+            let specificHeat = interpolate(
                 averageTemp,
                 Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
                 Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
                 Number(sub_df.iloc({ rows: [j - 1] }).$data[0][2]),
                 Number(sub_df.iloc({ rows: [j] }).$data[0][2])
             )
-            let dynamicVis = this.interpolate(
+            let dynamicVis = interpolate(
                 averageTemp,
                 Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
                 Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
@@ -94,7 +80,7 @@ export function fetchProperties(AveT, fluid, callback) {
                 Number(sub_df.iloc({ rows: [j] }).$data[0][3])
             )
             let kinematicVis = dynamicVis / density;
-            let therConductivity = this.interpolate(
+            let therConductivity = interpolate(
                 averageTemp,
                 Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
                 Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
@@ -140,7 +126,7 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_50k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                K = this.interpolate(
+                K = interpolate(
                     sigma,
                     Number(sub_df_50k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_50k.iloc({ rows: [j] }).$data[0][1]),
@@ -156,7 +142,7 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_50k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                let K_a = this.interpolate(
+                let K_a = interpolate(
                     sigma,
                     Number(sub_df_50k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_50k.iloc({ rows: [j] }).$data[0][1]),
@@ -166,14 +152,14 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_10k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                let K_b = this.interpolate(
+                let K_b = interpolate(
                     sigma,
                     Number(sub_df_10k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_10k.iloc({ rows: [j] }).$data[0][1]),
                     Number(sub_df_10k.iloc({ rows: [j - 1] }).$data[0][2]),
                     Number(sub_df_10k.iloc({ rows: [j] }).$data[0][2])
                 )
-                K = this.interpolate(
+                K = interpolate(
                     sigma,
                     10000,
                     50000,
@@ -188,7 +174,7 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_10k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                let K_a = this.interpolate(
+                let K_a = interpolate(
                     sigma,
                     Number(sub_df_10k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_10k.iloc({ rows: [j] }).$data[0][1]),
@@ -198,14 +184,14 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_5k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                let K_b = this.interpolate(
+                let K_b = interpolate(
                     sigma,
                     Number(sub_df_5k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_5k.iloc({ rows: [j] }).$data[0][1]),
                     Number(sub_df_5k.iloc({ rows: [j - 1] }).$data[0][2]),
                     Number(sub_df_5k.iloc({ rows: [j] }).$data[0][2])
                 )
-                K = this.interpolate(
+                K = interpolate(
                     sigma,
                     5000,
                     10000,
@@ -220,7 +206,7 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_5k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                let K_a = this.interpolate(
+                let K_a = interpolate(
                     sigma,
                     Number(sub_df_5k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_5k.iloc({ rows: [j] }).$data[0][1]),
@@ -230,14 +216,14 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_3k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                let K_b = this.interpolate(
+                let K_b = interpolate(
                     sigma,
                     Number(sub_df_3k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_3k.iloc({ rows: [j] }).$data[0][1]),
                     Number(sub_df_3k.iloc({ rows: [j - 1] }).$data[0][2]),
                     Number(sub_df_3k.iloc({ rows: [j] }).$data[0][2])
                 )
-                K = this.interpolate(
+                K = interpolate(
                     sigma,
                     5000,
                     3000,
@@ -251,7 +237,7 @@ export function calculate_Kc_and_Ke(tubeRe, sigma, whichK, callback) {
                 while (sigma > Number(sub_df_3k.iloc({ rows: [j] }).$data[0][1])) {
                     j++
                 }
-                K = this.interpolate(
+                K = interpolate(
                     sigma,
                     Number(sub_df_3k.iloc({ rows: [j - 1] }).$data[0][1]),
                     Number(sub_df_3k.iloc({ rows: [j] }).$data[0][1]),
