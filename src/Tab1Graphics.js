@@ -30,17 +30,13 @@ const Tab1 = (props) => {
     let rearSelected;
 
     switch (head) {
-        case 'A_1':
-            headSelected = A_1;
+        case 'A':
+            if (numberPasses % 2 == 1) { headSelected = A_1; }
+            else { headSelected = A_2; }
             break;
-        case 'A_2':
-            headSelected = A_2;
-            break;
-        case 'B_1':
-            headSelected = B_1;
-            break;
-        case 'B_2':
-            headSelected = B_2;
+        case 'B':
+            if (numberPasses % 2 == 1) { headSelected = B_1; }
+            else { headSelected = B_2; }
             break;
     }
 
@@ -48,18 +44,15 @@ const Tab1 = (props) => {
     shellSelected = shell;
 
     switch (rear) {
-        case 'L_1':
-            rearSelected = L_1;
+        case 'L':
+            if (numberPasses % 2 == 1) { rearSelected = L_1; }
+            else { rearSelected = L_0; }
             break;
-        case 'L_0':
-            rearSelected = L_0;
+        case 'M':
+            if (numberPasses % 2 == 1) { rearSelected = M_1; }
+            else { rearSelected = M_0; }
             break;
-        case 'M_1':
-            rearSelected = M_1;
-            break;
-        case 'M_0':
-            rearSelected = M_0;
-            break;
+
     }
 
     useEffect(() => {

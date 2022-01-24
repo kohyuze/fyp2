@@ -63,9 +63,9 @@ class SizingAnalysis extends React.Component {
             // addedMassCoefficient: 0,
             // metalMassUnitLength: 0,
             //TEMA configs
-            head: 'A_1',
+            head: 'A',
             shell: 'E',
-            rear: 'L_1',
+            rear: 'L',
             // pressure drop needed parameters
             // tubeRe: 0,
             // sigma: 0,

@@ -81,7 +81,7 @@ export function GShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
 
     // calculate the centralBaffleSpacing from the numberBaffles
     let numberBafflesPerSide = Math.floor(numberBaffles/2)
-    centralBaffleSpacing = Math.abs((tubeLengthPerSide - 2 * clearance)/(numberBafflesPerSide - 1))- 0.003 //3mm acounts for the thickness of the baffle
+    centralBaffleSpacing = Math.abs((tubeLengthPerSide - 2 * clearance)/(numberBafflesPerSide - 1) - 0.003) //3mm acounts for the thickness of the baffle
     console.log("Baffle Spacing ", centralBaffleSpacing)
 
 

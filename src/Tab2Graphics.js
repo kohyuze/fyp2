@@ -37,7 +37,7 @@ const Tab2 = (props) => {
 
         //user will enter tubePitch = 0 if they want to auto calculate.
         const findingTubePitch = (shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) => { //horizontal distance between two tubes
-            if (tubePitch == 0 ){
+            if (tubePitch != 0 ){
                 const imgTubePitch = tubePitch * shellImgDiameter / shellDiameter
                 return (imgTubePitch)
             } else if (layoutAngle === "triangular") {

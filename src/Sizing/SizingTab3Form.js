@@ -102,6 +102,13 @@ class SizingTab3Form extends React.Component {
                         <h2 className='categoryHeader'>Configurations</h2>
                         <div>{tubePasses()}</div>  
                         <MyTextInput
+                            label="Number of Baffles"
+                            name="numberBaffles"
+                            type="text"
+                            placeholder="Number of Baffles"
+                            unit=""
+                        />
+                        <MyTextInput
                             label="Baffle Cut"
                             name="baffleCutPercent"
                             type="text"

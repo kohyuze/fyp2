@@ -79,7 +79,7 @@ export function HShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     shellMFR = 0.25 * shellMFR
 
     let numberBafflesPerSide = Math.floor(numberBaffles/4)
-    centralBaffleSpacing = Math.abs((tubeLengthPerSide - 2 * clearance)/(numberBafflesPerSide - 1))- 0.003 //3mm acounts for the thickness of the baffle
+    centralBaffleSpacing = Math.abs((tubeLengthPerSide - 2 * clearance)/(numberBafflesPerSide - 1) - 0.003) //3mm acounts for the thickness of the baffle
 
     let X_l, X_t;
     //Determination of Longitudinal_tube_pitch and Traverse_tube_pitch from table 8.1, shah pg568

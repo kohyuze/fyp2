@@ -139,6 +139,7 @@ class SizingResult extends React.Component {
                     handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
                 }
 
+
                 // Checks if iteration is needed. Updates fluid properties with new mean temps and iterates.
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
                     this.setState({ shellMeanT: o.newShellMeanT })
@@ -241,8 +242,8 @@ class SizingResult extends React.Component {
             tubeMFR: 18.1,
             tubeFF: 0.000088,
             
-            tubeOTreq: 35.9,
-            shellOTreq: 61.9,
+            tubeOTreq: 37.31,
+            shellOTreq: 60.49,
             
             numberTube: 102,
             tubeInnerD: 0.0166,

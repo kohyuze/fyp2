@@ -79,6 +79,7 @@ class InputPage extends React.Component {
                     <div><p>Dynamic Viscosity:</p> <h5>{shellDV}Pa.s</h5></div>
                     <div><p>Thermal Conductivity:</p> <h5>{shellTC}W/m.K</h5></div>
                     <div><p>Density:</p> <h5>{shellD}kg/m³</h5></div>
+                    <div><p>Fouling Factor:</p> <h5>{shellFF}m².W/K</h5></div>
                     <h2>Tube-side Fluid: {tubeFluid}</h2>
                     <div><p>Inlet Temperature:</p> <h5>{tubeIT}°C</h5></div>
                     <div><p>Mass Flow Rate:</p> <h5>{tubeMFR}kg/s</h5></div>
@@ -86,6 +87,7 @@ class InputPage extends React.Component {
                     <div><p>Dynamic Viscosity:</p> <h5>{tubeDV}Pa.s</h5></div>
                     <div><p>Thermal Conductivity:</p> <h5>{tubeTC}W/m.K</h5></div>
                     <div><p>Density:</p> <h5>{tubeD}kg/m³</h5></div>
+                    <div><p>Fouling Factor:</p> <h5>{tubeFF}m².W/K</h5></div>
                     <h2>Physical Dimensions</h2>
                     <div><p>Number of Tubes:</p> <h5>{numberTube}</h5></div>
                     <div><p>Tube Length</p> <h5>{tubeLength}m</h5></div>

@@ -72,10 +72,8 @@ class RatingTab1Form extends React.Component {
                             {/* need to fix this, cannot be A_1, A_2 */}
                             <MySelect label="Head" name="head" >
                                 <option value="">Select head</option>
-                                <option value="A_1">A_1</option>
-                                <option value="A_2">A_2</option>
-                                <option value="B_1">B_1</option>
-                                <option value="B_2">B_2</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
                             </MySelect>
                             <MySelect label="Shell" name="shell">
                                 <option value="">Select shell</option>
@@ -87,10 +85,8 @@ class RatingTab1Form extends React.Component {
                             </MySelect>
                             <MySelect label="Rear" name="rear" >
                                 <option value="">Select rear</option>
-                                <option value="L_1">L_1</option>
-                                <option value="L_0">L_0</option>
-                                <option value="M_1">M_1</option>
-                                <option value="M_0">M_0</option>
+                                <option value="L_1">L</option>
+                                <option value="M_1">M</option>
                             </MySelect>
                         </div>
                         <h2 className='categoryHeader'>Shell Side Fluid</h2>
@@ -116,6 +112,13 @@ class RatingTab1Form extends React.Component {
                             placeholder="Mass Flow Rate"
                             unit="kg/s"
                         />
+                        <MyTextInput
+                            label="Fouling Factor"
+                            name="shellFF"
+                            type="text"
+                            placeholder="Fouling Factor"
+                            unit="m².W/K"
+                        />
                         <h2 className='categoryHeader'>Tube Side Fluid</h2>
                         <MySelect label="Tube Fluid" name="tubeFluid">
                             <option value="">Select a Tube Fluid</option>
@@ -138,6 +141,13 @@ class RatingTab1Form extends React.Component {
                             type="text"
                             placeholder="Mass Flow Rate"
                             unit="kg/s"
+                        />
+                        <MyTextInput
+                            label="Fouling Factor"
+                            name="tubeFF"
+                            type="text"
+                            placeholder="Fouling Factor"
+                            unit="m².W/K"
                         />
                         <button className='applyButton' type="submit" >Apply</button>
                         {/* button is not done, dk what to do with it yet */}
