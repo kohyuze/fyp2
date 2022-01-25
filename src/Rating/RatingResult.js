@@ -188,58 +188,21 @@ class RatingResult extends React.Component {
                 }
                 break;
         }
+        
+        //sometimes the tube pressure drop do not get calculated cos fetching data too slow. Then we force it to loop again
+        if(this.state.tubePressureDrop == 0 && this.state.iteration < 20 ){
+            updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+            handleSubmit({recalculate: 1})
+        }
 
 
     }
 
     componentDidMount() {
-        this.props.handleSubmit({
-            shell: 'E',
-            
-            shellFluid: 'engine oil',
-            tubeFluid: 'water',
-            shellIT: 65.6,
-            shellMFR: 36.3,
-            shellFF: 0.000176,
-            tubeIT: 32.2,
-            tubeMFR: 18.1,
-            tubeFF: 0.000088,
-            
-            numberTube: 102,
-            tubeInnerD: 0.0166,
-            tubeOuterD: 0.019,
-            shellInnerDiameter: 0.336,
-            // tubePitch: 0.025,    
-            tubePitch: 0,             
-            layoutAngle: "rotated-square",
-            
-            numberPasses: 2,
-            tubeLength: 4.3,            
-            baffleCutPercent: 25.8, //0.0867, //this value is in m, refers to the open space of the baffles
-            numberBaffles: 14,
-            //centralBaffleSpacing: 0.279, //not using this
-            clearance: 0.318,
-            recalculate: 1,
-            
-
-            // tubeIT: 65.6,
-            // tubeMFR: 36.3,
-            // tubeFF: 0.000176,
-            // shellIT: 32.2,
-            // shellMFR: 18.1,  
-            // shellFF: 0.000088,
-            // tubeFluid: 'engine oil',
-            // shellFluid: 'water',
-
-            // tubeInnerD: 0.0166,
-            // tubeOuterD: 0.019,
-            // tubePitch: 0.025,
-            // numberTube: 102,
-            // numberPasses: 2,
-            // tubeLength: 4.3,
+        // this.props.handleSubmit({
             
             
-        })
+        // })
         this.props.updateShellProperties(65.6, 'engine oil')
         this.props.updateTubeProperties(32.2, 'water')
         this.calculate()

@@ -125,17 +125,33 @@ class SizingResult extends React.Component {
         let o;
 
         //min tubeLength need to be 2x clearance. We'll set the min here to be 3xClearance and start iterating from here
-        if (this.state.iteration == 1){
-            tubeLength = 3 * clearance
+        if (tubeLength == 0){
+            tubeLength = 0.1
         }
 
+        // diff tube number needs different increment steps 
+        let increment
+        if (numberTube < 5){increment = 100}
+        else if (numberTube < 10){increment = 10}
+        else if (numberTube < 20){increment = 0.6}
+        else if (numberTube < 40){increment = 0.3}
+        else if (numberTube < 80 ){increment = 0.2}
+        else if (numberTube >= 80) {increment = 0.1}
+
+
+        let newTubeLength
         switch (shell) {
             case 'E':
                 o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
 
-                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 3) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    const newTubeLength = tubeLength + 0.1
+                //this first "if" reduces the number of loops by jumping bigger
+                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
+                    newTubeLength = tubeLength + 5*increment      
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
+                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    newTubeLength = tubeLength + increment
                     handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
                 }
 
@@ -156,8 +172,13 @@ class SizingResult extends React.Component {
                 o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT, tubeLength)
                 this.setState(o)
 
-                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    const newTubeLength = tubeLength + 0.1
+                //this first "if" reduces the number of loops cos every loop is +0.5
+                if ( (Math.abs(o.shellOT - shellOTreq) > 1 || Math.abs(o.tubeOT - tubeOTreq) > 1 ) && this.state.iteration > 2) { 
+                    newTubeLength = tubeLength + 0.5
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
+                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    newTubeLength = tubeLength + 0.1
                     handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
                 }
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -167,15 +188,20 @@ class SizingResult extends React.Component {
                 if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
                     this.setState({ tubeMeanT: o.newTubeMeanT })
                     updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
-                }
+                } 
                 break;
 
             case 'G':
                 o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT, tubeLength)
                 this.setState(o)
 
-                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    const newTubeLength = tubeLength + 0.1
+                //this first "if" reduces the number of loops cos every loop is +0.5
+                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
+                    newTubeLength = tubeLength + 0.5
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
+                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    newTubeLength = tubeLength + 0.1
                     handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
                 }
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -191,8 +217,13 @@ class SizingResult extends React.Component {
                 o = HShellThermalCalc.HShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT, tubeLength)
                 this.setState(o)
 
-                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    const newTubeLength = tubeLength + 0.1
+                //this first "if" reduces the number of loops cos every loop is +0.5
+                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
+                    newTubeLength = tubeLength + 0.5
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
+                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    newTubeLength = tubeLength + 0.1
                     handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
                 }
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -208,8 +239,13 @@ class SizingResult extends React.Component {
                 o = JShellThermalCalc.JShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT, tubeLength)
                 this.setState(o)
 
-                if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    const newTubeLength = tubeLength + 0.1
+                //this first "if" reduces the number of loops cos every loop is +0.5
+                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
+                    newTubeLength = tubeLength + 0.5
+                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                }
+                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                    newTubeLength = tubeLength + 0.1
                     handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
                 }
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -223,7 +259,13 @@ class SizingResult extends React.Component {
                 break;
         }
 
-        this.setState({ tubeLength: tubeLength.toFixed(2) })
+        //sometimes the program just stops before it's done, so this will force it to continue
+        if (this.state.iteration < 3) {
+            console.log("FORCED LOOP")
+            updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+        }
+
+        // this.setState({ tubeLength: tubeLength.toFixed(2) })
         console.log("FINAL TUBE LENGTH", tubeLength)
 
 
@@ -231,52 +273,10 @@ class SizingResult extends React.Component {
     }
 
     componentDidMount() {
-        this.props.handleSubmit({
-            shellFluid: 'engine oil',
-            tubeFluid: 'water',
-            shell: 'E',
-            shellIT: 65.6,
-            shellMFR: 36.3,
-            shellFF: 0.000176,
-            tubeIT: 32.2,
-            tubeMFR: 18.1,
-            tubeFF: 0.000088,
-            
-            tubeOTreq: 37.31,
-            shellOTreq: 60.49,
-            
-            numberTube: 102,
-            tubeInnerD: 0.0166,
-            tubeOuterD: 0.019,
-            shellInnerDiameter: 0.336,
-            tubePitch: 0.025,            
-            layoutAngle: "rotated-square",
-
-            numberPasses: 2,
-            tubeLength: 0, //4.3,            
-            baffleCutPercent: 25.8,
-            numberBaffles: 14,
-            //centralBaffleSpacing: 0.279,
-            clearance: 0.318,
-            recalculate: 1
-
-            // tubeIT: 65.6,
-            // tubeMFR: 36.3,
-            // tubeFF: 0.000176,
-            // shellIT: 32.2,
-            // shellMFR: 18.1,  
-            // shellFF: 0.000088,
-            // tubeInnerD: 0.0166,
-            // tubeOuterD: 0.019,
-            // tubePitch: 0.025,
-            // numberTube: 102,
-            // numberPasses: 2,
-            // tubeLength: 4.3,
-            // tubeFluid: 'engine oil',
-            // shellFluid: 'water',
+        // this.props.handleSubmit({
 
             
-        })
+        // })
         this.props.updateShellProperties(65.6, 'engine oil')
         this.props.updateTubeProperties(32.2, 'water')
         this.calculate()

@@ -17,58 +17,52 @@ class SizingAnalysis extends React.Component {
 
         this.state = {
             // fluids 
-            shellFluid: '',
-            tubeFluid: '',
+            shellFluid: 'engine oil',
+            tubeFluid: 'water',
             // constants for shell
-            shellIT: 0,//required
+            shellIT: 65.6,
             shellOT: 0,
-            shellOTreq: 0,
-            shellMFR: 0,
-            shellSHC: 0.01,  //put 0.01 cos sometimes the initial value of 0 will cause program to crash
-            shellDV: 0.01,
-            shellKV: 0.01,
-            shellTC: 0.01,
-            shellD: 0.01,
-            shellFF: 0.01,
+            shellOTreq: 60.49,
+            shellMFR: 36.3,
+            shellSHC: 0.1,  //put 0.1 cos sometimes the initial value of 0 will cause program to crash
+            shellDV: 0.1,
+            shellKV: 0.1,
+            shellTC: 0.1,
+            shellD: 0.1,
+            shellFF: 0.000176,
             // Constant for tube
-            tubeIT: 0,//required
+            tubeIT: 32.2,
             tubeOT: 0,
-            tubeOTreq: 0,
-            tubeMFR: 0,
-            tubeSHC: 0.01,
-            tubeDV: 0.01,
-            tubeKV: 0.01,
-            tubeTC: 0.01,
-            tubeD: 0.01,
-            tubeFF: 0.01,
+            tubeOTreq: 37.31,
+            tubeMFR: 18.1,
+            tubeSHC: 0.1,
+            tubeDV: 0.1,
+            tubeKV: 0.1,
+            tubeTC: 0.1,
+            tubeD: 0.1,
+            tubeFF: 0.000088,
             // Constant for Constraints and physical Dimensions
-            tubeInnerD: 0.010,
-            tubeOuterD: 0.012,
+            tubeInnerD: 0.0166,
+            tubeOuterD: 0.0190,
             tubePitch: 0, //default is 0, then will auto calculate
-            numberTube: 130,
-            numberPasses: 1,
-            layoutAngle: "square",
-            shellInnerDiameter: 0.5,
-            baffleCutPercent: 0,
+            numberTube: 102,
+            numberPasses: 2,
+            layoutAngle: "rotated-square",
+            shellInnerDiameter: 0.336,
+            baffleCutPercent: 25.8,
             centralBaffleSpacing: 0,
-            clearance: 0,
-            shellSideFluidDynamicViscocity: 0,
+            numberBaffles: 14,
+            clearance: 0.318,
+            // shellSideFluidDynamicViscocity: 0,
             tubeMaterialThermalConductivity: 0,
+            tubeLength: 0.1, 
             tubeMaterial: "Admiralty (70% Cu, 30% Ni)",
-            tubeLength: 0, //new
-            // Constant for material design
-            // tubeUnsupportedLength: 0,
-            // tubeYoungModule: 0,
-            // tubeLongitudeStress: 0,
-            // addedMassCoefficient: 0,
-            // metalMassUnitLength: 0,
+
             //TEMA configs
             head: 'A',
             shell: 'E',
             rear: 'L',
             // pressure drop needed parameters
-            // tubeRe: 0,
-            // sigma: 0,
             Kc: 0,
             ke: 0,
             // App states

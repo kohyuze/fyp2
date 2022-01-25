@@ -36,16 +36,13 @@ const Tab2 = (props) => {
         const tubeImgDiameter = (tubeDiameter / shellDiameter) * shellImgDiameter
 
         //user will enter tubePitch = 0 if they want to auto calculate.
-        const findingTubePitch = (shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) => { //horizontal distance between two tubes
-            if (tubePitch != 0 ){
-                const imgTubePitch = tubePitch * shellImgDiameter / shellDiameter
-                return (imgTubePitch)
-            } else if (layoutAngle === "triangular") {
+        const findMaxTubePitch = (shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) => { //horizontal distance between two tubes
+            if (layoutAngle === "triangular") {
                 //recalculate imgTubePitch since triangular layout is more compact
                 // sin60 = 0.866
-                const shellImgArea = Math.PI * (shellImgDiameter ** 2) / 4 - tubeImgDiameter;
-                const tubeImgArea = shellImgArea / (numberTube / 0.35714) //each triangle has 0.35714 tubes
-                const imgTubePitch = (4 * tubeImgArea / 0.866) ** 0.5
+                const shellImgArea = Math.PI * ((shellImgDiameter - 2 * tubeImgDiameter) ** 2) / 4 ;
+                const tubeTriangleArea = shellImgArea / (2*numberTube) //each triangle has 0.5 tube, so n tubes need 2n triangles
+                const imgTubePitch = (2 * tubeTriangleArea / 0.866) ** 0.5 
                 return (imgTubePitch)
             }
             else {
@@ -59,12 +56,22 @@ const Tab2 = (props) => {
             }
         }
 
-        let imgTubePitch = findingTubePitch(shellImgDiameter, numberTube, layoutAngle)
+        let imgTubePitch
+        let maxImgTubePitch = findMaxTubePitch(shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) * 1.1 //I make the max abit higher. Later will iterate and reduce till everything fits.
+        let userImgTubePitch = tubePitch * shellImgDiameter / shellDiameter
+
+        console.log("ORIGINAL TUBE PITCH", tubePitch)
+        if (tubePitch == 0 || userImgTubePitch > maxImgTubePitch) { imgTubePitch = maxImgTubePitch }
+        else { imgTubePitch = userImgTubePitch }
+
+        console.log("maxImgTubePitch", maxImgTubePitch)
+        console.log("userImgTubePitch", userImgTubePitch)
+        console.log("imgTubePitch", imgTubePitch)
 
         //express the diameter in terms of tube
-        const tubeStayWithinDiameter = shellImgDiameter - imgTubePitch
-        const numTubeInCenterRow = tubeStayWithinDiameter / imgTubePitch * 1.07 //give it abit of margin
-        imgTubePitch = (tubeStayWithinDiameter / Math.floor(numTubeInCenterRow)) //reset imgTubePitch so that the rows are evenly spread out
+        const tubeStayWithinDiameter = shellImgDiameter - imgTubePitch - tubeImgDiameter
+        const numTubeInCenterRow = Math.floor(tubeStayWithinDiameter / imgTubePitch )//give it abit of margin
+        imgTubePitch = (tubeStayWithinDiameter / numTubeInCenterRow) //reset imgTubePitch so that the rows are evenly spread out
 
         const xleft = canvas.width / 2 - tubeStayWithinDiameter / 2
         const ycenter = canvas.height / 2
@@ -78,6 +85,8 @@ const Tab2 = (props) => {
         }
 
         let draw = true;
+        let drawing = 1;
+
         // this is a loop cos sometimes we cannot fit all the tubes in, then we reduce tubepitch and try again
         while (draw) {
             //start drawing
@@ -115,6 +124,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                                 //console.log(tubeDrawn, i)
@@ -134,6 +144,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                             }
@@ -153,6 +164,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                             }
@@ -176,6 +188,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                                 //console.log(tubeDrawn, i)
@@ -195,6 +208,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                                 //draw one below
@@ -207,6 +221,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                             }
@@ -226,6 +241,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                                 //draw row below
@@ -238,6 +254,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                             }
@@ -262,6 +279,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                                 //console.log(tubeDrawn, i)
@@ -281,6 +299,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                                 //draw one below
@@ -293,6 +312,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                             }
@@ -312,6 +332,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                                 //draw row below
@@ -324,6 +345,7 @@ const Tab2 = (props) => {
                                     c.beginPath();
                                     c.arc(x, y, tubeImgDiameter / 2, 0, 2 * Math.PI);
                                     c.stroke();
+                                    // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
                             }
@@ -332,29 +354,38 @@ const Tab2 = (props) => {
                         }
                     }
                     break
+                    
             }
-            
-            const calculatedTubePitch = (imgTubePitch * (shellDiameter / shellImgDiameter)).toPrecision(2)
-            //console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
 
-            if (currentRow >= tubeDrawn) { //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
+
+            // draw = false;
+            const calculatedTubePitch = (imgTubePitch * (shellDiameter / shellImgDiameter)).toPrecision(2)
+            // console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
+            console.log("tubes drawn", tubeDrawn)
+            console.log("currentRow", currentRow)
+
+            if (calculatedTubePitch < 0.01) { draw = false; } //This is a quick fix for an error that I cannot understand, where if I put tubePitch<0.01 it'll go into infinite loop
+            else if (currentRow >= tubeDrawn) { //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
                 //console.log("Tubes not fully drawn")
                 imgTubePitch = imgTubePitch * 0.95
+                drawing++
             }
             else {
                 //console.log("Tubes fully drawn")
                 draw = false;
-                
+                console.log("DRAWING", drawing)
                 //tubePitch == 0 means the user wants auto calculate. 
                 //tubePitch > calculatedTubePitch means the user input tubePitch cannot fit all the tubes, then we auto resize the tubePitch
-                if (tubePitch == 0 || tubePitch > calculatedTubePitch){  
-                    props.handleSubmit({tubePitch: calculatedTubePitch,
-                                        //recalculate: 1
-                                    })
+                if (tubePitch == 0 || tubePitch > calculatedTubePitch) {
+                    props.handleSubmit({ tubePitch: calculatedTubePitch })
                     //console.log('rewriting tube pitch!')
                 }
+
             }
+            console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
+            // console.log("ACTUAL TUBEPITCH", tubePitch)
         }
+
     }
 
     return (
