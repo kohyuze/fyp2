@@ -48,7 +48,7 @@ class RatingAnalysis extends React.Component {
             shellInnerDiameter: 0.336,
             baffleCutPercent: 25.8,
             centralBaffleSpacing: 0,
-            numberBaffles: 14,
+            numberBaffles: 13,
             clearance: 0.318,
             // shellSideFluidDynamicViscocity: 0,
             tubeMaterialThermalConductivity: 0,

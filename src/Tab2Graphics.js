@@ -60,13 +60,13 @@ const Tab2 = (props) => {
         let maxImgTubePitch = findMaxTubePitch(shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) * 1.1 //I make the max abit higher. Later will iterate and reduce till everything fits.
         let userImgTubePitch = tubePitch * shellImgDiameter / shellDiameter
 
-        console.log("ORIGINAL TUBE PITCH", tubePitch)
+        // console.log("ORIGINAL TUBE PITCH", tubePitch)
         if (tubePitch == 0 || userImgTubePitch > maxImgTubePitch) { imgTubePitch = maxImgTubePitch }
         else { imgTubePitch = userImgTubePitch }
 
-        console.log("maxImgTubePitch", maxImgTubePitch)
-        console.log("userImgTubePitch", userImgTubePitch)
-        console.log("imgTubePitch", imgTubePitch)
+        // console.log("maxImgTubePitch", maxImgTubePitch)
+        // console.log("userImgTubePitch", userImgTubePitch)
+        // console.log("imgTubePitch", imgTubePitch)
 
         //express the diameter in terms of tube
         const tubeStayWithinDiameter = shellImgDiameter - imgTubePitch - tubeImgDiameter
@@ -127,9 +127,9 @@ const Tab2 = (props) => {
                                     // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
-                                //console.log(tubeDrawn, i)
+                                //// console.log(tubeDrawn, i)
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                         else if (currentRow % 2 === 0) {
@@ -148,7 +148,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -168,7 +168,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -191,9 +191,9 @@ const Tab2 = (props) => {
                                     // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
-                                //console.log(tubeDrawn, i)
+                                //// console.log(tubeDrawn, i)
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                         else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
@@ -225,7 +225,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -258,7 +258,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -282,9 +282,9 @@ const Tab2 = (props) => {
                                     // c.fillText(tubeDrawn, x, y)
                                     tubeDrawn++
                                 }
-                                //console.log(tubeDrawn, i)
+                                //// console.log(tubeDrawn, i)
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                         else if (currentRow % 2 === 0) { //these will be the offset rows, every alternate row is offset
@@ -316,7 +316,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
 
                         }
@@ -349,7 +349,7 @@ const Tab2 = (props) => {
                                     tubeDrawn++
                                 }
                             }
-                            //console.log(tubeDrawn, currentRow)
+                            //// console.log(tubeDrawn, currentRow)
                             currentRow++
                         }
                     }
@@ -360,30 +360,30 @@ const Tab2 = (props) => {
 
             // draw = false;
             const calculatedTubePitch = (imgTubePitch * (shellDiameter / shellImgDiameter)).toPrecision(2)
-            // console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
-            console.log("tubes drawn", tubeDrawn)
-            console.log("currentRow", currentRow)
+            // // console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
+            // console.log("tubes drawn", tubeDrawn)
+            // console.log("currentRow", currentRow)
 
             if (calculatedTubePitch < 0.01) { draw = false; } //This is a quick fix for an error that I cannot understand, where if I put tubePitch<0.01 it'll go into infinite loop
             else if (currentRow >= tubeDrawn) { //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
-                //console.log("Tubes not fully drawn")
+                //// console.log("Tubes not fully drawn")
                 imgTubePitch = imgTubePitch * 0.95
                 drawing++
             }
             else {
-                //console.log("Tubes fully drawn")
+                //// console.log("Tubes fully drawn")
                 draw = false;
-                console.log("DRAWING", drawing)
+                // console.log("DRAWING", drawing)
                 //tubePitch == 0 means the user wants auto calculate. 
                 //tubePitch > calculatedTubePitch means the user input tubePitch cannot fit all the tubes, then we auto resize the tubePitch
                 if (tubePitch == 0 || tubePitch > calculatedTubePitch) {
                     props.handleSubmit({ tubePitch: calculatedTubePitch })
-                    //console.log('rewriting tube pitch!')
+                    //// console.log('rewriting tube pitch!')
                 }
 
             }
-            console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
-            // console.log("ACTUAL TUBEPITCH", tubePitch)
+            // console.log("CALCULATED TUBEPITCH", calculatedTubePitch)
+            // // console.log("ACTUAL TUBEPITCH", tubePitch)
         }
 
     }

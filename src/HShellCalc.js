@@ -3,13 +3,13 @@ import * as math from 'mathjs';
 
 
 
-export function HShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
+export function HShellThermalCalculation(data, State, Length) {
 
     let {
         shellFluid,
         tubeFluid,
         // constants for shell
-        //shellIT,
+        shellIT,
         shellOT,
         shellMFR,
         shellSHC,
@@ -19,7 +19,7 @@ export function HShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         shellD,
         shellFF,
         // Constant for tube
-        //tubeIT,
+        tubeIT,
         tubeOT,
         tubeMFR,
         tubeSHC,
@@ -64,10 +64,6 @@ export function HShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
     if (Length) { //this is here for sizing calculation
         tubeLength = Length
     }
-
-    //just in case strings were passed in
-    shellIT = Number(shellIT)
-    tubeIT = Number(tubeIT)
 
     //------------------Rating problem-----------------------
     ////////////////////Geometrical Calculations, Shah 594/////////////////////////

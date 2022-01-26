@@ -49,16 +49,17 @@ class RatingTab1Form extends React.Component {
                     initialValues={{}}//shellIT: '', shellMFR: '' }}//dk why i dun need to put all the variables here
                     validationSchema={
                         Yup.object({
-                            shellIT: Yup.number(),
+                            shellIT: Yup.number(),                            
                             shellMFR: Yup.number(),
+                            shellFF: Yup.number(),
                             tubeIT: Yup.number(),
-                            tubeMFR: Yup.number(),
+                            tubeMFR: Yup.number(),                            
+                            tubeFF: Yup.number(),
                         })
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
                         this.props.handleSubmit({recalculate: 1});
-                        console.log(values)
                         setSubmitting(false);
                         this.setState({popUp: true})   
                         

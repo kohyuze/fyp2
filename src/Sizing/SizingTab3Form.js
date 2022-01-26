@@ -86,14 +86,14 @@ class SizingTab3Form extends React.Component {
                     validationSchema={
                         Yup.object({
                             baffleCutPercent: Yup.number(),
-                            centralBaffleSpacing: Yup.number(),
+                            numberBaffles: Yup.number(),
                             clearance: Yup.number(),
                         })
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
-                        this.props.handleSubmit({recalculate: 1});
-                        console.log("submitted values:" + values);
+                        this.props.handleSubmit({tubeLength: 0.1}); 
+                        this.props.handleSubmit({recalculate: 1});                        
                         setSubmitting(false);
                         this.setState({ popUp: true })
                     }}
@@ -115,13 +115,13 @@ class SizingTab3Form extends React.Component {
                             placeholder="Baffle Cut"
                             unit="%"
                         />
-                        <MyTextInput
+                        {/* <MyTextInput
                             label="Central Baffles Spacing"
                             name="centralBaffleSpacing"
                             type="text"
                             placeholder="Central Baffles Spacing"
                             unit="m"
-                        />
+                        /> */}
                         <MyTextInput
                             label="Clearance"
                             name="clearance"

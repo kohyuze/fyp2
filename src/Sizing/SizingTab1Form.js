@@ -50,15 +50,19 @@ class SizingTab1Form extends React.Component {
                     validationSchema={
                         Yup.object({
                             shellIT: Yup.number(),
+                            shellOTreq: Yup.number(),
                             shellMFR: Yup.number(),
+                            shellFF: Yup.number(),
                             tubeIT: Yup.number(),
                             tubeMFR: Yup.number(),
+                            tubeOTreq: Yup.number(),
+                            tubeFF: Yup.number(),
                         })
                     }
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
-                        this.props.handleSubmit({recalculate: 1});
-                        console.log(values)
+                        this.props.handleSubmit({tubeLength: 0.1}); 
+                        this.props.handleSubmit({recalculate: 1});                                                 
                         setSubmitting(false);
                         this.setState({popUp: true})   
                         

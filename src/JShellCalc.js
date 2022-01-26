@@ -2,13 +2,13 @@ import * as math from 'mathjs';
 
 
 
-export function JShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
+export function JShellThermalCalculation(data, State, Length) {
 
     let {
         shellFluid,
         tubeFluid,
         // constants for shell
-        //shellIT,
+        shellIT,
         shellOT,
         shellMFR,
         shellSHC,
@@ -18,7 +18,7 @@ export function JShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         shellD,
         shellFF,
         // Constant for tube
-        //tubeIT,
+        tubeIT,
         tubeOT,
         tubeMFR,
         tubeSHC,
@@ -64,10 +64,7 @@ export function JShellThermalCalculation(data, State, shellIT, tubeIT, Length) {
         tubeLength = Length
     }
 
-    //just in case strings were passed in
-    shellIT = Number(shellIT)
-    tubeIT = Number(tubeIT)
-
+ 
     //------------------Rating problem-----------------------
     ////////////////////Geometrical Calculations, Shah 594/////////////////////////
     //Assumptions: The shell-and-tube heat exchanger is assumed to have the ideal geometrical

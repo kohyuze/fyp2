@@ -211,6 +211,9 @@ const Tab1 = (props) => {
                         c.fillRect(shellTopLeftX + baffleClearance + (i + 1) * baffleSpacing, shellTopLeftY, baffleWidth, baffleHeight)
                         i = i + 2;
                     }
+                    if (numberBaffles%2 == 1){ //becos when odd number the last baffle doesn't get drawn
+                        c.fillRect(shellTopLeftX + baffleClearance + i * baffleSpacing, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight)
+                    }
                     break;
                 case 'F':
                     centralBaffleSpacing = (tubeLength - 2 * clearance) / (numberBaffles - 1)//same formula as in FShellCalc
@@ -244,6 +247,9 @@ const Tab1 = (props) => {
                         c.fillRect(shellTopLeftX + baffleClearance + (i + 1) * baffleSpacing, shellTopLeftY, baffleWidth, 0.5 * baffleHeight)
                         c.fillRect(shellTopLeftX + baffleClearance + (i + 1) * baffleSpacing, shellTopLeftY + shellInsideHeight - 0.5 * baffleHeight, baffleWidth, 0.5 * baffleHeight)
                         i = i + 2;
+                    }
+                    if (numberBaffles%2 == 1){ //becos when odd number the last baffle doesn't get drawn
+                        c.fillRect(shellTopLeftX + baffleClearance + i * baffleSpacing, shellTopLeftY + 0.5 * shellInsideHeight - 0.5 * baffleHeight, baffleWidth, baffleHeight)
                     }
                     break;
                 case 'G':

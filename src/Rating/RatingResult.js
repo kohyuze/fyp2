@@ -136,7 +136,7 @@ class RatingResult extends React.Component {
 
                 break;
             case 'F':
-                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
+                o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state)
                 this.setState(o)
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -149,7 +149,7 @@ class RatingResult extends React.Component {
                 }
                 break;
             case 'G':
-                o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
+                o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state)
                 this.setState(o)
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -162,7 +162,7 @@ class RatingResult extends React.Component {
                 }
                 break;
             case 'H':
-                o = HShellThermalCalc.HShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
+                o = HShellThermalCalc.HShellThermalCalculation(this.props.data, this.state)
                 this.setState(o)
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
