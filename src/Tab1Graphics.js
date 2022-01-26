@@ -192,18 +192,23 @@ const Tab1 = (props) => {
                     var outputNozzleX = shellTopLeftX + shellInsideWidth - 0.5 * baffleClearance;
                     var outputNozzleY = shellTopLeftY + shellInsideHeight;
 
+                    c.fillStyle = 'black';
                     //Draw the shell input nozzle
+                    // draw the first and last baffle. 
                     c.fillRect(inputNozzleX, inputNozzleY, nozzleHeightThickness, nozzleHeight)
                     c.fillRect(inputNozzleX - 0.5 * nozzleWidth, inputNozzleY, nozzleWidth, nozzleWidthThickness)
-                    //Draw the shell output nozzle            
-                    c.fillRect(outputNozzleX, outputNozzleY, nozzleHeightThickness, nozzleHeight)
-                    c.fillRect(outputNozzleX - 0.5 * nozzleWidth, outputNozzleY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
-
-                    // draw the first and last baffle. 
-                    c.fillStyle = 'black';
                     c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY, baffleWidth, baffleHeight)
-                    c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight)
-
+                    //Draw the shell output nozzle            
+                    if (numberBaffles%2 == 1){ 
+                        c.fillRect(outputNozzleX, inputNozzleY, nozzleHeightThickness, nozzleHeight)
+                        c.fillRect(outputNozzleX - 0.5 * nozzleWidth, inputNozzleY, nozzleWidth, nozzleWidthThickness)
+                        c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY, baffleWidth, baffleHeight)
+                    } else {
+                        c.fillRect(outputNozzleX, outputNozzleY, nozzleHeightThickness, nozzleHeight)
+                        c.fillRect(outputNozzleX - 0.5 * nozzleWidth, outputNozzleY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
+                        c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight)
+                    }                   
+                               
                     //draw the remaining baffles. Split the space between equally. minus 2 as the first and last are alr drawn
                     var i = 1;
                     while (i < numberBaffles - 2) {
@@ -234,7 +239,7 @@ const Tab1 = (props) => {
                     //draw longitudinal baffle
                     c.fillRect(shellTopLeftX, shellTopLeftY + 0.5 * shellInsideHeight, shellInsideWidth - baffleClearance, nozzleWidthThickness)
 
-                    // draw the first and last baffle. 
+                    
                     c.fillStyle = 'black';
                     c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY, baffleWidth, 0.5 * baffleHeight)
                     c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY + shellInsideHeight - 0.5 * baffleHeight, baffleWidth, 0.5 * baffleHeight)
@@ -395,20 +400,36 @@ const Tab1 = (props) => {
                     var outputNozzleRX = shellTopLeftX + 0.5 * baffleClearance;
                     var outputNozzleRY = shellTopLeftY + shellInsideHeight;
 
+                    c.fillStyle = 'black';
                     //Draw the shell input nozzle
+                    // draw the middle baffle
                     c.fillRect(inputNozzleX, inputNozzleY, nozzleHeightThickness, nozzleHeight)
                     c.fillRect(inputNozzleX - 0.5 * nozzleWidth, inputNozzleY, nozzleWidth, nozzleWidthThickness)
-                    //Draw the shell output nozzle            
-                    c.fillRect(outputNozzleLX, outputNozzleLY, nozzleHeightThickness, nozzleHeight)
-                    c.fillRect(outputNozzleLX - 0.5 * nozzleWidth, outputNozzleLY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
-                    c.fillRect(outputNozzleRX, outputNozzleRY, nozzleHeightThickness, nozzleHeight)
-                    c.fillRect(outputNozzleRX - 0.5 * nozzleWidth, outputNozzleRY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
-
-                    // draw the first, middle and last baffle. 
-                    c.fillStyle = 'black';
-                    c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight) //left
                     c.fillRect(shellTopLeftX + 0.5 * shellInsideWidth, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight) //middle
-                    c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight) //right
+
+
+                    //Draw the shell output nozzle    
+                    // draw the first and last baffle.         
+                    if ((0.5*numberBaffles)%2 == 1){ 
+                        c.fillRect(outputNozzleLX, inputNozzleY, nozzleHeightThickness, nozzleHeight)
+                        c.fillRect(outputNozzleLX - 0.5 * nozzleWidth, inputNozzleY, nozzleWidth, nozzleWidthThickness)
+                        c.fillRect(outputNozzleRX, inputNozzleY, nozzleHeightThickness, nozzleHeight)
+                        c.fillRect(outputNozzleRX - 0.5 * nozzleWidth, inputNozzleY, nozzleWidth, nozzleWidthThickness)
+                        c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY, baffleWidth, baffleHeight) //left                    
+                        c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY, baffleWidth, baffleHeight) //right
+                    } else {
+                        c.fillRect(outputNozzleLX, outputNozzleLY, nozzleHeightThickness, nozzleHeight)
+                        c.fillRect(outputNozzleLX - 0.5 * nozzleWidth, outputNozzleLY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
+                        c.fillRect(outputNozzleRX, outputNozzleRY, nozzleHeightThickness, nozzleHeight)
+                        c.fillRect(outputNozzleRX - 0.5 * nozzleWidth, outputNozzleRY + nozzleHeight, nozzleWidth, nozzleWidthThickness)
+                        c.fillRect(shellTopLeftX + baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight) //left                    
+                        c.fillRect(shellTopLeftX + shellInsideWidth - baffleClearance, shellTopLeftY + shellInsideHeight - baffleHeight, baffleWidth, baffleHeight) //right
+                    }        
+                    
+
+                    
+                    
+                    
 
                     //draw the remaining baffles. Split the space between equally. minus 2 as the first and last are alr drawn
                     var i = 0;
