@@ -1,11 +1,6 @@
 import * as dfd from 'danfojs';
 
 
-// export function interpolate(x, x1, x2, y1, y2) {
-//     // console.log("interpolate ".x1 ,x2,y1,y2)
-//     return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
-// }
-
 const interpolate = (x, x1, x2, y1, y2) => {
     // console.log("interpolate ".x1 ,x2,y1,y2)
     return (y1 + ((x - x1) * (y2 - y1) / (x2 - x1)));
@@ -18,10 +13,10 @@ export function fetchProperties(AveT, fluid, callback) {
     console.log("fetching " + fluid)
     let fluidProperties = ''
     switch (fluid) {
-        case 'water':
+        case 'Water':
             fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/SteamTable"
             break;
-        case 'engine oil':
+        case 'Engine Oil':
             fluidProperties = "https://raw.githubusercontent.com/kohyuze/fluid-properties/main/engineOilUnused"
             break;
         case '50% Ethylene Glycol':

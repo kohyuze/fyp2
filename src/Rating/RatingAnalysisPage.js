@@ -4,6 +4,7 @@ import Tab2Graphics from '../Tab2Graphics';
 import Tab1Form from './RatingTab1Form';
 import Tab2Form from './RatingTab2Form';
 import Tab3Form from './RatingTab3Form';
+import RatingBatchInput from './RatingBatchInput';
 
 import { Link } from 'react-router-dom';
 
@@ -61,6 +62,11 @@ class RatingAnalysis extends React.Component {
                 <div>
                   < Tab1Form
                     formData={this.props.data}
+                    handleSubmit={this.props.handleSubmit}
+                    updateTubeProperties={this.props.updateTubeProperties}
+                    updateShellProperties={this.props.updateShellProperties}
+                  />
+                  < RatingBatchInput 
                     handleSubmit={this.props.handleSubmit}
                     updateTubeProperties={this.props.updateTubeProperties}
                     updateShellProperties={this.props.updateShellProperties}

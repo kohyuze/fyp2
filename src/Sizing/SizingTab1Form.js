@@ -62,12 +62,13 @@ class SizingTab1Form extends React.Component {
                     onSubmit={(values, { setSubmitting }) => {
                         this.props.handleSubmit(values);
                         this.props.handleSubmit({tubeLength: 0.1}); 
-                        this.props.handleSubmit({recalculate: 1});                                                 
+                        this.props.updateShellProperties(this.props.formData.shellIT,this.props.formData.shellFluid);
+                        this.props.updateTubeProperties(this.props.formData.tubeIT,this.props.formData.tubeFluid);
+                        // this.props.handleSubmit({recalculate: 1}); //no need cos updateProperties alr have this                                                
                         setSubmitting(false);
                         this.setState({popUp: true})   
                         
-                        this.props.updateShellProperties(this.props.formData.shellIT,this.props.formData.shellFluid);
-                        this.props.updateTubeProperties(this.props.formData.tubeIT,this.props.formData.tubeFluid);
+                        
                     }}
                 >
                     <Form>
@@ -96,8 +97,8 @@ class SizingTab1Form extends React.Component {
                         <h2 className='categoryHeader'>Shell Side Fluid</h2>
                         <MySelect label="Shell Fluid" name="shellFluid">
                             <option value="">Select a Shell Fluid</option>
-                            <option value="water">Water</option>
-                            <option value="engine oil">Engine Oil</option>
+                            <option value="Water">Water</option>
+                            <option value="Engine Oil">Engine Oil</option>
                             <option value="50% Ethylene Glycol">50% Ethylene Glycol</option>
                             <option value="Ethylene Glycol">Ethylene Glycol</option>
                             <option value="Glycerin">Glycerin</option>

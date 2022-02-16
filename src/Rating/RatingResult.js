@@ -88,6 +88,9 @@ class RatingResult extends React.Component {
             case "Admiralty (70% Cu, 30% Ni)":
                 handleSubmit({tubeMaterialThermalConductivity: 111})
                 break
+            case "Admiralty":
+                handleSubmit({tubeMaterialThermalConductivity: 111})
+                break
             case "Stainless Steel":
                 handleSubmit({tubeMaterialThermalConductivity: 25})
                 break
