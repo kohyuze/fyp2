@@ -69,6 +69,8 @@ class RatingResult extends React.Component {
             shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
             tubeLength,
+            tubeDrawingDone,
+            iteration
         } = this.props.data;
 
         const {
@@ -80,8 +82,8 @@ class RatingResult extends React.Component {
 
 
 
-        console.log("Iteration " + this.state.iteration)
-        this.setState({ iteration: this.state.iteration + 1 })
+        console.log("Iteration " + iteration)
+        handleSubmit({ iteration: iteration + 1 })
 
         //need to update the tube materials conductivity
         switch (tubeMaterial) {
@@ -123,7 +125,7 @@ class RatingResult extends React.Component {
         let o;
         switch (shell) {
             case 'E':
-                o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state)
+                o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state)  
                 this.setState(o)
 
                 // Checks if iteration is needed. Updates fluid properties with new mean temps and iterates.
@@ -193,7 +195,8 @@ class RatingResult extends React.Component {
         }
         
         //sometimes the tube pressure drop do not get calculated cos fetching data too slow. Then we force it to loop again
-        if(this.state.tubePressureDrop == 0 && this.state.iteration < 20 ){
+        if(this.state.tubePressureDrop == 0 && iteration < 3 && this.state.calculationsDone == 1){
+            console.log("P drop not calculated")
             updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
             handleSubmit({recalculate: 1})
         }
@@ -202,12 +205,8 @@ class RatingResult extends React.Component {
     }
 
     componentDidMount() {
-        // this.props.handleSubmit({
-            
-            
-        // })
-        this.props.updateShellProperties(65.6, 'engine oil')
-        this.props.updateTubeProperties(32.2, 'water')
+        this.props.updateShellProperties(65.6, 'Engine Oil')
+        this.props.updateTubeProperties(32.2, 'Water')
         this.calculate()
     }
 
@@ -219,7 +218,7 @@ class RatingResult extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.data.recalculate) {
             this.props.handleSubmit({ recalculate: 0 });
-            console.log('recalculating..')
+            // console.log('recalculating..')
             this.calculate()
         }
     }

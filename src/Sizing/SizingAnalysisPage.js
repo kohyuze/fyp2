@@ -4,8 +4,7 @@ import Tab2Graphics from '../Tab2Graphics';
 import Tab1Form from './SizingTab1Form';
 import Tab2Form from './SizingTab2Form';
 import Tab3Form from './SizingTab3Form';
-
-import { Link } from 'react-router-dom';
+import SizingBatchInput from './SizingBatchInput';
 
 class SizingAnalysis extends React.Component {
   constructor(props) {
@@ -64,6 +63,9 @@ class SizingAnalysis extends React.Component {
                     handleSubmit={this.props.handleSubmit}
                     updateTubeProperties={this.props.updateTubeProperties}
                     updateShellProperties={this.props.updateShellProperties}
+                  />
+                  < SizingBatchInput 
+                    handleSubmit={this.props.handleSubmit}
                   />
                 </div>
               </div>

@@ -76,7 +76,7 @@ export function GShellThermalCalculation(data, State, Length) {
     // calculate the centralBaffleSpacing from the numberBaffles
     let numberBafflesPerSide = Math.floor(numberBaffles/2)
     centralBaffleSpacing = Math.abs((tubeLengthPerSide - 2 * clearance)/(numberBafflesPerSide - 1) - 0.003) //3mm acounts for the thickness of the baffle
-    console.log("Baffle Spacing ", centralBaffleSpacing)
+    // console.log("Baffle Spacing ", centralBaffleSpacing)
 
 
     let X_l, X_t;
@@ -170,7 +170,7 @@ export function GShellThermalCalculation(data, State, Length) {
     //Now, compute the number of baffles from Eq. (8.126) as
     const N_b = numberBafflesPerSide
     //Math.floor((tubeLengthPerSide - clearance - clearance) / centralBaffleSpacing + 1)
-    console.log("Nb", N_b)
+    // console.log("Nb", N_b)
 
     //Bypass and Leakage Flow Areas. To calculate the fraction of crossflow area available for
     //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area
@@ -202,16 +202,16 @@ export function GShellThermalCalculation(data, State, Length) {
     //-----Shell-Side Heat Transfer Coefficient-----------------------
     //Determination of the flow velocity in the shell
     const shellMassVelocity = shellMFR / A_ocr;
-    //console.log("shellMassVelocity", shellMassVelocity)
+    //// console.log("shellMassVelocity", shellMassVelocity)
     //Determination of the Reynolds number
     const shellRe = (shellMassVelocity * tubeOuterD) / shellDV;
-    //console.log("shellRe", shellRe)
+    //// console.log("shellRe", shellRe)
     //Calculation of the Pr number
     const shellPr = (shellKV * shellSHC * shellD) / shellTC;
     //Now we compute Nus from the given correlation with Re_d = Re_s. Note that we have not calculated T_w, 
     //so we cannot calculate Pr_w. So in this iteration, we consider Pr_s = Pr_w
     const shellNu = 1.04 * (shellRe ** 0.4) * (shellPr ** 0.36)
-    //console.log("shellNu", shellNu)
+    //// console.log("shellNu", shellNu)
     const h_id = (shellNu * shellTC) / tubeOuterD
 
     //Bell Delaware method, refer to table 9.2, shah pg648
@@ -256,23 +256,23 @@ export function GShellThermalCalculation(data, State, Length) {
     //Tube-side Reynolds number
     const tubeRe = (tubeMFR * tubeInnerD) / (A_ot * tubeDV)
     o.tubeRe = tubeRe
-    // console.log("A_ot", A_ot)
-    //console.log("tubeDV", tubeDV)
-    //console.log("tubeRe", tubeRe)
+    // // console.log("A_ot", A_ot)
+    //// console.log("tubeDV", tubeDV)
+    //// console.log("tubeRe", tubeRe)
 
     const tubePr = (tubeKV * tubeSHC * tubeD) / tubeTC;
     //Nusselt number
     const tubeNu = 0.024 * tubeRe ** 0.8 * tubePr ** 0.4
-    //console.log("tubeNu", tubeNu)
+    //// console.log("tubeNu", tubeNu)
     //Heat transfer coefficient
     const h_t = (tubeNu * tubeTC) / tubeInnerD
-    //console.log("h_t", h_t)
+    //// console.log("h_t", h_t)
     o.tubeHEcoeff = h_t.toFixed(2);
 
     //---------------Overall Heat Transfer Coefficient------------
     const U_inverse = (1 / h_s) + shellFF + ((tubeOuterD * Math.log(tubeOuterD / tubeInnerD)) / (2 * k_w)) + tubeFF * (tubeOuterD / tubeInnerD) + (1 / h_t) * (tubeOuterD / tubeInnerD)
     const overallHEcoeff = 1 / U_inverse
-    //console.log("overallHEcoeff", overallHEcoeff)
+    //// console.log("overallHEcoeff", overallHEcoeff)
     o.overallHEcoeff = overallHEcoeff.toFixed(2);
 
     //------------- Heat Transfer Effectiveness------------------
@@ -311,7 +311,7 @@ export function GShellThermalCalculation(data, State, Length) {
         HEeffectiveness_parallelflow = (1 - exp) / (1 + C_star)
     }
 
-    // console.log("HEeffectiveness", HEeffectiveness)
+    // // console.log("HEeffectiveness", HEeffectiveness)
     // o.HEeffectiveness = HEeffectiveness.toFixed(2);
 
     //------------------Heat Transfer Rate and Exit Temperatures----------------------
@@ -325,8 +325,8 @@ export function GShellThermalCalculation(data, State, Length) {
     T_si = shellIT;
     C_s = C_shell
 
-    console.log("ShellIT ", shellIT)
-    console.log("TubeIT ", tubeIT)
+    // console.log("ShellIT ", shellIT)
+    // console.log("TubeIT ", tubeIT)
 
     const EC_c = HEeffectiveness_counterflow * C_min
     const EC_p = HEeffectiveness_parallelflow * C_min
@@ -443,7 +443,7 @@ export function GShellThermalCalculation(data, State, Length) {
             }
             break
         default:
-            console.log("G Shell calculation numberPasses invalid.")
+            // console.log("G Shell calculation numberPasses invalid.")
             break
     }
 
@@ -451,23 +451,23 @@ export function GShellThermalCalculation(data, State, Length) {
 
     
 
-    // console.log(matrixX)
-    console.log("T_ti", T_ti)
-    console.log("T_to", T_to)
-    console.log("T_si", T_si)
-    console.log("T_so", T_so)
-    console.log("T_1", T_1)
-    console.log("T_2", T_2)
-    console.log("T_3", T_3)
-    // console.log("T_4", T_4)
-    // console.log("T_5", T_5)
-    // console.log("T_6", T_6)
-    // console.log("T_7", T_7)
-    // console.log("T_8", T_8)
-    // console.log("T_9", T_9)
+    // // console.log(matrixX)
+    // console.log("T_ti", T_ti)
+    // console.log("T_to", T_to)
+    // console.log("T_si", T_si)
+    // console.log("T_so", T_so)
+    // console.log("T_1", T_1)
+    // console.log("T_2", T_2)
     // console.log("T_3", T_3)
-    console.log("T_soa", T_soa)
-    console.log("T_sob", T_sob)
+    // // console.log("T_4", T_4)
+    // // console.log("T_5", T_5)
+    // // console.log("T_6", T_6)
+    // // console.log("T_7", T_7)
+    // // console.log("T_8", T_8)
+    // // console.log("T_9", T_9)
+    // // console.log("T_3", T_3)
+    // console.log("T_soa", T_soa)
+    // console.log("T_sob", T_sob)
 
 
     //Heat Transfer Rate
@@ -487,13 +487,13 @@ export function GShellThermalCalculation(data, State, Length) {
     //check mean temp, if difference is more than 1°C, we iterate again
     o.newShellMeanT = (shellOT2 + shellIT) / 2
     o.newTubeMeanT = (tubeOT2 + tubeIT) / 2
-    console.log("newShellMeanT " + o.newShellMeanT)
-    console.log("shellMeanT " + o.shellMeanT)
-    console.log("newTubeMeanT " + o.newTubeMeanT)
-    console.log("tubeMeanT " + o.tubeMeanT)
+    // console.log("newShellMeanT " + o.newShellMeanT)
+    // console.log("shellMeanT " + o.shellMeanT)
+    // console.log("newTubeMeanT " + o.newTubeMeanT)
+    // console.log("tubeMeanT " + o.tubeMeanT)
 
-    console.log("ShellOT ", shellOT2)
-    console.log("TubeOT ", tubeOT2)
+    // console.log("ShellOT ", shellOT2)
+    // console.log("TubeOT ", tubeOT2)
 
     //------------------Shell side pressure drop shah pg656----------------------
     const b = 6.59 / (1 + 0.14 * shellRe ** 0.52)
@@ -545,8 +545,8 @@ export function GShellThermalCalculation(data, State, Length) {
         const firstTerm = (4 * frictionFactor * tubeLength / tubeInnerD)
         const tubePressureDrop = coeff_in_front * (firstTerm + entranceEffect - exitEffect) * numberPasses
         o.tubePressureDrop = tubePressureDrop.toFixed(2)
-        console.log("shellPressureDrop ", shellPressureDrop)
-        console.log("tubePressureDrop ", tubePressureDrop)
+        // console.log("shellPressureDrop ", shellPressureDrop)
+        // console.log("tubePressureDrop ", tubePressureDrop)
     }
 
     return (o)

@@ -372,7 +372,6 @@ export function EShellThermalCalculation(data, State, Length) {
         // console.log("tubePressureDrop ", tubePressureDrop)
     }
 
-
     return (o)
 
 }

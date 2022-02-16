@@ -68,8 +68,6 @@ class RatingAnalysis extends React.Component {
                   />
                   < RatingBatchInput 
                     handleSubmit={this.props.handleSubmit}
-                    updateTubeProperties={this.props.updateTubeProperties}
-                    updateShellProperties={this.props.updateShellProperties}
                   />
                 </div>
               </div>

@@ -63,7 +63,8 @@ class SizingTab2Form extends React.Component {
                             this.setState({numberTubePopUp: true})
                         } else {
                             this.props.handleSubmit(values);
-                            this.props.handleSubmit({tubeLength: 0.1}); 
+                            this.props.handleSubmit({tubeLength: 0}); 
+                            this.props.handleSubmit({iteration: 0});
                             this.props.handleSubmit({recalculate: 1});                            
                             setSubmitting(false);
                             this.setState({popUp: true})

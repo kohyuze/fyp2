@@ -40,6 +40,7 @@ class SizingTab3Form extends React.Component {
         //state is just for the popup box
         this.state = {
             popUp: false,
+            numberBafflesPopUp: false,
         }
     }
     render() {
@@ -91,11 +92,16 @@ class SizingTab3Form extends React.Component {
                         })
                     }
                     onSubmit={(values, { setSubmitting }) => {
-                        this.props.handleSubmit(values);
-                        this.props.handleSubmit({tubeLength: 0.1}); 
-                        this.props.handleSubmit({recalculate: 1});                        
-                        setSubmitting(false);
-                        this.setState({ popUp: true })
+                        if (values.numberBaffles < 4) {
+                            this.setState({ numberBafflesPopUp: true })
+                        } else {
+                            this.props.handleSubmit(values);
+                            this.props.handleSubmit({ tubeLength: 0 });
+                            this.props.handleSubmit({ iteration: 0 });
+                            this.props.handleSubmit({ recalculate: 1 });
+                            setSubmitting(false);
+                            this.setState({ popUp: true })
+                        }
                     }}
                 >
                     <Form>
@@ -136,6 +142,9 @@ class SizingTab3Form extends React.Component {
                 </Formik >
                 <PopUp open={this.state.popUp} onClose={() => this.setState({ popUp: false })}>
                     <p className="popup-text">Updated!</p>
+                </PopUp>
+                <PopUp open={this.state.numberBafflesPopUp} onClose={() => this.setState({numberBafflesPopUp: false})}>
+                    <p className="popup-text">Miminum 4 baffles!</p>
                 </PopUp>
             </div >
         );

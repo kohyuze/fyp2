@@ -36,7 +36,7 @@ const Tab2 = (props) => {
         const tubeImgDiameter = (tubeDiameter / shellDiameter) * shellImgDiameter
 
         //user will enter tubePitch = 0 if they want to auto calculate.
-        const findMaxTubePitch = (shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) => { //horizontal distance between two tubes
+        const findMaxTubePitch = (shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle) => { //horizontal distance between two tubes
             if (layoutAngle === "triangular") {
                 //recalculate imgTubePitch since triangular layout is more compact
                 // sin60 = 0.866
@@ -52,12 +52,12 @@ const Tab2 = (props) => {
                 const B = (Math.PI * shellImgDiameter) / (Math.sqrt(2) * numberTube);
                 const C = ((-1) * shellImgArea) / (numberTube)
                 const imgTubePitch = (-B + (B ** 2 - 4 * C) ** 0.5) / 2
-                return (imgTubePitch)
+                return (imgTubePitch * 1.1) //I make the max abit higher. Later will iterate and reduce till everything fits.
             }
         }
 
         let imgTubePitch
-        let maxImgTubePitch = findMaxTubePitch(shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) * 1.1 //I make the max abit higher. Later will iterate and reduce till everything fits.
+        let maxImgTubePitch = findMaxTubePitch(shellImgDiameter, numberTube, tubeImgDiameter, layoutAngle, tubePitch) 
         let userImgTubePitch = tubePitch * shellImgDiameter / shellDiameter
 
         // console.log("ORIGINAL TUBE PITCH", tubePitch)
@@ -85,10 +85,11 @@ const Tab2 = (props) => {
         }
 
         let draw = true;
-        let drawing = 1;
+        let drawing = 0;
 
         // this is a loop cos sometimes we cannot fit all the tubes in, then we reduce tubepitch and try again
         while (draw) {
+            drawing++
             //start drawing
             c.clearRect(0, 0, canvas.width, canvas.height);
             c.beginPath();
@@ -368,10 +369,10 @@ const Tab2 = (props) => {
             else if (currentRow >= tubeDrawn) { //means not all tubes are fit into the circle, then we reduce tubePitch to make it more cramped.
                 //// console.log("Tubes not fully drawn")
                 imgTubePitch = imgTubePitch * 0.95
-                drawing++
+                
             }
             else {
-                //// console.log("Tubes fully drawn")
+                //console.log("Tubes fully drawn")
                 draw = false;
                 // console.log("DRAWING", drawing)
                 //tubePitch == 0 means the user wants auto calculate. 
@@ -380,6 +381,7 @@ const Tab2 = (props) => {
                     props.handleSubmit({ tubePitch: calculatedTubePitch })
                     //// console.log('rewriting tube pitch!')
                 }
+                // props.handleSubmit({ tubeDrawingDone: 1 })
 
             }
             // console.log("CALCULATED TUBEPITCH", calculatedTubePitch)

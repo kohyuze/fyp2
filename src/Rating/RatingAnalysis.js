@@ -16,8 +16,8 @@ class RatingAnalysis extends React.Component {
 
         this.state = {
             // fluids 
-            shellFluid: 'engine oil',
-            tubeFluid: 'water',
+            shellFluid: 'Engine Oil',
+            tubeFluid: 'Water',
             // constants for shell
             shellIT: 65.6,
             shellOT: 0,
@@ -66,6 +66,7 @@ class RatingAnalysis extends React.Component {
             currentPage: "forms",
             recalculate: 0,
             redraw: 0,
+            iteration: 0,
         };
     }
 
@@ -93,7 +94,7 @@ class RatingAnalysis extends React.Component {
                 //putting recalculate:1 here will ensure the fluid properties are fully updated
                 //before running recalculation
             }
-
+            console.log("TUBE UPDATE")
         })
     }
 
@@ -105,6 +106,7 @@ class RatingAnalysis extends React.Component {
             this.handleSubmit({ shellKV: shellProperties[3] })
             this.handleSubmit({ shellTC: shellProperties[4] })
             this.handleSubmit({ recalculate: 1 })
+            console.log("SHELL UPDATE")
         })
     }
 

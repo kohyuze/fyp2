@@ -14,7 +14,7 @@ class SizingResult extends React.Component {
             tubeHEcoeff: 0,
             shellHEcoeff: 0,
             overallHEcoeff: 0,
-            iteration: 0,
+            // iteration: 0,
             shellMeanT: this.props.data.shellIT, //first iteration's values are fetched using input temp, at Tab1Form
             newShellMeanT: 0,
             tubeMeanT: this.props.data.tubeIT,   //further iterations, this value will be updated with the mean.
@@ -71,6 +71,7 @@ class SizingResult extends React.Component {
             shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
             tubeLength,
+            iteration
         } = this.props.data;
 
         const {
@@ -80,45 +81,46 @@ class SizingResult extends React.Component {
             updateShellProperties
         } = this.props;
 
-        
 
-        console.log("Iteration " + this.state.iteration)
-        this.setState({ iteration: this.state.iteration + 1 })
+
+        console.log("Iteration " + iteration)
+        // this.setState({ iteration: iteration + 1 })
+        handleSubmit({ iteration: iteration + 1 })
 
         //need to update the tube materials conductivity
         switch (tubeMaterial) {
             case "Admiralty (70% Cu, 30% Ni)":
-                handleSubmit({tubeMaterialThermalConductivity: 111})
+                handleSubmit({ tubeMaterialThermalConductivity: 111 })
                 break
             case "Admiralty":
-                handleSubmit({tubeMaterialThermalConductivity: 111})
+                handleSubmit({ tubeMaterialThermalConductivity: 111 })
                 break
             case "Stainless Steel":
-                handleSubmit({tubeMaterialThermalConductivity: 25})
+                handleSubmit({ tubeMaterialThermalConductivity: 25 })
                 break
             case "Mild Steel":
-                handleSubmit({tubeMaterialThermalConductivity: 50})
+                handleSubmit({ tubeMaterialThermalConductivity: 50 })
                 break
             case "Copper":
-                handleSubmit({tubeMaterialThermalConductivity: 386})
+                handleSubmit({ tubeMaterialThermalConductivity: 386 })
                 break
             case "Nickle":
-                handleSubmit({tubeMaterialThermalConductivity: 92})
+                handleSubmit({ tubeMaterialThermalConductivity: 92 })
                 break
             case "Aluminium":
-                handleSubmit({tubeMaterialThermalConductivity: 239})
+                handleSubmit({ tubeMaterialThermalConductivity: 239 })
                 break
             case "Borosilicate Glass":
-                handleSubmit({tubeMaterialThermalConductivity: 1.15})
+                handleSubmit({ tubeMaterialThermalConductivity: 1.15 })
                 break
             case "Zinc":
-                handleSubmit({tubeMaterialThermalConductivity: 113})
+                handleSubmit({ tubeMaterialThermalConductivity: 113 })
                 break
             case "Titanium Alloy":
-                handleSubmit({tubeMaterialThermalConductivity: 7.5})
+                handleSubmit({ tubeMaterialThermalConductivity: 7.5 })
                 break
             default: //Admiralty
-                handleSubmit({tubeMaterialThermalConductivity: 111})
+                handleSubmit({ tubeMaterialThermalConductivity: 111 })
                 break
         }
 
@@ -128,20 +130,26 @@ class SizingResult extends React.Component {
         let o;
 
         //min tubeLength need to be 2x clearance. We'll set the min here to be 3xClearance and start iterating from here
-        if (tubeLength == 0){
-            tubeLength = 0.1
+        if (tubeLength == 0) {
+            tubeLength = 3 * clearance
         }
 
         // diff HT area needs different increment steps, if the HT area is very small, then the program will hang if we
         // increment by 0.1. So we need a way to scale the increment size by the HT area.
         // the smaller the HTarea, the larger the increment
-
         const HTarea = Math.PI * tubeInnerD * numberTube //per unit length.
-
         // to get inverse relationship, we need 1/HTarea
+        let increment = 1 / HTarea
+        console.log("increment", increment)
 
-        let increment = 1/HTarea  
-        console.log("increment",increment)
+
+        // we know the output temperature, so we can set the fluid properties and no need to iterate.
+        const shellMeanTemp = (shellIT + shellOTreq) / 2
+        const tubeMeanTemp = (tubeIT + tubeOTreq) / 2
+        if (iteration < 2) {
+            updateShellProperties(shellMeanTemp, shellFluid)
+            updateTubeProperties(tubeMeanTemp, tubeFluid)
+        }
 
         let newTubeLength
         switch (shell) {
@@ -149,26 +157,33 @@ class SizingResult extends React.Component {
                 o = EShellThermalCalc.EShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
 
-                //this first "if" reduces the number of loops by jumping bigger
-                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
-                    newTubeLength = tubeLength + 5*increment      
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    newTubeLength = tubeLength + increment
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-
-
-                // Checks if iteration is needed. Updates fluid properties with new mean temps and iterates.
-                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
-                    this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid) //dun use the newly updated state, cos sometimes the 
-                    //state may update slowly and this function will run with the old value  
-                }
-                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
-                    this.setState({ tubeMeanT: o.newTubeMeanT })
-                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+                if (shellIT > tubeIT) { //shell fluid hot
+                    //this first "if" reduces the number of loops by jumping bigger
+                    if (o.shellOT > shellOTreq + 1 && o.tubeOT < tubeOTreq - 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
+                } else { // tube fluid hot
+                    if (o.shellOT < shellOTreq - 1 && o.tubeOT > tubeOTreq + 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
                 }
                 break;
 
@@ -176,95 +191,135 @@ class SizingResult extends React.Component {
                 o = FShellThermalCalc.FShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
 
-                //this first "if" reduces the number of loops by jumping bigger
-                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
-                    newTubeLength = tubeLength + 5*increment      
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                if (shellIT > tubeIT) { //shell fluid hot
+                    if (o.shellOT > shellOTreq + 1 && o.tubeOT < tubeOTreq - 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
+                } else { // tube fluid hot
+                    if (o.shellOT < shellOTreq - 1 && o.tubeOT > tubeOTreq + 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
                 }
-                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    newTubeLength = tubeLength + increment
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
-                    this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid)
-                }
-                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
-                    this.setState({ tubeMeanT: o.newTubeMeanT })
-                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
-                } 
                 break;
 
             case 'G':
-                o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state,  tubeLength)
+                o = GShellThermalCalc.GShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
 
-                //this first "if" reduces the number of loops by jumping bigger
-                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
-                    newTubeLength = tubeLength + 5*increment      
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    newTubeLength = tubeLength + increment
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
-                    this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid)
-                }
-                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
-                    this.setState({ tubeMeanT: o.newTubeMeanT })
-                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+                if (shellIT > tubeIT) { //shell fluid hot
+                    if (o.shellOT > shellOTreq + 1 && o.tubeOT < tubeOTreq - 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
+                } else { // tube fluid hot
+                    if (o.shellOT < shellOTreq - 1 && o.tubeOT > tubeOTreq + 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
                 }
                 break;
             case 'H':
                 o = HShellThermalCalc.HShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
 
-                //this first "if" reduces the number of loops by jumping bigger
-                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
-                    newTubeLength = tubeLength + 5*increment      
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    newTubeLength = tubeLength + increment
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
-                    this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid)
-                }
-                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
-                    this.setState({ tubeMeanT: o.newTubeMeanT })
-                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+                if (shellIT > tubeIT) { //shell fluid hot
+                    if (o.shellOT > shellOTreq + 1 && o.tubeOT < tubeOTreq - 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
+                } else { // tube fluid hot
+                    if (o.shellOT < shellOTreq - 1 && o.tubeOT > tubeOTreq + 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
                 }
                 break;
             case 'J':
                 o = JShellThermalCalc.JShellThermalCalculation(this.props.data, this.state, tubeLength)
                 this.setState(o)
 
-                //this first "if" reduces the number of loops by jumping bigger
-                if (Math.abs(o.shellOT - shellOTreq) > 1 && Math.abs(o.tubeOT - tubeOTreq) > 1 && this.state.iteration > 2) { 
-                    newTubeLength = tubeLength + 5*increment      
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && this.state.iteration > 2) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
-                    newTubeLength = tubeLength + increment
-                    handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
-                }
-                if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
-                    this.setState({ shellMeanT: o.newShellMeanT })
-                    updateShellProperties(o.newShellMeanT, shellFluid)
-                }
-                if (Math.abs(o.newTubeMeanT - o.tubeMeanT) >= 1) {
-                    this.setState({ tubeMeanT: o.newTubeMeanT })
-                    updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
+                if (shellIT > tubeIT) { //shell fluid hot
+                    if (o.shellOT > shellOTreq + 1 && o.tubeOT < tubeOTreq - 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT > shellOTreq && o.tubeOT < tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
+                } else { // tube fluid hot
+                    if (o.shellOT < shellOTreq - 1 && o.tubeOT > tubeOTreq + 1 && iteration > 3 && iteration < 50) { 
+                        newTubeLength = tubeLength + 5 * increment      
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    else if (o.shellOT < shellOTreq && o.tubeOT > tubeOTreq && iteration > 3 && iteration < 50) { //iteration > 3 cos of some weird reason the first few iterations are crazy.
+                        newTubeLength = tubeLength + increment
+                        handleSubmit({ tubeLength: newTubeLength, recalculate: 1 })
+                    }
+                    // Updates the Kc and Ke values for tube P drop calculation
+                    if (iteration < 3) {
+                        updateTubeProperties(tubeMeanTemp, tubeFluid, o.tubeRe, o.sigma)
+                    }
                 }
                 break;
         }
 
         //sometimes the program just stops before it's done, so this will force it to continue
-        if (this.state.iteration < 3) {
+        if (iteration < 3) {
             console.log("FORCED LOOP")
             updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
         }
@@ -277,34 +332,8 @@ class SizingResult extends React.Component {
     }
 
     componentDidMount() {
-        // this.props.handleSubmit({
-        //      // constants for shell
-        //      tubeIT: 65.6,
-        //      tubeOT: 0,
-        //      tubeOTreq: 60.49,
-        //      tubeMFR: 36.3,
-        //      tubeSHC: 0.1,  //put 0.1 cos sometimes the initial value of 0 will cause program to crash
-        //      tubeDV: 0.1,
-        //      tubeKV: 0.1,
-        //      tubeTC: 0.1,
-        //      tubeD: 0.1,
-        //      tubeFF: 0.000176,
-        //      // Constant for tube
-        //      shellIT: 32.2,
-        //      shellOT: 0,
-        //      shellOTreq: 37.31,
-        //      shellMFR: 18.1,
-        //      shellSHC: 0.1,
-        //      shellDV: 0.1,
-        //      shellKV: 0.1,
-        //      shellTC: 0.1,
-        //      shellD: 0.1,
-        //      shellFF: 0.000088,
-
-            
-        // })
-        this.props.updateShellProperties(65.6, 'engine oil')
-        this.props.updateTubeProperties(32.2, 'water')
+        this.props.updateShellProperties(65.6, 'Engine Oil')
+        this.props.updateTubeProperties(32.2, 'Water')
         this.calculate()
     }
 
@@ -316,7 +345,7 @@ class SizingResult extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.data.recalculate) {
             this.props.handleSubmit({ recalculate: 0 });
-            console.log('recalculating..')
+            // console.log('recalculating..')
             this.calculate()
         }
     }

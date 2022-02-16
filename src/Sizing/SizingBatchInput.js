@@ -3,7 +3,8 @@ import * as dfd from 'danfojs';
 import React, { Component } from 'react';
 import PopUp from '../popup';
 
-class RatingBatchInput extends Component {
+
+class SizingBatchInput extends Component {
 
     state = {
         // Initially, no file is selected
@@ -43,30 +44,29 @@ class RatingBatchInput extends Component {
                 rear: df.iloc({ rows: [4] }).$data[0][1],
                 // fluids 
                 shellFluid: df.iloc({ rows: [6] }).$data[0][1],
-                tubeFluid: df.iloc({ rows: [11] }).$data[0][1],
+                tubeFluid: df.iloc({ rows: [12] }).$data[0][1],
                 // constants for shell
                 shellIT: Number(df.iloc({ rows: [7] }).$data[0][1]),
-                //shellOT: 0,
-                shellMFR: Number(df.iloc({ rows: [8] }).$data[0][1]),
-                shellFF: Number(df.iloc({ rows: [9] }).$data[0][1]),
+                shellOTreq: Number(df.iloc({ rows: [8] }).$data[0][1]),
+                shellMFR: Number(df.iloc({ rows: [9] }).$data[0][1]),
+                shellFF: Number(df.iloc({ rows: [10] }).$data[0][1]),
                 // Constant for tube
-                tubeIT: Number(df.iloc({ rows: [12] }).$data[0][1]),
-                //tubeOT: 0,
-                tubeMFR: Number(df.iloc({ rows: [13] }).$data[0][1]),
-                tubeFF: Number(df.iloc({ rows: [14] }).$data[0][1]),
+                tubeIT: Number(df.iloc({ rows: [13] }).$data[0][1]),
+                tubeOTreq: Number(df.iloc({ rows: [14] }).$data[0][1]),
+                tubeMFR: Number(df.iloc({ rows: [15] }).$data[0][1]),
+                tubeFF: Number(df.iloc({ rows: [16] }).$data[0][1]),
                 // Constant for Constraints and physical Dimensions
-                tubeInnerD: Number(df.iloc({ rows: [17] }).$data[0][1]),
-                tubeOuterD: Number(df.iloc({ rows: [18] }).$data[0][1]),
-                tubePitch: Number(df.iloc({ rows: [20] }).$data[0][1]),
-                numberTube: Number(df.iloc({ rows: [16] }).$data[0][1]),
-                numberPasses: Number(df.iloc({ rows: [24] }).$data[0][1]),
-                layoutAngle: df.iloc({ rows: [21] }).$data[0][1],
-                shellInnerDiameter: Number(df.iloc({ rows: [19] }).$data[0][1]),
-                baffleCutPercent: Number(df.iloc({ rows: [26] }).$data[0][1]),
-                numberBaffles: Number(df.iloc({ rows: [25] }).$data[0][1]),
-                clearance: Number(df.iloc({ rows: [27] }).$data[0][1]),
-                tubeLength: Number(df.iloc({ rows: [23] }).$data[0][1]),
-                tubeMaterial: df.iloc({ rows: [22] }).$data[0][1],
+                tubeInnerD: Number(df.iloc({ rows: [19] }).$data[0][1]),
+                tubeOuterD: Number(df.iloc({ rows: [20] }).$data[0][1]),
+                tubePitch: Number(df.iloc({ rows: [22] }).$data[0][1]),
+                numberTube: Number(df.iloc({ rows: [18] }).$data[0][1]),
+                numberPasses: Number(df.iloc({ rows: [25] }).$data[0][1]),
+                layoutAngle: df.iloc({ rows: [23] }).$data[0][1],
+                shellInnerDiameter: Number(df.iloc({ rows: [21] }).$data[0][1]),
+                baffleCutPercent: Number(df.iloc({ rows: [27] }).$data[0][1]),
+                numberBaffles: Number(df.iloc({ rows: [26] }).$data[0][1]),
+                clearance: Number(df.iloc({ rows: [28] }).$data[0][1]),
+                tubeMaterial: df.iloc({ rows: [24] }).$data[0][1],
             }
             this.props.handleSubmit(values);
             this.props.handleSubmit({recalculate: 1});
@@ -111,8 +111,8 @@ class RatingBatchInput extends Component {
                 <h3>
                     Batch Input 
                     <p>
-                        <a href="https://github.com/kohyuze/fluid-properties/blob/main/Rating_batchinput.xlsx?raw=true" download >
-                            Download rating batch input form
+                        <a href="https://github.com/kohyuze/fluid-properties/blob/main/Sizing_batchinput.xlsx?raw=true" download >
+                            Download sizing batch input form
                         </a>
                     </p>
                 </h3>
@@ -133,4 +133,4 @@ class RatingBatchInput extends Component {
     }
 }
 
-export default RatingBatchInput;
+export default SizingBatchInput;

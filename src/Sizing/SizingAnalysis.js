@@ -17,12 +17,12 @@ class SizingAnalysis extends React.Component {
 
         this.state = {
             // fluids 
-            shellFluid: 'engine oil',
-            tubeFluid: 'water',
+            shellFluid: 'Engine Oil',
+            tubeFluid: 'Water',
             // constants for shell
             shellIT: 65.6,
             shellOT: 0,
-            shellOTreq: 60.49,
+            shellOTreq: 60.5,
             shellMFR: 36.3,
             shellSHC: 0.1,  //put 0.1 cos sometimes the initial value of 0 will cause program to crash
             shellDV: 0.1,
@@ -33,7 +33,7 @@ class SizingAnalysis extends React.Component {
             // Constant for tube
             tubeIT: 32.2,
             tubeOT: 0,
-            tubeOTreq: 37.31,
+            tubeOTreq: 37.3,
             tubeMFR: 18.1,
             tubeSHC: 0.1,
             tubeDV: 0.1,
@@ -44,7 +44,7 @@ class SizingAnalysis extends React.Component {
             // Constant for Constraints and physical Dimensions
             tubeInnerD: 0.0166,
             tubeOuterD: 0.0190,
-            tubePitch: 0, //default is 0, then will auto calculate
+            tubePitch: 0.025, //default is 0, then will auto calculate
             numberTube: 102,
             numberPasses: 2,
             layoutAngle: "rotated-square",
@@ -55,7 +55,7 @@ class SizingAnalysis extends React.Component {
             clearance: 0.318,
             // shellSideFluidDynamicViscocity: 0,
             tubeMaterialThermalConductivity: 0,
-            tubeLength: 0.1, 
+            tubeLength: 0, 
             tubeMaterial: "Admiralty (70% Cu, 30% Ni)",
 
             //TEMA configs
@@ -69,6 +69,7 @@ class SizingAnalysis extends React.Component {
             currentPage: "forms",
             recalculate: 0,
             redraw: 0,
+            iteration: 0,
         };
     }
 
