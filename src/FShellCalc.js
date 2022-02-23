@@ -16,8 +16,6 @@
 // The method i used to calculate is essentially treating the F shell HX as 2 separate 1-1 E shell HX in counterflow, in series.
 
 import * as math from 'mathjs';
-import { number } from 'mathjs';
-
 
 export function FShellThermalCalculation(data, State, Length) {
 
@@ -56,7 +54,6 @@ export function FShellThermalCalculation(data, State, Length) {
         centralBaffleSpacing,
         numberBaffles,
         clearance,
-        shellSideFluidDynamicViscocity,
         tubeMaterialThermalConductivity,
         tubeLength,
         Kc,
@@ -100,10 +97,10 @@ export function FShellThermalCalculation(data, State, Length) {
             X_t = tubePitch
             X_l = (Math.sqrt(3) / 2) * tubePitch
             break;
-        case 'rotated-triangular':
-            X_t = Math.sqrt(3) * tubePitch
-            X_l = 0.5 * tubePitch
-            break;
+        // case 'rotated-triangular':
+        //     X_t = Math.sqrt(3) * tubePitch
+        //     X_l = 0.5 * tubePitch
+        //     break;
         case 'square':
             X_t = tubePitch
             X_l = tubePitch
@@ -175,7 +172,7 @@ export function FShellThermalCalculation(data, State, Length) {
     else if (layoutAngle === 'rotated-triangular' && tubePitch / tubeOuterD >= 3.732) {
         A_ocr = (shellInnerDiameter_new - D_otl + (D_ctl / X_t) * (X_t - tubeOuterD)) * centralBaffleSpacing //eqn 8.122
     }
-    if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
+    else if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
         A_ocr = centralBaffleSpacing * (shellInnerDiameter_new - D_otl + 2 * (D_ctl / X_t) * (tubePitch - tubeOuterD)) //eqn 8.123
     }
     //we shall not account for finned tubes
@@ -189,7 +186,7 @@ export function FShellThermalCalculation(data, State, Length) {
     //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area
     //for flow bypass:
     const Width_bypass_lane = 0.019 //assumed, can let user input, or can derive from tubePitch
-    const A_obp = centralBaffleSpacing * (shellInnerDiameter_new - D_otl) // + (0.5 * numberPasses * Width_bypass_lane)) // No pass divder lane since only one pass per side
+    const A_obp = centralBaffleSpacing * (shellInnerDiameter_new - D_otl) // + (0.5 * numberPasses * Width_bypass_lane)) // No bypass lane in my illustration
 
     //Consequently,
     const F_bp = A_obp / A_ocr
@@ -208,7 +205,7 @@ export function FShellThermalCalculation(data, State, Length) {
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
 
-    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input. <====================================================================================================================
+    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input.
 
     
     //////////////Thermal calculations, Shah pg653//////////////////////////
@@ -290,7 +287,7 @@ export function FShellThermalCalculation(data, State, Length) {
 
     //------------- Heat Transfer Effectiveness------------------
     //Total tube outside heat transfer area
-    const A_s = Math.PI * tubeLength * tubeOuterD * numberTube/2 //one pass has half the tubes
+    const A_s = Math.PI * tubeLength * tubeOuterD * numberTube/2 //one Eshell has half the tubes(on each side of longitudinal baffle)v
     const C_tube = tubeMFR * tubeSHC
     const C_shell = shellMFR * shellSHC
     let C_min

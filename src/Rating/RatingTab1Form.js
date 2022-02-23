@@ -46,7 +46,7 @@ class RatingTab1Form extends React.Component {
             <div className='formContainer' >
                 {/* the error message sucks, pls fix in future */}
                 <Formik
-                    initialValues={{}}//shellIT: '', shellMFR: '' }}//dk why i dun need to put all the variables here
+                    initialValues={{}}
                     validationSchema={
                         Yup.object({
                             shellIT: Yup.number(),                            
@@ -70,7 +70,6 @@ class RatingTab1Form extends React.Component {
                     <Form>
                         <h2 className='categoryHeader'>TEMA</h2>
                         <div>
-                            {/* need to fix this, cannot be A_1, A_2 */}
                             <MySelect label="Head" name="head" >
                                 <option value="">Select head</option>
                                 <option value="A">A</option>

@@ -40,7 +40,7 @@ export function HShellThermalCalculation(data, State, Length) {
         centralBaffleSpacing,
         numberBaffles,
         clearance,
-        shellSideFluidDynamicViscocity,
+
         tubeMaterialThermalConductivity,
         tubeLength,
         Kc,
@@ -72,10 +72,10 @@ export function HShellThermalCalculation(data, State, Length) {
 
     //for H shells, tube length needs to be quartered, massFlowRate needs to be split into 4 streams.
     let tubeLengthPerSide = 0.25 * tubeLength
-    shellMFR = 0.25 * shellMFR
+    let shellMFRPerSide = 0.25 * shellMFR
 
-    let numberBafflesPerSide = Math.floor(numberBaffles/4)
-    centralBaffleSpacing = Math.abs((tubeLengthPerSide - 2 * clearance)/(numberBafflesPerSide - 1) - 0.003) //3mm acounts for the thickness of the baffle
+    let numberBafflesPerSide = Math.floor(numberBaffles / 4)
+    centralBaffleSpacing = Math.abs((tubeLengthPerSide - 2 * clearance) / (numberBafflesPerSide - 1) - 0.003) //3mm acounts for the thickness of the baffle
 
     let X_l, X_t;
     //Determination of Longitudinal_tube_pitch and Traverse_tube_pitch from table 8.1, shah pg568
@@ -84,10 +84,10 @@ export function HShellThermalCalculation(data, State, Length) {
             X_t = tubePitch
             X_l = (Math.sqrt(3) / 2) * tubePitch
             break;
-        case 'rotated-triangular': //not an option yet
-            X_t = Math.sqrt(3) * tubePitch
-            X_l = 0.5 * tubePitch
-            break;
+        // case 'rotated-triangular': //not an option yet
+        //     X_t = Math.sqrt(3) * tubePitch
+        //     X_l = 0.5 * tubePitch
+        //     break;
         case 'square':
             X_t = tubePitch
             X_l = tubePitch
@@ -159,7 +159,7 @@ export function HShellThermalCalculation(data, State, Length) {
     else if (layoutAngle === 'rotated-triangular' && tubePitch / tubeOuterD >= 3.732) {
         A_ocr = (shellInnerDiameter_new - D_otl + (D_ctl / X_t) * (X_t - tubeOuterD)) * centralBaffleSpacing //eqn 8.122
     }
-    if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
+    else if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
         A_ocr = centralBaffleSpacing * (shellInnerDiameter_new - D_otl + 2 * (D_ctl / X_t) * (tubePitch - tubeOuterD)) //eqn 8.123
     }
     //we shall not account for finned tubes
@@ -168,13 +168,13 @@ export function HShellThermalCalculation(data, State, Length) {
     //Now, compute the number of baffles from Eq. (8.126) as
     const N_b = numberBafflesPerSide
     //Math.floor((tubeLengthPerSide - clearance - clearance) / centralBaffleSpacing + 1)
-    console.log("Nb", N_b)
+    // console.log("Nb", N_b)
 
     //Bypass and Leakage Flow Areas. To calculate the fraction of crossflow area available for
     //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area
     //for flow bypass:
     const Width_bypass_lane = 0.019 //assumed, can let user input, or can derive from tubePitch
-    const A_obp = centralBaffleSpacing * (shellInnerDiameter_new - D_otl) // + (0.5 * numberPasses * Width_bypass_lane)) // No pass divder lane since only one pass per side
+    const A_obp = centralBaffleSpacing * (shellInnerDiameter_new - D_otl) // + (0.5 * numberPasses * Width_bypass_lane)) //No bypass lane in my illustration
 
     //Consequently,
     const F_bp = A_obp / A_ocr
@@ -193,13 +193,13 @@ export function HShellThermalCalculation(data, State, Length) {
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
 
-    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input. <====================================================================================================================
+    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input.
 
 
     //////////////Thermal calculations, Shah pg653//////////////////////////
     //-----Shell-Side Heat Transfer Coefficient-----------------------
     //Determination of the flow velocity in the shell
-    const shellMassVelocity = shellMFR / A_ocr;
+    const shellMassVelocity = shellMFRPerSide / A_ocr;
     //console.log("shellMassVelocity", shellMassVelocity)
     //Determination of the Reynolds number
     const shellRe = (shellMassVelocity * tubeOuterD) / shellDV;
@@ -248,7 +248,7 @@ export function HShellThermalCalculation(data, State, Length) {
 
     //-----Tube-Side Heat Transfer Coefficient-----------------------
     //Number of tubes per pass
-    const N_tp = numberTube / 2 //F shell is fixed with 2 passes. 1 pass per "E shell".
+    const N_tp = numberTube / numberPasses
     //Tube-side flow area per pass
     const A_ot = (Math.PI / 4) * tubeInnerD ** 2 * N_tp
     //Tube-side Reynolds number
@@ -275,9 +275,9 @@ export function HShellThermalCalculation(data, State, Length) {
 
     //------------- Heat Transfer Effectiveness------------------
     //Total tube outside heat transfer area
-    const A_s = Math.PI * tubeLengthPerSide * tubeOuterD * numberTube / 2 //one pass has half the tubes
+    const A_s = Math.PI * tubeLengthPerSide * tubeOuterD * numberTube / 2 //one Eshell has half the tubes (on each side of longitudinal baffle)
     const C_tube = tubeMFR * tubeSHC
-    const C_shell = shellMFR * shellSHC
+    const C_shell = shellMFRPerSide * shellSHC
     let C_min
     let C_max
     if (C_tube > C_shell) {
@@ -316,59 +316,104 @@ export function HShellThermalCalculation(data, State, Length) {
     // Refer to report on this segment. Pg ___
 
     let T_ti, T_to, T_si, T_soa1, T_soa2, T_sob1, T_sob2, T_so, T_1, T_2, T_3, T_4, T_5, T_6, T_7, T_8, T_9, T_10, T_11 = 0; //initial value.
-    let C_t, C_s; 
+    let C_t, C_s;
 
     T_ti = tubeIT;
     C_t = C_tube
     T_si = shellIT;
     C_s = C_shell
 
-    console.log("ShellIT ", shellIT)
-    console.log("TubeIT ", tubeIT)
+    // console.log("ShellIT ", shellIT)
+    // console.log("TubeIT ", tubeIT)
 
     const EC_c = HEeffectiveness_counterflow * C_min
     const EC_p = HEeffectiveness_parallelflow * C_min
 
+    let matrixA, matrixB, matrixX
+
     switch (Number(numberPasses)) {
         case 1:
-            
-            break
-        case 2:
-            let matrixA = math.matrix([[0, 0, 0, 0, 0, -C_t, 0, 0, 0, 0, 0, 0, EC_p, 0, 0, 0],
-                                        [0, C_s, 0, 0, 0, C_t, 0, 0, 0, 0, 0, 0, -C_s, 0, 0, 0],
-                                        [0, 0, 0, 0, 0, C_t - EC_c, -C_t, 0, 0, 0, 0, 0, 0, EC_c, 0, 0],
-                                        [0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, 0, -C_s, 0, 0],
-                                        [0, 0, 0, 0, 0, 0, (C_t - EC_p), -C_t, 0, 0, 0, 0, 0, 0, EC_p, 0],
-                                        [0, 0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, 0, -C_s, 0],
-                                        [0, 0, 0, 0, 0, 0, 0, C_t - EC_c, -C_t, 0, 0, 0, 0, 0, 0, EC_c],
-                                        [0, 0, 0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, 0, -C_s],
-                                        [0, 0, 0, 0, 0, 0, 0, 0, (EC_c - C_t), C_t, 0, 0, 0, 0, 0, 0],
-                                        [0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, C_s],
-                                        [0, 0, 0, 0, 0, 0, 0, 0, 0, (EC_p - C_t), C_t, 0, 0, 0, 0, 0],
-                                        [0, 0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_t, 0, 0, 0, C_s, 0],
-                                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (EC_c - C_t), C_t, 0, 0, 0, 0],
-                                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_t, 0, C_s, 0, 0],
-                                        [C_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (EC_p - C_t), 0, 0, 0, 0],
-                                        [C_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_s, 0, 0, 0]]);
+            matrixA = math.matrix([[0, 0, 0, 0, 0, 0, 0, 0, C_s, 0, 0, 0],
+                                        [0, 0, 0, 0, 0, -EC_p, 0, 0, 0, C_s, 0, 0],
+                                        [0, 0, 0, 0, 0, 0, -EC_c, 0, 0, 0, C_s, 0],
+                                        [0, 0, 0, 0, 0, 0, 0, -EC_p, 0, 0, 0, C_s],
+                                        [0, C_s, 0, 0, 0, 0, 0, 0, EC_p-C_s, 0, 0, 0],
+                                        [0, 0, C_s, 0, 0, -EC_c, 0, 0, 0, EC_c-C_s, 0, 0],
+                                        [0, 0, 0, C_s, 0, 0, -EC_p, 0, 0, 0, EC_p-C_s, 0],
+                                        [0, 0, 0, 0, C_s, 0, 0, -EC_c, 0, 0, 0, EC_c-C_s],
+                                        [0, C_s, 0, 0, 0, C_t, 0, 0, 0, 0, 0, 0],
+                                        [0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0],
+                                        [0, 0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0],                                                                         
+                                        [C_t, 0, 0, 0, C_s, 0, 0, -C_t, 0, 0, 0, 0]]);
 
-            let matrixB = math.matrix([[(EC_p - C_t) * T_ti],
-                                        [C_t * T_ti],
+            matrixB = math.matrix([[(C_s - EC_c) * T_si + EC_c*T_ti],
+                                        [(C_s - EC_p) * T_si],
+                                        [(C_s - EC_c) * T_si],
+                                        [(C_s - EC_p) * T_si],                                       
+                                        [EC_p * T_ti],
                                         [0],
                                         [0],
                                         [0],
-                                        [0],
-                                        [0],
-                                        [0],
-                                        [EC_c * T_si],
+                                        [C_t * T_ti + C_s * T_si],
                                         [C_s * T_si],
-                                        [EC_p * T_si],
                                         [C_s * T_si],
-                                        [EC_c * T_si],
-                                        [C_s * T_si],
-                                        [EC_p * T_si],
                                         [C_s * T_si]]);
 
-            let matrixX
+            // console.log("determinant",math.det(matrixA))
+            if (math.det(matrixA) > 0.1 || math.det(matrixA) < -0.1) { //to avoid determinant=0 error
+                matrixX = math.multiply(math.inv(matrixA), matrixB);
+
+                T_to = matrixX.get([0, 0])
+                T_soa1 = matrixX.get([1, 0])
+                T_soa2 = matrixX.get([2, 0])
+                T_sob1 = matrixX.get([3, 0])
+                T_sob2 = matrixX.get([4, 0])
+                T_1 = matrixX.get([5, 0])
+                T_2 = matrixX.get([6, 0])
+                T_3 = matrixX.get([7, 0])
+                T_4 = matrixX.get([8, 0])
+                T_5 = matrixX.get([9, 0])
+                T_6 = matrixX.get([10, 0])
+                T_7 = matrixX.get([11, 0])
+
+                T_so = (T_soa1 + T_soa2 + T_sob1 + T_sob2) / 4
+            }
+            break
+        case 2:
+            matrixA = math.matrix([[0, 0, 0, 0, 0, -C_t, 0, 0, 0, 0, 0, 0, EC_p, 0, 0, 0],
+            [0, C_s, 0, 0, 0, C_t, 0, 0, 0, 0, 0, 0, -C_s, 0, 0, 0],
+            [0, 0, 0, 0, 0, C_t - EC_c, -C_t, 0, 0, 0, 0, 0, 0, EC_c, 0, 0],
+            [0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, 0, -C_s, 0, 0],
+            [0, 0, 0, 0, 0, 0, (C_t - EC_p), -C_t, 0, 0, 0, 0, 0, 0, EC_p, 0],
+            [0, 0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, 0, -C_s, 0],
+            [0, 0, 0, 0, 0, 0, 0, C_t - EC_c, -C_t, 0, 0, 0, 0, 0, 0, EC_c],
+            [0, 0, 0, 0, C_s, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, 0, -C_s],
+            [0, 0, 0, 0, 0, 0, 0, 0, (EC_c - C_t), C_t, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_t, 0, 0, 0, 0, 0, C_s],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, (EC_p - C_t), C_t, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_t, 0, 0, 0, C_s, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (EC_c - C_t), C_t, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_t, 0, C_s, 0, 0],
+            [C_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (EC_p - C_t), 0, 0, 0, 0],
+            [C_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -C_t, C_s, 0, 0, 0]]);
+
+            matrixB = math.matrix([[(EC_p - C_t) * T_ti],
+            [C_t * T_ti],
+            [0],
+            [0],
+            [0],
+            [0],
+            [0],
+            [0],
+            [EC_c * T_si],
+            [C_s * T_si],
+            [EC_p * T_si],
+            [C_s * T_si],
+            [EC_c * T_si],
+            [C_s * T_si],
+            [EC_p * T_si],
+            [C_s * T_si]]);
+
             // console.log("determinant",math.det(matrixA))
             if (math.det(matrixA) > 0.1 || math.det(matrixA) < -0.1) { //to avoid determinant=0 error
                 matrixX = math.multiply(math.inv(matrixA), matrixB);
@@ -393,43 +438,40 @@ export function HShellThermalCalculation(data, State, Length) {
                 T_so = (T_soa1 + T_soa2 + T_sob1 + T_sob2) / 4
             }
             break
-        case 4:
-            
-            break
         default:
-            console.log("G Shell calculation numberPasses invalid.")
+            console.log("H Shell calculation numberPasses invalid.")
             break
     }
 
-    
-
-    
-
-        // console.log(matrixX)
-        console.log("T_ti", T_ti)
-        console.log("T_to", T_to)
-        console.log("T_si", T_si)
-        console.log("T_so", T_so)
-        console.log("T_1", T_1)
-        console.log("T_2", T_2)
-        console.log("T_3", T_3)
-        console.log("T_4", T_4)
-        console.log("T_5", T_5)
-        console.log("T_6", T_6)
-        console.log("T_7", T_7)
-        console.log("T_8", T_8)
-        console.log("T_9", T_9)
-        console.log("T_10", T_10)
-        console.log("T_11", T_11)
-        // console.log("T_12", T_12)
-        console.log("T_soa1", T_soa1)
-        console.log("T_soa2", T_soa2)
-        console.log("T_sob1", T_sob1)
-        console.log("T_sob2", T_sob2)
-    
 
 
-    
+
+
+    // console.log(matrixX)
+    // console.log("T_ti", T_ti)
+    // console.log("T_to", T_to)
+    // console.log("T_si", T_si)
+    // console.log("T_so", T_so)
+    // console.log("T_1", T_1)
+    // console.log("T_2", T_2)
+    // console.log("T_3", T_3)
+    // console.log("T_4", T_4)
+    // console.log("T_5", T_5)
+    // console.log("T_6", T_6)
+    // console.log("T_7", T_7)
+    // console.log("T_8", T_8)
+    // console.log("T_9", T_9)
+    // console.log("T_10", T_10)
+    // console.log("T_11", T_11)
+    // // console.log("T_12", T_12)
+    // console.log("T_soa1", T_soa1)
+    // console.log("T_soa2", T_soa2)
+    // console.log("T_sob1", T_sob1)
+    // console.log("T_sob2", T_sob2)
+
+
+
+
 
 
     //Heat Transfer Rate
@@ -441,20 +483,20 @@ export function HShellThermalCalculation(data, State, Length) {
     let shellOT2, tubeOT2;
     shellOT2 = Number(T_so)
     tubeOT2 = Number(T_to)
-    
+
     o.shellOT = shellOT2.toFixed(2);
     o.tubeOT = tubeOT2.toFixed(2);
 
     //check mean temp, if difference is more than 1°C, we iterate again
     o.newShellMeanT = (shellOT2 + shellIT) / 2
     o.newTubeMeanT = (tubeOT2 + tubeIT) / 2
-    console.log("newShellMeanT " + o.newShellMeanT)
-    console.log("shellMeanT " + o.shellMeanT)
-    console.log("newTubeMeanT " + o.newTubeMeanT)
-    console.log("tubeMeanT " + o.tubeMeanT)
+    // console.log("newShellMeanT " + o.newShellMeanT)
+    // console.log("shellMeanT " + o.shellMeanT)
+    // console.log("newTubeMeanT " + o.newTubeMeanT)
+    // console.log("tubeMeanT " + o.tubeMeanT)
 
-    console.log("ShellOT ", shellOT2)
-    console.log("TubeOT ", tubeOT2)
+    // console.log("ShellOT ", shellOT2)
+    // console.log("TubeOT ", tubeOT2)
 
     //------------------Shell side pressure drop shah pg656----------------------
     const b = 6.59 / (1 + 0.14 * shellRe ** 0.52)
@@ -462,8 +504,8 @@ export function HShellThermalCalculation(data, State, Length) {
 
     //the ideal pressure drop without correction
     //assuming the wall viscosity is v similar to bulk vioscosity
-    const deltaP_bid = (4 * F_id * shellMassVelocity ** 2 * N_rcc) / (2 * shellD)  *1.2 //this adds 20% cos my calculations always underestimate due to difference in values used
-    
+    const deltaP_bid = (4 * F_id * shellMassVelocity ** 2 * N_rcc) / (2 * shellD) * 1.2 //this adds 20% cos my calculations always underestimate due to difference in values used
+
     //finding the correction factors ζ_b, ζ_l and C_s
     let ζ_b
     if (N_ssplus >= 0.5) { ζ_b = 1 }
@@ -482,7 +524,7 @@ export function HShellThermalCalculation(data, State, Length) {
 
     // finding the deltaPs
     const deltaP_cr = deltaP_bid * (N_b - 1) * ζ_b * ζ_l
-    const G_w = shellMFR / ((A_ocr * A_ow) ** 0.5)
+    const G_w = shellMFRPerSide / ((A_ocr * A_ow) ** 0.5)
     const deltaP_w = N_b * (2 + 0.6 * N_rcw) * ((G_w ** 2) / (2 * shellD)) * ζ_l
     const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw / N_rcc)) * ζ_b * ζ_s
 
@@ -506,8 +548,8 @@ export function HShellThermalCalculation(data, State, Length) {
         const firstTerm = (4 * frictionFactor * tubeLength / tubeInnerD)
         const tubePressureDrop = coeff_in_front * (firstTerm + entranceEffect - exitEffect) * numberPasses
         o.tubePressureDrop = tubePressureDrop.toFixed(2)
-        console.log("shellPressureDrop ", shellPressureDrop)
-        console.log("tubePressureDrop ", tubePressureDrop)
+        // console.log("shellPressureDrop ", shellPressureDrop)
+        // console.log("tubePressureDrop ", tubePressureDrop)
     }
 
     return (o)

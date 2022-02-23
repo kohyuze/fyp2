@@ -32,51 +32,24 @@ class SizingResult extends React.Component {
             shell,
             shellFluid,
             tubeFluid,
-            Kc,
-            Ke,
             tubeMaterial,
             // constants for shell
             shellIT,
             shellOT,
             shellOTreq,
-            shellMFR,
-            shellSHC,
-            shellDV,
-            shellKV,
-            shellTC,
-            shellD,
-            shellFF,
             // Constant for tube
             tubeIT,
-            tubeOT,
             tubeOTreq,
-            tubeMFR,
-            tubeSHC,
-            tubeDV,
-            tubeKV,
-            tubeTC,
-            tubeD,
-            tubeFF,
             // Constant for Constraints and physical Dimensions
             tubeInnerD,
-            tubeOuterD,
-            tubePitch,
             numberTube,
-            numberPasses,
-            layoutAngle,
-            shellInnerDiameter,
-            baffleCutPercent,
-            centralBaffleSpacing,
             clearance,
-            shellSideFluidDynamicViscocity,
-            tubeMaterialThermalConductivity,
             tubeLength,
             iteration
         } = this.props.data;
 
         const {
             handleSubmit,
-            handlePageChange,
             updateTubeProperties,
             updateShellProperties
         } = this.props;
@@ -140,7 +113,7 @@ class SizingResult extends React.Component {
         const HTarea = Math.PI * tubeInnerD * numberTube //per unit length.
         // to get inverse relationship, we need 1/HTarea
         let increment = 1 / HTarea
-        console.log("increment", increment)
+        // console.log("increment", increment)
 
 
         // we know the output temperature, so we can set the fluid properties and no need to iterate.
@@ -316,6 +289,9 @@ class SizingResult extends React.Component {
                     }
                 }
                 break;
+            default: 
+                console.log("Invalid Shell type")
+                break
         }
 
         //sometimes the program just stops before it's done, so this will force it to continue
@@ -354,6 +330,10 @@ class SizingResult extends React.Component {
         const {
             handlePageChange
         } = this.props;
+        let {
+            shellOTreq,
+            tubeOTreq,
+        } = this.props.data;
         return (
             <div>
                 <button className="previous" onClick={() => handlePageChange({ currentPage: 'inputCheck' })}>&laquo; Back to Inputs</button>
@@ -363,15 +343,16 @@ class SizingResult extends React.Component {
                     <div><p>Shell-side heat transfer coefficient:</p> <h5>{this.state.shellHEcoeff}W/m².K</h5></div>
                     <div><p>Overall heat transfer coefficient:</p> <h5>{this.state.overallHEcoeff}W/m².K</h5></div>
                     <div><p></p> <h5></h5></div>
-                    <div><p>Shell output temperature:</p> <h5>{this.state.shellOT}°C</h5></div>
-                    <div><p>Tube output temperature:</p> <h5>{this.state.tubeOT}°C</h5></div>
+                    <div><p>Target Shell output temperature:</p> <h5>{shellOTreq}°C</h5></div>
+                    <div><p>Final Shell output temperature:</p> <h5>{this.state.shellOT}°C</h5></div>
+                    <div><p>Target Tube output temperature:</p> <h5>{tubeOTreq}°C</h5></div>
+                    <div><p>Final Tube output temperature:</p> <h5>{this.state.tubeOT}°C</h5></div>
                     <div><p></p> <h5></h5></div>
                     <div><p>Shell pressure drop:</p> <h5>{this.state.shellPressureDrop}Pa</h5></div>
                     <div><p>Tube pressure drop:</p> <h5>{this.state.tubePressureDrop}Pa</h5></div>
                     <div><p></p> <h5></h5></div>
                     <div><p>Minimum tube length:</p> <h5>{this.state.tubeLength}m</h5></div>
                 </div>
-                {/* <button onClick={() => console.log(this.state)}>log state</button> */}
             </div>
         );
     }

@@ -1,5 +1,4 @@
 import React from 'react';
-import * as dfd from 'danfojs';
 import * as EShellThermalCalc from '../EShellCalc';
 import * as FShellThermalCalc from '../FShellCalc';
 import * as GShellThermalCalc from '../GShellCalc';
@@ -33,49 +32,11 @@ class RatingResult extends React.Component {
             shellFluid,
             tubeFluid,
             tubeMaterial,
-            Kc,
-            Ke,
-            // constants for shell
-            shellIT,
-            shellOT,
-            shellMFR,
-            shellSHC,
-            shellDV,
-            shellKV,
-            shellTC,
-            shellD,
-            shellFF,
-            // Constant for tube
-            tubeIT,
-            tubeOT,
-            tubeMFR,
-            tubeSHC,
-            tubeDV,
-            tubeKV,
-            tubeTC,
-            tubeD,
-            tubeFF,
-            // Constant for Constraints and physical Dimensions
-            tubeInnerD,
-            tubeOuterD,
-            tubePitch,
-            numberTube,
-            numberPasses,
-            layoutAngle,
-            shellInnerDiameter,
-            baffleCutPercent,
-            centralBaffleSpacing,
-            clearance,
-            shellSideFluidDynamicViscocity,
-            tubeMaterialThermalConductivity,
-            tubeLength,
-            tubeDrawingDone,
             iteration
         } = this.props.data;
 
         const {
             handleSubmit,
-            handlePageChange,
             updateTubeProperties,
             updateShellProperties
         } = this.props;
@@ -180,7 +141,7 @@ class RatingResult extends React.Component {
                 }
                 break;
             case 'J':
-                o = JShellThermalCalc.JShellThermalCalculation(this.props.data, this.state, this.props.data.shellIT, this.props.data.tubeIT)
+                o = JShellThermalCalc.JShellThermalCalculation(this.props.data, this.state)
                 this.setState(o)
 
                 if (Math.abs(o.newShellMeanT - o.shellMeanT) >= 1) {
@@ -192,6 +153,9 @@ class RatingResult extends React.Component {
                     updateTubeProperties(o.newTubeMeanT, tubeFluid, o.tubeRe, o.sigma)
                 }
                 break;
+            default: 
+                console.log("Invalid Shell type")
+                break
         }
         
         //sometimes the tube pressure drop do not get calculated cos fetching data too slow. Then we force it to loop again
@@ -242,7 +206,6 @@ class RatingResult extends React.Component {
                     <div><p>Shell pressure drop:</p> <h5>{this.state.shellPressureDrop}Pa</h5></div>
                     <div><p>Tube pressure drop:</p> <h5>{this.state.tubePressureDrop}Pa</h5></div>
                 </div>
-                {/* <button onClick={() => console.log(this.state)}>log state</button> */}
             </div>
         );
     }

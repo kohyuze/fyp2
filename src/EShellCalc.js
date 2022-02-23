@@ -1,10 +1,6 @@
 
 // This is calculation using the Bell-Delaware method.
 
-import math from "mathjs";
-import * as util from './util';
-
-
 export function EShellThermalCalculation(data, State, Length) {
 
     let {
@@ -42,7 +38,6 @@ export function EShellThermalCalculation(data, State, Length) {
         centralBaffleSpacing,
         numberBaffles,
         clearance,
-        shellSideFluidDynamicViscocity,
         tubeMaterialThermalConductivity,
         tubeLength,
         // Constants for tube pressure drop
@@ -88,10 +83,10 @@ export function EShellThermalCalculation(data, State, Length) {
             X_t = tubePitch
             X_l = (Math.sqrt(3) / 2) * tubePitch
             break;
-        case 'rotated-triangular':
-            X_t = Math.sqrt(3) * tubePitch
-            X_l = 0.5 * tubePitch
-            break;
+        // case 'rotated-triangular':
+        //     X_t = Math.sqrt(3) * tubePitch
+        //     X_l = 0.5 * tubePitch
+        //     break;
         case 'square':
             X_t = tubePitch
             X_l = tubePitch
@@ -154,7 +149,7 @@ export function EShellThermalCalculation(data, State, Length) {
     else if (layoutAngle === 'rotated-triangular' && tubePitch / tubeOuterD >= 3.732) {
         A_ocr = (shellInnerDiameter - D_otl + (D_ctl / X_t) * (X_t - tubeOuterD)) * centralBaffleSpacing //eqn 8.122
     }
-    if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
+    else if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
         A_ocr = centralBaffleSpacing * (shellInnerDiameter - D_otl + 2 * (D_ctl / X_t) * (tubePitch - tubeOuterD)) //eqn 8.123
     }
     //we shall not account for finned tubes
@@ -186,7 +181,7 @@ export function EShellThermalCalculation(data, State, Length) {
     //This concludes all geometrical characteristics needed for the thermal design/rating of a
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
-    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input.<====================================================================================================================
+    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input.
 
     //////////////Thermal calculations, Shah pg653//////////////////////////
     //-----Shell-Side Heat Transfer Coefficient-----------------------

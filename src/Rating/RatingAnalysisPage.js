@@ -6,8 +6,6 @@ import Tab2Form from './RatingTab2Form';
 import Tab3Form from './RatingTab3Form';
 import RatingBatchInput from './RatingBatchInput';
 
-import { Link } from 'react-router-dom';
-
 class RatingAnalysis extends React.Component {
   constructor(props) {
     super(props);
@@ -36,9 +34,6 @@ class RatingAnalysis extends React.Component {
             <Tab1Graphics data={this.props.data}/>
           </div>
         </div>
-
-        {/* <button onClick={() => console.log(this.props)}>log props</button> */}
-        {/* <button onClick={() => console.log(this.state)}>log state2</button> */}
 
         <button className="next" onClick={() => this.props.handlePageChange({ currentPage: 'inputCheck' })}>Check Inputs &raquo;</button>
         <section className="tabs">

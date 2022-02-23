@@ -35,9 +35,6 @@ class SizingAnalysis extends React.Component {
           </div>
         </div>
 
-        {/* <button onClick={() => console.log(this.props)}>log props</button> */}
-        {/* <button onClick={() => console.log(this.state)}>log state2</button> */}
-
         <button className="next" onClick={() => this.props.handlePageChange({ currentPage: 'inputCheck' })}>Check Inputs &raquo;</button>
         <section className="tabs">
           <div className="container">

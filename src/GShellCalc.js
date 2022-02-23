@@ -39,7 +39,6 @@ export function GShellThermalCalculation(data, State, Length) {
         centralBaffleSpacing,
         numberBaffles,
         clearance,
-        shellSideFluidDynamicViscocity,
         tubeMaterialThermalConductivity,
         tubeLength,
         Kc,
@@ -71,7 +70,7 @@ export function GShellThermalCalculation(data, State, Length) {
 
     //for G shells, tube length needs to be halved, massFlowRate needs to be halved too.
     let tubeLengthPerSide = 0.5 * tubeLength
-    shellMFR = 0.5 * shellMFR
+    let shellMFRPerSide = 0.5 * shellMFR
 
     // calculate the centralBaffleSpacing from the numberBaffles
     let numberBafflesPerSide = Math.floor(numberBaffles/2)
@@ -86,10 +85,10 @@ export function GShellThermalCalculation(data, State, Length) {
             X_t = tubePitch
             X_l = (Math.sqrt(3) / 2) * tubePitch
             break;
-        case 'rotated-triangular':
-            X_t = Math.sqrt(3) * tubePitch
-            X_l = 0.5 * tubePitch
-            break;
+        // case 'rotated-triangular':
+        //     X_t = Math.sqrt(3) * tubePitch
+        //     X_l = 0.5 * tubePitch
+        //     break;
         case 'square':
             X_t = tubePitch
             X_l = tubePitch
@@ -161,7 +160,7 @@ export function GShellThermalCalculation(data, State, Length) {
     else if (layoutAngle === 'rotated-triangular' && tubePitch / tubeOuterD >= 3.732) {
         A_ocr = (shellInnerDiameter_new - D_otl + (D_ctl / X_t) * (X_t - tubeOuterD)) * centralBaffleSpacing //eqn 8.122
     }
-    if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
+    else if (layoutAngle === 'rotated-triangular' || layoutAngle === 'rotated-square') {
         A_ocr = centralBaffleSpacing * (shellInnerDiameter_new - D_otl + 2 * (D_ctl / X_t) * (tubePitch - tubeOuterD)) //eqn 8.123
     }
     //we shall not account for finned tubes
@@ -176,7 +175,7 @@ export function GShellThermalCalculation(data, State, Length) {
     //flow bypass, Fbp [Eq. (8.127)], we first have to calculate the magnitude of crossflow area
     //for flow bypass:
     const Width_bypass_lane = 0.019 //assumed, can let user input, or can derive from tubePitch
-    const A_obp = centralBaffleSpacing * (shellInnerDiameter_new - D_otl) // + (0.5 * numberPasses * Width_bypass_lane)) // No pass divder lane since only one pass per side
+    const A_obp = centralBaffleSpacing * (shellInnerDiameter_new - D_otl) // + (0.5 * numberPasses * Width_bypass_lane)) // No bypass lane in my illustration
 
     //Consequently,
     const F_bp = A_obp / A_ocr
@@ -195,13 +194,13 @@ export function GShellThermalCalculation(data, State, Length) {
     //shell-and-tube heat exchanger using the Bell–Delaware method.
 
 
-    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input. <====================================================================================================================
+    const k_w = tubeMaterialThermalConductivity //thermal conductivity of tube wall. user input. 
 
 
     //////////////Thermal calculations, Shah pg653//////////////////////////
     //-----Shell-Side Heat Transfer Coefficient-----------------------
     //Determination of the flow velocity in the shell
-    const shellMassVelocity = shellMFR / A_ocr;
+    const shellMassVelocity = shellMFRPerSide / A_ocr;
     //// console.log("shellMassVelocity", shellMassVelocity)
     //Determination of the Reynolds number
     const shellRe = (shellMassVelocity * tubeOuterD) / shellDV;
@@ -250,7 +249,7 @@ export function GShellThermalCalculation(data, State, Length) {
 
     //-----Tube-Side Heat Transfer Coefficient-----------------------
     //Number of tubes per pass
-    const N_tp = numberTube / 2 //F shell is fixed with 2 passes. 1 pass per "E shell".
+    const N_tp = numberTube / numberPasses
     //Tube-side flow area per pass
     const A_ot = (Math.PI / 4) * tubeInnerD ** 2 * N_tp
     //Tube-side Reynolds number
@@ -277,9 +276,9 @@ export function GShellThermalCalculation(data, State, Length) {
 
     //------------- Heat Transfer Effectiveness------------------
     //Total tube outside heat transfer area
-    const A_s = Math.PI * tubeLengthPerSide * tubeOuterD * numberTube / 2 //one pass has half the tubes
+    const A_s = Math.PI * tubeLengthPerSide * tubeOuterD * numberTube / 2 //one Eshell has half the tubes(on each side of longitudinal baffle)
     const C_tube = tubeMFR * tubeSHC
-    const C_shell = shellMFR * shellSHC
+    const C_shell = shellMFRPerSide * shellSHC
     let C_min
     let C_max
     if (C_tube > C_shell) {
@@ -521,7 +520,7 @@ export function GShellThermalCalculation(data, State, Length) {
 
     // finding the deltaPs
     const deltaP_cr = deltaP_bid * (N_b - 1) * ζ_b * ζ_l
-    const G_w = shellMFR / ((A_ocr * A_ow) ** 0.5)
+    const G_w = shellMFRPerSide / ((A_ocr * A_ow) ** 0.5)
     const deltaP_w = N_b * (2 + 0.6 * N_rcw) * ((G_w ** 2) / (2 * shellD)) * ζ_l
     const deltaP_io = 2 * deltaP_bid * (1 + (N_rcw / N_rcc)) * ζ_b * ζ_s
 

@@ -2,7 +2,6 @@ import React from 'react';
 import RatingAnalysisPage from './RatingAnalysisPage';
 import RatingInputPage from './RatingInputPage';
 import RatingResultPage from './RatingResult';
-import * as dfd from 'danfojs';
 import * as util from '../util';
 
 
@@ -50,7 +49,6 @@ class RatingAnalysis extends React.Component {
             centralBaffleSpacing: 0,
             numberBaffles: 14,
             clearance: 0.318,
-            // shellSideFluidDynamicViscocity: 0,
             tubeMaterialThermalConductivity: 0,
             tubeLength: 4.3, 
             tubeMaterial: "Admiralty (70% Cu, 30% Ni)",

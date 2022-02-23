@@ -1,5 +1,4 @@
 import React from 'react';
-import * as dfd from 'danfojs';
 
 class InputPage extends React.Component {
     constructor(props) {
@@ -24,7 +23,6 @@ class InputPage extends React.Component {
             shellTC,
             shellD,
             shellFF,
-            //ShellPN, //not filled in form
             // Constant for tube
             tubeIT,
             tubeOTreq,
@@ -35,7 +33,6 @@ class InputPage extends React.Component {
             tubeTC,
             tubeD,
             tubeFF,
-            //TubePN, //not filled in form
             // Constant for Constraints and physical Dimensions
             tubeInnerD,
             tubeOuterD,
@@ -48,15 +45,8 @@ class InputPage extends React.Component {
             centralBaffleSpacing,
             numberBaffles,
             clearance,
-            shellSideFluidDynamicViscocity,
             tubeMaterialThermalConductivity,
             tubeMaterial,
-            // Constant for material design
-            tubeUnsupportedLength,
-            tubeYoungModule,
-            tubeLongitudeStress,
-            addedMassCoefficient,
-            metalMassUnitLength,
         } = this.props.data;
         const {
             handleSubmit,
@@ -65,7 +55,6 @@ class InputPage extends React.Component {
         return (
             <div>
                 <button className="previous" onClick={() => handlePageChange({ currentPage: 'forms' })}>&laquo; Edit Inputs</button>
-                {/* <button onClick={() => console.log(this.props.data)}>log props</button> */}
 
                 <h2>Inputs</h2>
 

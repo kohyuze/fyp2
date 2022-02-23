@@ -48,7 +48,7 @@ class RatingTab2Form extends React.Component {
             <div className='formContainer' >
                 {/* the error message sucks, pls fix in future */}
                 <Formik
-                    initialValues={{ }}//dk why i dun need to put all the variables here
+                    initialValues={{}}//dk why i dun need to put all the variables here
                     validationSchema={
                         Yup.object({
                             tubeInnerD: Yup.number(),                          

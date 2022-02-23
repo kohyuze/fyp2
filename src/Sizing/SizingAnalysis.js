@@ -2,7 +2,6 @@ import React from 'react';
 import SizingAnalysisPage from './SizingAnalysisPage';
 import SizingInputPage from './SizingInputPage';
 import SizingResultPage from './SizingResult';
-import * as dfd from 'danfojs';
 import * as util from '../util';
 
 
@@ -53,7 +52,6 @@ class SizingAnalysis extends React.Component {
             centralBaffleSpacing: 0,
             numberBaffles: 14,
             clearance: 0.318,
-            // shellSideFluidDynamicViscocity: 0,
             tubeMaterialThermalConductivity: 0,
             tubeLength: 0, 
             tubeMaterial: "Admiralty (70% Cu, 30% Ni)",
