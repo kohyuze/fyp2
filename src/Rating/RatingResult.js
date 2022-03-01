@@ -196,9 +196,9 @@ class RatingResult extends React.Component {
                 <button className="previous" onClick={() => handlePageChange({ currentPage: 'inputCheck' })}>&laquo; Back to Inputs</button>
                 <h1>Results</h1>
                 <div className='input-Container'>
-                    <div><p>Tube-side heat transfer coefficient:</p> <h5>{this.state.tubeHEcoeff}W/m².K</h5></div>
-                    <div><p>Shell-side heat transfer coefficient:</p> <h5>{this.state.shellHEcoeff}W/m².K</h5></div>
-                    <div><p>Overall heat transfer coefficient:</p> <h5>{this.state.overallHEcoeff}W/m².K</h5></div>
+                    <div><p>Tube-side heat transfer coefficient:</p> <h5>{this.state.tubeHEcoeff}W/m²·K</h5></div>
+                    <div><p>Shell-side heat transfer coefficient:</p> <h5>{this.state.shellHEcoeff}W/m²·K</h5></div>
+                    <div><p>Overall heat transfer coefficient:</p> <h5>{this.state.overallHEcoeff}W/m²·K</h5></div>
                     <div><p></p> <h5></h5></div>
                     <div><p>Shell output temperature:</p> <h5>{this.state.shellOT}°C</h5></div>
                     <div><p>Tube output temperature:</p> <h5>{this.state.tubeOT}°C</h5></div>
