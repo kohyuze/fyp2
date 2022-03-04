@@ -442,9 +442,8 @@ export function JShellThermalCalculation(data, State, Length) {
 
 
     //Heat Transfer Rate
-    // const Q_a = HEeffectiveness * C_min * Math.abs(T_2 - T_ti)
-    // const Q_b = HEeffectiveness * C_min * Math.abs(T_si - T_to)
-    // const Q = Q_a + Q_b
+    const Q = shellMFR * C_s * Math.abs(T_si - T_so)
+    o.Q = Q.toFixed(2)
 
     //Exit temperature
     let shellOT2, tubeOT2;
