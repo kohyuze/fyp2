@@ -470,7 +470,7 @@ export function GShellThermalCalculation(data, State, Length) {
 
 
     //Heat Transfer Rate
-    const Q = shellMFR * C_s * Math.abs(T_si - T_so)
+    const Q = C_s * Math.abs(T_si - T_so)
     o.Q = Q.toFixed(2)
 
     //Exit temperature

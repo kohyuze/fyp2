@@ -202,10 +202,10 @@ class RatingResult extends React.Component {
                     <div><p></p> <h5></h5></div>
                     <div><p>Shell output temperature:</p> <h5>{this.state.shellOT}°C</h5></div>
                     <div><p>Tube output temperature:</p> <h5>{this.state.tubeOT}°C</h5></div>
-                    <div><p>Heat Transfer Rate</p> <h5>{this.state.Q}W</h5></div>
+                    <div><p>Heat Transfer Rate</p> <h5>{(this.state.Q/1000).toFixed(2)}kW</h5></div>
                     <div><p></p> <h5></h5></div>
-                    <div><p>Shell pressure drop:</p> <h5>{this.state.shellPressureDrop}Pa</h5></div>
-                    <div><p>Tube pressure drop:</p> <h5>{this.state.tubePressureDrop}Pa</h5></div>
+                    <div><p>Shell pressure drop:</p> <h5>{(this.state.shellPressureDrop/1000).toFixed(2)}kPa</h5></div>
+                    <div><p>Tube pressure drop:</p> <h5>{(this.state.tubePressureDrop/1000).toFixed(2)}kPa</h5></div>
                 </div>
             </div>
         );

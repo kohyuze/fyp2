@@ -318,7 +318,7 @@ export function EShellThermalCalculation(data, State, Length) {
     // console.log("TubeOT Recalc ", Q/C_tube + tubeIT)
 
     //Heat Transfer Rate
-    const Q = shellMFR * C_shell * Math.abs(shellIT - shellOT2)
+    const Q = C_shell * Math.abs(shellIT - shellOT2)
     o.Q = Q.toFixed(2)
 
     //------------------Shell side pressure drop shah pg656----------------------
