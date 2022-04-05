@@ -85,8 +85,8 @@ class RatingTab1Form extends React.Component {
                             </MySelect>
                             <MySelect label="Rear" name="rear" >
                                 <option value="">Select rear</option>
-                                <option value="L_1">L</option>
-                                <option value="M_1">M</option>
+                                <option value="L">L</option>
+                                <option value="M">M</option>
                             </MySelect>
                         </div>
                         <h2 className='categoryHeader'>Shell Side Fluid</h2>

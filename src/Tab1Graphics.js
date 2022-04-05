@@ -45,14 +45,15 @@ const Tab1 = (props) => {
 
     switch (rear) {
         case 'L':
-            if (numberPasses % 2 == 1) { rearSelected = L_1; }
-            else { rearSelected = L_0; }
+            if (numberPasses % 2 == 1) { rearSelected = L_1;}
+            else { rearSelected = L_0;}
             break;
         case 'M':
-            if (numberPasses % 2 == 1) { rearSelected = M_1; }
-            else { rearSelected = M_0; }
+            if (numberPasses % 2 == 1) { rearSelected = M_1;}
+            else { rearSelected = M_0;}
             break;
-
+        default:
+            break
     }
 
     useEffect(() => {
