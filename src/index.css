@@ -39,7 +39,7 @@ code {
 }
 
 .navButtons:hover {
-  opacity: 99%;
+  /* opacity: 99%; */
   cursor: pointer;
 }
 
@@ -169,7 +169,7 @@ code {
 }
 
 .applyButton:hover {
-  opacity: 99%;
+  /* opacity: 99%; */
   cursor: pointer;
 }
 
@@ -252,6 +252,6 @@ code {
   margin-right: auto;
 }
 .calculate:hover {
-  opacity: 99%;
+  /* opacity: 99%; */
   cursor: pointer;
 }
