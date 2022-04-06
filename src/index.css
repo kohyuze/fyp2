@@ -68,9 +68,9 @@ code {
 .tabs p {
   font-size: 1rem;
 }
-.tabs .container > div{
-  /* padding: 0.3rem 0; */
-}
+/* .tabs .container > div{
+  padding: 0.3rem 0;
+} */
 .tabs .container > div:hover{
   color: white;
   cursor: pointer;
