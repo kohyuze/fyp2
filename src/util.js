@@ -57,42 +57,48 @@ export function fetchProperties(AveT, fluid, callback) {
                 }                
             }
 
-            let density = interpolate(
-                averageTemp,
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][1]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][1])
-            )
-            let specificHeat = interpolate(
-                averageTemp,
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][2]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][2])
-            )
-            let dynamicVis = interpolate(
-                averageTemp,
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][3]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][3])
-            )
-            let kinematicVis = dynamicVis / density;
-            let therConductivity = interpolate(
-                averageTemp,
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
-                Number(sub_df.iloc({ rows: [j - 1] }).$data[0][4]),
-                Number(sub_df.iloc({ rows: [j] }).$data[0][4])
-            )
-            // If temperature too high, exceed fluid data, take top value for fluid properties.
-            if (TempTooHigh){               
+            // console.log("J = ", j)
+
+            // If temp too low, take first row values   
+            // If temperature too high, exceed fluid data, take last row values for fluid properties.
+            // Else, do interpolation
+            let density, specificHeat, dynamicVis, kinematicVis, therConductivity
+            if (TempTooHigh || j == 0){               
                 density = Number(sub_df.iloc({ rows: [j] }).$data[0][1])
                 specificHeat =  Number(sub_df.iloc({ rows: [j] }).$data[0][2])
                 dynamicVis = Number(sub_df.iloc({ rows: [j] }).$data[0][3])
                 kinematicVis = dynamicVis / density
                 therConductivity = Number(sub_df.iloc({ rows: [j] }).$data[0][4])
+            } else {
+                density = interpolate(
+                    averageTemp,
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][1]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][1])
+                )
+                specificHeat = interpolate(
+                    averageTemp,
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][2]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][2])
+                )
+                dynamicVis = interpolate(
+                    averageTemp,
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][3]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][3])
+                )
+                kinematicVis = dynamicVis / density;
+                therConductivity = interpolate(
+                    averageTemp,
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][0]),
+                    Number(sub_df.iloc({ rows: [j - 1] }).$data[0][4]),
+                    Number(sub_df.iloc({ rows: [j] }).$data[0][4])
+                )
             }
 
             const Properties = [density.toPrecision(4), specificHeat.toPrecision(4), dynamicVis.toPrecision(4), kinematicVis.toPrecision(4), therConductivity.toPrecision(4)];
