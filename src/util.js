@@ -46,8 +46,15 @@ export function fetchProperties(AveT, fluid, callback) {
             // the $data[0] is gotten by referencing the object when u console.log the fkin thing,
             // trying to extract the fkin value from the dataframe was a huge headache.
             let j = 0;
+            let TempTooHigh = false
             while (averageTemp > Number(sub_df.iloc({ rows: [j] }).$data[0][0])) {
-                j++
+                if (sub_df.iloc({ rows: [j+1] }).$data[0][0] == null) {
+                    console.log("Temperature too high, exceed fluid data. Taking top value for fluid properties.")
+                    TempTooHigh = true
+                    break
+                } else {
+                    j++
+                }                
             }
 
             let density = interpolate(
@@ -79,8 +86,17 @@ export function fetchProperties(AveT, fluid, callback) {
                 Number(sub_df.iloc({ rows: [j - 1] }).$data[0][4]),
                 Number(sub_df.iloc({ rows: [j] }).$data[0][4])
             )
+            // If temperature too high, exceed fluid data, take top value for fluid properties.
+            if (TempTooHigh){               
+                density = Number(sub_df.iloc({ rows: [j] }).$data[0][1])
+                specificHeat =  Number(sub_df.iloc({ rows: [j] }).$data[0][2])
+                dynamicVis = Number(sub_df.iloc({ rows: [j] }).$data[0][3])
+                kinematicVis = dynamicVis / density
+                therConductivity = Number(sub_df.iloc({ rows: [j] }).$data[0][4])
+            }
 
             const Properties = [density.toPrecision(4), specificHeat.toPrecision(4), dynamicVis.toPrecision(4), kinematicVis.toPrecision(4), therConductivity.toPrecision(4)];
+       
             // console.log(Properties)
             callback(Properties);
         }).catch(err => {

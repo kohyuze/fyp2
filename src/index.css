@@ -40,6 +40,7 @@ code {
 
 .navButtons:hover {
   opacity: 99%;
+  cursor: pointer;
 }
 
 .buttonText {
@@ -169,6 +170,7 @@ code {
 
 .applyButton:hover {
   opacity: 99%;
+  cursor: pointer;
 }
 
 /* ----------Next button------------ */
@@ -190,6 +192,7 @@ code {
 .next:hover {
   background-color: #ddd;
   color: black;
+  cursor: pointer;
 }
 
 .previous {
@@ -250,4 +253,5 @@ code {
 }
 .calculate:hover {
   opacity: 99%;
+  cursor: pointer;
 }
