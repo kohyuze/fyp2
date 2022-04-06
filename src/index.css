@@ -39,7 +39,7 @@ code {
 }
 
 .navButtons:hover {
-  opacity: 50%;
+  opacity: 99%;
 }
 
 .buttonText {
@@ -168,7 +168,7 @@ code {
 }
 
 .applyButton:hover {
-  opacity: 50%;
+  opacity: 99%;
 }
 
 /* ----------Next button------------ */
@@ -249,5 +249,5 @@ code {
   margin-right: auto;
 }
 .calculate:hover {
-  opacity: 50%;
+  opacity: 99%;
 }
